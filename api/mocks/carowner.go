@@ -1,0 +1,24 @@
+package mocks
+
+import (
+    "time"
+    "testing"
+    "api/domain/model"
+    )
+
+
+//モック構造体を作成
+type MockCarOwnerRepo struct{
+    //リポジトリインターフェース実行の結果と照らし合わせたい内容をメンバとして定義
+    SavedOwner  *model.CarOwner
+    ExistUser   *model.CarOwner
+    SaveErr     error
+    
+}
+
+
+//リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
+func (m *MockCarOwnerRepo) Save(carOwner *model.CarOwner) error {
+    m.SavedOwner = carOwner
+    return m.SaveErr
+}
