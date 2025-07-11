@@ -8,7 +8,6 @@ type CarOwner struct{
     FirstName           string
     MiddleName          string
     LastName            string
-    FullName            string
     LicenseExpiration   time.Time   //免許証の期限
 }
 
