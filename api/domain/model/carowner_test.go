@@ -22,7 +22,7 @@ func TestIsLicenseExpired(t *testing.T){
             testname:   "期限切れ",
             licenseExpiration:  time.Now().Add(-24 * time.Hour), //1日前
             wantExpired:  true,
-        }
+        },
     }
     //testCaseをループで回す
     for _, tt := range tests{
