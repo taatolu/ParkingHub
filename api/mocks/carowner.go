@@ -3,7 +3,7 @@ package mocks
 import (
     "time"
     "testing"
-    "api/domain/model"
+    "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
 

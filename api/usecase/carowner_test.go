@@ -4,8 +4,8 @@ import (
     "time"
     "testing"
     "github.com/stretchr/testify/assert"
-    "api/mocks"
-    "api/model"
+    "github.com/taatolu/ParkingHub/api/mocks"
+    "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
 //usecaseの確認
