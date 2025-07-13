@@ -15,14 +15,14 @@ services:
             - db_parkinghub:/var/lib/
             
     api:
-        image: gilang;1.13
-        working_dir: go/src/app
+        image: golang:1.13
+        working_dir: /go/src/app
         volumes:
-            - ./api : /go/src/app
-        command:
-            go run main.go
+            - type: bind
+              source: ./api
+              target: /go/src/app
+        command: go run main.go
         environment:
-            environment:
             #環境変数の設定
             #直書き非推奨なので、ホストの.envから取得
             - DB_HOST=db
