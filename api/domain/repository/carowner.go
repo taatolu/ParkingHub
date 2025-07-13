@@ -1,7 +1,7 @@
 package repository
 
 import(
-    "api/domain/model"
+    "github.com/taatolu/ParkingHub/api/domain/model"
     "time"
     )
 
