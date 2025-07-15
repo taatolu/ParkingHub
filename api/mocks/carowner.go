@@ -27,4 +27,14 @@ func (m *MockCarOwnerRepo) FindByID(id int)(*model.CarOwner, error){
     return m.FoundOwner, nil
 }
 
+//FindByName(部分一致検索)
+func (m *MockCarOwnerRepo) FindByName(name string)(*model.CarOwner, error){
+    ans := m.FoundOwner.ContainsName(name)
+    if ans{
+        return m.FoundOwner, nil
+    }
+    return nil, fmt.Errorf("no matching name found")
+}
+
+
 
