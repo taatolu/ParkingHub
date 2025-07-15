@@ -24,5 +24,6 @@ func (m *MockCarOwnerRepo) Save(carOwner *model.CarOwner) error {
 //deleteメソッド
 func (m *MockCarOwnerRepo) Delete(id int)error{
     //処理
+    return m.SaveErr
 }
 
