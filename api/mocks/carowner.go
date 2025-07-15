@@ -16,7 +16,13 @@ type MockCarOwnerRepo struct{
 
 
 //リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
+//saveメソッド
 func (m *MockCarOwnerRepo) Save(carOwner *model.CarOwner) error {
     m.SavedOwner = carOwner
     return m.SaveErr
 }
+//deleteメソッド
+func (m *MockCarOwnerRepo) Delete(id int)error{
+    //処理
+}
+
