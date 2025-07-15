@@ -3,6 +3,7 @@ package usecase
 import (
     "time"
     "testing"
+    "errors"
     "github.com/stretchr/testify/assert"
     "github.com/taatolu/ParkingHub/api/mocks"
     "github.com/taatolu/ParkingHub/api/domain/model"
@@ -78,8 +79,8 @@ func TestRegisterUser(t *testing.T){
         tt := tt // ループ変数のキャプチャ対策
         t.Run(tt.testname, func(t *testing.T){
             mockRepo := &mocks.MockCarOwnerRepo{}
-            uc := &CarOwnerUsecase{OwnerRepo: mockRepo}
-            err := uc.RegistOwner(tt.owner)
+            uc := &CarOwnerUsecase{CarOwnerRepo: mockRepo}
+            err := uc.RegistCarOwner(tt.owner)
             if tt.wantError{
                 //wantError=true(異常の場合)
                 assert.Error(t, err, "errorを期待していたのにエラーが返らない")
