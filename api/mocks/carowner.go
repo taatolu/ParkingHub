@@ -2,6 +2,7 @@ package mocks
 
 import (
     "github.com/taatolu/ParkingHub/api/domain/model"
+    "fmt"
     )
 
 

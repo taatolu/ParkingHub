@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+    "time"
+    "strings"
+)
 
 //CarOuner構造体
 type CarOwner struct{
@@ -16,3 +19,9 @@ func (c *CarOwner)IsLicenseExpired()bool{
     //現在時刻が c.LisenceExpiration より後かどうか(現在時刻が後ならtrueを返す)
     return time.Now().After(c.LicenseExpiration)
 }
+
+func(c *CarOwner)ContainsName(name string)bool{
+    return strings.Contains(c.FirstName, name)||
+        strings.Contains(c.MiddleName, name)||
+        strings.Contains(c.LastName, name)
+    }
