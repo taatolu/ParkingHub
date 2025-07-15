@@ -16,3 +16,9 @@ func (c *CarOwner)IsLicenseExpired()bool{
     //現在時刻が c.LisenceExpiration より後かどうか(現在時刻が後ならtrueを返す)
     return time.Now().After(c.LicenseExpiration)
 }
+
+func(c *CarOwner)ContainsName(name string)bool{
+    return string.Contains(c.FirstName, name)||
+        string.Contains(c.MiddleName, name)||
+        string.LastName(c.LastName, name)
+    }
