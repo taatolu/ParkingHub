@@ -10,7 +10,7 @@ type MockCarOwnerRepo struct{
     //リポジトリインターフェース実行の結果と照らし合わせたい内容をメンバとして定義
     SavedOwner  *model.CarOwner
     SaveErr     error
-    FinededUser *model.CarOwner
+    FoundOwner *model.CarOwner
     
 }
 
@@ -24,7 +24,7 @@ func (m *MockCarOwnerRepo) Save (carOwner *model.CarOwner) error {
 
 //FindByID
 func (m *MockCarOwnerRepo) FindByID(id int)(*model.CarOwner, error){
-    return m.FinededUser, nil
+    return m.FinededOwner, nil
 }
 
 

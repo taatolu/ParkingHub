@@ -9,7 +9,8 @@ import (
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
-//usecaseの確認
+///usecaseの確認
+//RegisterUser
 func TestRegisterUser(t *testing.T){
     //テーブルテストの準備
     tests := []struct{
@@ -130,6 +131,34 @@ func TestSaveCarOwner_Error(t *testing.T){
     err := mockRepo.Save(owner)
     assert.Error(t, err)
     assert.Equal(t, mockRepo.SaveErr, err)
+}
+
+//FindByID
+func TestFindByID(t *testing.T){
+    owner = &model.CarOwner{
+        ID:         1,
+        FirstName:  "test",
+        MiddleName: "山田",
+        LastName:   "太郎",
+        LicenseExpiration:  time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+    }
+    
+    mock := &mocks.MockCarOwnerRepo{
+        FoundOwner:   owner,
+    }
+    
+    got, err := mock.FindByID(1)
+    if err != nil{
+        t.Fatalf("想定外のエラー: %v", err)
+    }
+    
+    if got.ID != owner.ID ||
+        got.FirstName != owner.FirstName ||
+        got.MiddleName != owner.MiddleName ||
+        got.LastName != owner.LastName ||
+        !got.LicenseExpiration.Equal(owner.LicenseExpiration) {
+            t.Errorf("取得した値が期待値と一致しません")
+        }
 }
 
 
