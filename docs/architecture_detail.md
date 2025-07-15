@@ -26,53 +26,53 @@
 
 | **項目** | **内容** |
 | --- | --- |
-| 表示項目 | 氏名、所属/業者名、連絡先、権限区分 |
-| 検索 | 氏名・所属・業者名で部分一致検索 |
-| 詳細表示 | 利用者情報＋関連車両・免許証情報 |
+| 表示項目 | ユーザーID、氏名、所属/業者名、連絡先、権限区分、ログインID |
+| 検索 | 氏名・所属・業者名・ログインIDで部分一致検索 |
+| 詳細表示 | 利用者情報＋関連車両所有者・車両・免許証情報 |
 | 編集・削除 | 管理者のみ可能 |
-| 新規登録 | 必須項目：氏名、所属/業者名、連絡先、権限区分 |
-| バリデーション | 氏名・連絡先必須、連絡先はメール形式チェック等 |
+| 新規登録 | 必須項目：氏名、所属/業者名、連絡先、権限区分、ログインID/パスワード |
+| バリデーション | 氏名・連絡先必須、連絡先はメール形式チェック、ログインID重複不可 |
 
 ## **1.4 車両管理画面**
 
 | **項目** | **内容** |
 | --- | --- |
-| 表示項目 | 車両ナンバー、車種、任意保険期限、車検期限 |
-| 検索 | 車両ナンバー・利用者名で検索 |
-| 詳細表示 | 車両情報＋関連利用者 |
+| 表示項目 | 車両ID、車両所有者ID、車両ナンバー、車種、任意保険期限、車検期限 |
+| 検索 | 車両ナンバー・車両所有者名で検索 |
+| 詳細表示 | 車両情報＋関連車両所有者 |
 | 編集・削除 | 管理者のみ可能 |
-| 新規登録 | 必須項目：車両ナンバー、利用者ID、車種 |
-| バリデーション | ナンバー必須、期限は日付形式 |
+| 新規登録 | 必須項目：車両ナンバー、車両所有者ID、車種 |
+| バリデーション | ナンバー必須、期限は日付形式、所有者ID存在チェック |
 
 ## **1.5 免許証管理（利用者詳細内）**
 
 | **項目** | **内容** |
 | --- | --- |
-| 表示項目 | 免許証番号、有効期限 |
+| 表示項目 | 有効期限、車両所有者ID |
 | 編集 | 管理者のみ可能 |
-| バリデーション | 免許証番号必須、有効期限は未来日 |
+| バリデーション | 有効期限は未来日、所有者ID存在チェック |
 
 ## **1.6 違反記録管理画面**
 
 | **項目** | **内容** |
 | --- | --- |
-| 表示項目 | 違反種別、発生日、利用者名、車両ナンバー、始末書要否 |
-| 検索 | 利用者名・車両ナンバー・違反種別・期間 |
-| 詳細表示 | 違反内容詳細、累積違反数 |
+| 表示項目 | 違反ID、違反種別、発生日、車両所有者ID、車両ID、始末書要否 |
+| 検索 | 車両所有者名・車両ナンバー・違反種別・期間 |
+| 詳細表示 | 違反内容詳細、累積違反数、関連車両所有者情報 |
 | 編集・削除 | 管理者のみ可能 |
-| 新規登録 | 必須項目：利用者ID、車両ID、違反種別、発生日 |
-| バリデーション | 違反種別必須、発生日は日付形式 |
+| 新規登録 | 必須項目：車両所有者ID、車両ID、違反種別、発生日 |
+| バリデーション | 違反種別必須、発生日は日付形式、所有者ID・車両ID存在チェック |
 | 始末書判定 | 10月～翌年9月の期間で累計5回違反で自動フラグON |
 
 ## **1.7 許可証発行画面**
 
 | **項目** | **内容** |
 | --- | --- |
-| 発行対象 | 利用者選択（社員/協力業者/外注業者） |
+| 発行対象 | 車両所有者選択（社員/協力業者/外注業者） |
 | 許可証種別 | 従業員駐車場・工場内・外注業者向け |
 | 発行機能 | PDF出力・印刷 |
 | 有効期限 | 発行日から1年間（デフォルト） |
-| バリデーション | 利用者・車両情報が揃っていること |
+| バリデーション | 車両所有者・車両情報が揃っていること |
 
 ## **1.8 注意文書作成画面**
 
@@ -101,6 +101,10 @@
 | POST | /api/users | 利用者新規登録 | 管理者 |
 | PUT | /api/users/{id} | 利用者情報更新 | 管理者 |
 | DELETE | /api/users/{id} | 利用者削除 | 管理者 |
+| GET | /api/car_owners | 車両所有者一覧取得 | 管理者 |
+| POST | /api/car_owners | 車両所有者新規登録 | 管理者 |
+| PUT | /api/car_owners/{id} | 車両所有者情報更新 | 管理者 |
+| DELETE | /api/car_owners/{id} | 車両所有者削除 | 管理者 |
 | GET | /api/vehicles | 車両一覧取得 | 管理者 |
 | POST | /api/vehicles | 車両新規登録 | 管理者 |
 | PUT | /api/vehicles/{id} | 車両情報更新 | 管理者 |
@@ -113,17 +117,20 @@
 | POST | /api/permits | 許可証発行 | 管理者 |
 | POST | /api/import/csv | CSVインポート | 管理者 |
 
+
+
 ## **3. データベース詳細設計（テーブル定義例）**
 
 ## **3.1 users（利用者）**
 
 | **カラム名** | **型** | **制約** | **説明** |
 | --- | --- | --- | --- |
-| id | SERIAL | PK | 利用者ID |
+| id | SERIAL | PK | 利用者ID（User） |
 | name | VARCHAR | NOT NULL | 氏名 |
 | company | VARCHAR |  | 所属/業者名 |
 | email | VARCHAR | NOT NULL | 連絡先 |
 | role | VARCHAR | NOT NULL | 権限区分 |
+| login_id | VARCHAR | NOT NULL | ログインID |
 | password_hash | VARCHAR | NOT NULL | パスワードHash |
 | created_at | TIMESTAMP | NOT NULL | 登録日時 |
 | updated_at | TIMESTAMP | NOT NULL | 更新日時 |
@@ -133,7 +140,7 @@
 | **カラム名** | **型** | **制約** | **説明** |
 | --- | --- | --- | --- |
 | id | SERIAL | PK | 車両ID |
-| user_id | INTEGER | FK(users.id) | 利用者ID |
+| car_owner_id | INTEGER | FK(car_owners.id) | 車両所有者ID |
 | number | VARCHAR | NOT NULL | ナンバー |
 | type | VARCHAR |  | 車種 |
 | insurance_exp | DATE |  | 任意保険期限 |
@@ -146,7 +153,7 @@
 | **カラム名** | **型** | **制約** | **説明** |
 | --- | --- | --- | --- |
 | id | SERIAL | PK | 免許証ID |
-| user_id | INTEGER | FK(users.id) | 利用者ID |
+| car_owner_id | INTEGER | FK(car_owners.id) | 車両所有者ID |
 | license_no | VARCHAR | NOT NULL | 免許証番号 |
 | expire_date | DATE | NOT NULL | 有効期限 |
 | created_at | TIMESTAMP | NOT NULL | 登録日時 |
@@ -157,7 +164,7 @@
 | **カラム名** | **型** | **制約** | **説明** |
 | --- | --- | --- | --- |
 | id | SERIAL | PK | 違反ID |
-| user_id | INTEGER | FK(users.id) | 利用者ID |
+| car_owner_id | INTEGER | FK(car_owners.id) | 車両所有者ID |
 | vehicle_id | INTEGER | FK(vehicles.id) | 車両ID |
 | type | VARCHAR | NOT NULL | 違反種別 |
 | date | DATE | NOT NULL | 発生日 |
@@ -165,13 +172,28 @@
 | created_at | TIMESTAMP | NOT NULL | 登録日時 |
 | updated_at | TIMESTAMP | NOT NULL | 更新日時 |
 
-## **3.5 permits（許可証）**
+## **3.5 car_owners（車両所有者）**
+
+| **カラム名** | **型** | **制約** | **説明** |
+| --- | --- | --- | --- |
+| id | SERIAL | PK | 車両所有者ID |
+| user_id | INTEGER | FK(users.id) | 利用者ID（User） |
+| name | VARCHAR | NOT NULL | 氏名 |
+| contact | VARCHAR |  | 連絡先 |
+| created_at | TIMESTAMP | NOT NULL | 登録日時 |
+| updated_at | TIMESTAMP | NOT NULL | 更新日時 |
+
+## **3.6 permits（許可証）**
 
 | **カラム名** | **型** | **制約** | **説明** |
 | --- | --- | --- | --- |
 | id | SERIAL | PK | 許可証ID |
-| user_id | INTEGER | FK(users.id) | 利用者ID |
+| car_owner_id | INTEGER | FK(car_owners.id) | 車両所有者ID |
 | type | VARCHAR | NOT NULL | 許可証種別 |
+| issue_date | DATE | NOT NULL | 発行日 |
+| expire_date | DATE | NOT NULL | 有効期限 |
+| created_at | TIMESTAMP | NOT NULL | 登録日時 |
+| updated_at | TIMESTAMP | NOT NULL | 更新日時 |
 | issue_date | DATE | NOT NULL | 発行日 |
 | expire_date | DATE | NOT NULL | 有効期限 |
 | created_at | TIMESTAMP | NOT NULL | 登録日時 |
