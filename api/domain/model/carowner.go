@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+    "time"
+    "strings"
+)
 
 //CarOuner構造体
 type CarOwner struct{
@@ -18,7 +21,7 @@ func (c *CarOwner)IsLicenseExpired()bool{
 }
 
 func(c *CarOwner)ContainsName(name string)bool{
-    return string.Contains(c.FirstName, name)||
-        string.Contains(c.MiddleName, name)||
-        string.LastName(c.LastName, name)
+    return strings.Contains(c.FirstName, name)||
+        strings.Contains(c.MiddleName, name)||
+        strings.LastName(c.LastName, name)
     }
