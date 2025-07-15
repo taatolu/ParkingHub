@@ -7,8 +7,10 @@ import(
 
 type Config struct{
     DBHost  string
+    DBName  string
     DBUser  string
     DBPass  string
+    LOGFile string
 }
 
 func LoadConfig()(*Config, error){
