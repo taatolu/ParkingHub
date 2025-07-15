@@ -23,5 +23,5 @@ func (c *CarOwner)IsLicenseExpired()bool{
 func(c *CarOwner)ContainsName(name string)bool{
     return strings.Contains(c.FirstName, name)||
         strings.Contains(c.MiddleName, name)||
-        strings.LastName(c.LastName, name)
+        strings.Contains(c.LastName, name)
     }
