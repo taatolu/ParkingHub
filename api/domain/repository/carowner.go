@@ -2,7 +2,6 @@ package repository
 
 import(
     "github.com/taatolu/ParkingHub/api/domain/model"
-    "time"
     )
 
 type CarOwnerRepository interface{

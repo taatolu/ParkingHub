@@ -1,8 +1,6 @@
 package mocks
 
 import (
-    "time"
-    "testing"
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
