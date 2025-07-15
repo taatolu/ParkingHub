@@ -33,7 +33,7 @@ func (uc *CarOwnerUsecase)RegistCarOwner(owner *model.CarOwner)error{
     
     //免許証期限が切れている場合、エラーを返す
     isLicenseExpired := owner.IsLicenseExpired()
-    if isLicenseExpired{
+    if !isLicenseExpired{
         //isLicenseExpiredがtrueだったら（期限切れだったら）、、、
         return fmt.Errorf("免許証期限切れの為登録不可 %v", owner.LicenseExpiration)
     }
