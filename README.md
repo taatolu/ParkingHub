@@ -1,5 +1,5 @@
 # ParkingHub
-![GitHub Actions](https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml/badge.svg)(https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml)
+[![CI](https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml/badge.svg)](https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml)
 
 
 ## 概要
