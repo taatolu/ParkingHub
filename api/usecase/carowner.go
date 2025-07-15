@@ -1,7 +1,6 @@
 package usecase
 
 import(
-    "time"
     "fmt"
     "github.com/taatolu/ParkingHub/api/domain/model"
     "github.com/taatolu/ParkingHub/api/domain/repository"
@@ -9,7 +8,7 @@ import(
 
 //ユースケース構造体の作成
 type CarOwnerUsecase struct{
-    CarOwnerRepo   *repository.CarOwnerRepository
+    CarOwnerRepo   repository.CarOwnerRepository
 }
 
 //owner登録処理
