@@ -24,7 +24,7 @@ func (m *MockCarOwnerRepo) Save (carOwner *model.CarOwner) error {
 
 //FindByID
 func (m *MockCarOwnerRepo) FindByID(id int)(*model.CarOwner, error){
-    return m.FinededOwner, nil
+    return m.FoundOwner, nil
 }
 
 
