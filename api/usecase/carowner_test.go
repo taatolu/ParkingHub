@@ -9,7 +9,8 @@ import (
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
-//usecaseの確認
+///usecaseの確認
+//RegisterUser
 func TestRegisterUser(t *testing.T){
     //テーブルテストの準備
     tests := []struct{
@@ -130,6 +131,112 @@ func TestSaveCarOwner_Error(t *testing.T){
     err := mockRepo.Save(owner)
     assert.Error(t, err)
     assert.Equal(t, mockRepo.SaveErr, err)
+}
+
+//FindByID
+func TestFindByID(t *testing.T){
+    owner := &model.CarOwner{
+        ID:         1,
+        FirstName:  "test",
+        MiddleName: "山田",
+        LastName:   "太郎",
+        LicenseExpiration:  time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+    }
+    
+    mock := &mocks.MockCarOwnerRepo{
+        FoundOwner:   owner,
+    }
+    
+    got, err := mock.FindByID(1)
+    if err != nil{
+        t.Fatalf("想定外のエラー: %v", err)
+    }
+    
+    if got.ID != owner.ID ||
+        got.FirstName != owner.FirstName ||
+        got.MiddleName != owner.MiddleName ||
+        got.LastName != owner.LastName ||
+        !got.LicenseExpiration.Equal(owner.LicenseExpiration) {
+            t.Errorf("取得した値が期待値と一致しません")
+        }
+}
+
+
+//FindByName(部分一致検索)
+func TestFindByName(t *testing.T){
+    tests := []struct{
+        testname    string
+        testOwner *model.CarOwner
+        searchName  string
+        wantError   bool
+    }{
+        //テストケースの作成
+        {
+            testname:   "正常系(FirstNameに一致する値あり)",
+            testOwner:    &model.CarOwner{
+                ID:         1,
+                FirstName:  "test",
+                MiddleName: "山田",
+                LastName:   "太郎",
+            },
+            searchName: "t",
+            wantError:  false,
+        },
+        {
+            testname:   "正常系(MiddleNameに一致する値あり)",
+            testOwner:    &model.CarOwner{
+                ID:         1,
+                FirstName:  "test",
+                MiddleName: "山田",
+                LastName:   "太郎",
+            },
+            searchName: "田",
+            wantError:  false,
+        },
+        {
+            testname:   "正常系(LastNameに一致する値あり)",
+            testOwner:    &model.CarOwner{
+                ID:         1,
+                FirstName:  "test",
+                MiddleName: "山田",
+                LastName:   "太郎",
+            },
+            searchName: "郎",
+            wantError:  false,
+        },
+        {
+            testname:   "異常系(一致する値なし)",
+            testOwner:    &model.CarOwner{
+                ID:         1,
+                FirstName:  "test",
+                MiddleName: "山田",
+                LastName:   "太郎",
+            },
+            searchName: "け",
+            wantError:  true,
+        },
+    }
+    //テストケースをループで回す
+    for _, tt := range tests{
+        t.Run(tt.testname, func(t *testing.T){
+            mockRepo := &mocks.MockCarOwnerRepo{
+                FoundOwner: tt.testOwner,
+            }
+            //MockのFindByName実行
+            getOwner, err := mockRepo.FindByName(tt.searchName)
+            
+            //期待した結果と一致するか確認
+            if tt.wantError{
+                //wantErrorがtrue（異常系）なら
+                assert.NotEqual(t, tt.testOwner, getOwner, "値が一致しないことを期待していたが、一致してしまった")
+                assert.Error(t, err)
+            }else{
+                //wantErrorがfalse（正常系）なら
+                assert.Equal(t, tt.testOwner, getOwner, "値が一致するはずだが、一致せず")
+            }
+            
+        })
+    }
 }
 
 
