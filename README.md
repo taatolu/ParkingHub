@@ -1,5 +1,6 @@
 # ParkingHub
-![GitHub Actions](https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml/badge.svg)
+![GitHub Actions](https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml/badge.svg)(https://github.com/taatolu/ParkingHub/actions/workflows/ci.yml)
+
 
 ## 概要
 ParkingHubは、会社駐車場の利用者（社員・協力業者・外注業者）および車両管理、違反記録、許可証発行、注意文書作成などを効率化するWebシステムです。従来のExcel管理から脱却し、社内サーバ上のDocker環境で安定運用します。
