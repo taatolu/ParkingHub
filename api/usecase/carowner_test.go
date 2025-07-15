@@ -135,7 +135,7 @@ func TestSaveCarOwner_Error(t *testing.T){
 
 //FindByID
 func TestFindByID(t *testing.T){
-    owner = &model.CarOwner{
+    owner := &model.CarOwner{
         ID:         1,
         FirstName:  "test",
         MiddleName: "山田",
