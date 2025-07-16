@@ -10,7 +10,7 @@ type MockCarOwnerRepo struct {
 	//リポジトリインターフェース実行の結果と照らし合わせたい内容をメンバとして定義
 	SavedOwner *model.CarOwner
 	SaveErr    error
-	FoundOwner *model.CarOwner
+	FoundOwner []*model.CarOwner
 }
 
 // リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
@@ -26,7 +26,7 @@ func (m *MockCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
 }
 
 // FindByName(部分一致検索)
-func (m *MockCarOwnerRepo) FindByName(name string) (*model.CarOwner, error) {
+func (m *MockCarOwnerRepo) FindByName(name string) ([]*model.CarOwner, error) {
 	ans := m.FoundOwner.ContainsName(name)
 	if ans {
 		return m.FoundOwner, nil
