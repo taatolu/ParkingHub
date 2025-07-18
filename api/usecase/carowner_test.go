@@ -161,79 +161,32 @@ func TestFindByID(t *testing.T) {
 	}
 }
 
-// FindByName(部分一致検索)
+// FindByName(ownerのリストを返すか？)
 func TestFindByName(t *testing.T) {
-	tests := []struct {
-		testname   string
-		testOwner  *model.CarOwner
-		searchName string
-		wantError  bool
-	}{
-		//テストケースの作成
-		{
-			testname: "正常系(FirstNameに一致する値あり)",
-			testOwner: &model.CarOwner{
-				ID:         1,
-				FirstName:  "test",
-				MiddleName: "山田",
-				LastName:   "太郎",
-			},
-			searchName: "t",
-			wantError:  false,
-		},
-		{
-			testname: "正常系(MiddleNameに一致する値あり)",
-			testOwner: &model.CarOwner{
-				ID:         1,
-				FirstName:  "test",
-				MiddleName: "山田",
-				LastName:   "太郎",
-			},
-			searchName: "田",
-			wantError:  false,
-		},
-		{
-			testname: "正常系(LastNameに一致する値あり)",
-			testOwner: &model.CarOwner{
-				ID:         1,
-				FirstName:  "test",
-				MiddleName: "山田",
-				LastName:   "太郎",
-			},
-			searchName: "郎",
-			wantError:  false,
-		},
-		{
-			testname: "異常系(一致する値なし)",
-			testOwner: &model.CarOwner{
-				ID:         1,
-				FirstName:  "test",
-				MiddleName: "山田",
-				LastName:   "太郎",
-			},
-			searchName: "け",
-			wantError:  true,
-		},
+	owners := []*model.CarOwner{
+		{ID: 1, FirstName: "test", MiddleName: "山田", LastName: "太郎",
+			LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local)},
+		{ID: 2, FirstName: "test", MiddleName: "佐藤", LastName: "一郎",
+			LicenseExpiration: time.Date(2025, 2, 2, 0, 0, 0, 0, time.Local)},
+		{ID: 3, FirstName: "sample", MiddleName: "横田", LastName: "健二",
+			LicenseExpiration: time.Date(2025, 3, 3, 0, 0, 0, 0, time.Local)},
 	}
-	//テストケースをループで回す
-	for _, tt := range tests {
-		t.Run(tt.testname, func(t *testing.T) {
-			mockRepo := &mocks.MockCarOwnerRepo{
-				FoundOwner: tt.testOwner,
-			}
-			//MockのFindByName実行
-			getOwner, err := mockRepo.FindByName(tt.searchName)
-
-			//期待した結果と一致するか確認
-			if tt.wantError {
-				//wantErrorがtrue（異常系）なら
-				assert.NotEqual(t, tt.testOwner, getOwner, "値が一致しないことを期待していたが、一致してしまった")
-				assert.Error(t, err)
-			} else {
-				//wantErrorがfalse（正常系）なら
-				assert.Equal(t, tt.testOwner, getOwner, "値が一致するはずだが、一致せず")
-			}
-
-		})
+	mock := &mocks.MockCarOwnerRepo{
+		FoundOwners: owners,
 	}
+
+	//モックテストの本番処理
+	//FindByName関数の引数に何を渡そうともowner=mock.FoundOwnersが帰るので、引数には適当な値（test）を渡す
+	GotOwners, err := mock.FindByName("test")
+	assert.NoError(t, err)
+	assert.Equal(t, mock.FoundOwners, GotOwners)
+}
+
+func TestFindByName_Error(t *testing.T){
+	//モックリポジトリをインスタンス化するときに、ownerのリストを渡さない(FoundOwners=nilとする)
+	mock := &mocks.MockCarOwnerRepo{}
+	//モックテストの本番
+	GotOwners, err := mock.FindByName("test")
+	assert.Error(t, err)
+	assert.Nil(t, GotOwners)
 }
