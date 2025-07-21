@@ -32,3 +32,9 @@ func (r *CarOwnerRepositoryImpl) Save (carOwner *model.CarOwner) error {
 	
 	return nil
 }
+
+func (r *CarOwnerRepositoryImpl) FindByID (id int)(*model.CarOwner, error){
+	//取り急ぎ適当に処理
+	owner := model.CarOwner{}
+	return &owner, nil
+}
