@@ -34,7 +34,19 @@ func (r *CarOwnerRepositoryImpl) Save (carOwner *model.CarOwner) error {
 }
 
 func (r *CarOwnerRepositoryImpl) FindByID (id int)(*model.CarOwner, error){
-	//取り急ぎ適当に処理
-	owner := model.CarOwner{}
-	return &owner, nil
+	//DBから取得したownerを格納する場所を作成
+	owner := &model.CarOwner{}
+	
+	cmd := `SELECT ID, FirstName, MiddleName, LastName, LicenseExpiration FROM carowners WHERE id = $1`
+	err := r.DB.QueryRow(cmd, id).Scan(
+	    &owner.ID,
+	    &owner.FirstName,
+	    &owner.MiddleName,
+	    &owner.LastName,
+	    &owner.LicenseExpiration)
+	
+	if err != nil{
+	    return nil, fmt.Errorf("CarOwnerの取得失敗: %w", err)
+	}
+	return owner, nil
 }
