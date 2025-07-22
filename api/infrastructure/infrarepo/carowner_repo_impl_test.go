@@ -68,7 +68,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
 	rows := sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}).
 		AddRow(targetOwner.ID, targetOwner.FirstName, targetOwner.MiddleName, targetOwner.LastName, targetOwner.LicenseExpiration)
 
-	mock.ExpectQuery("SELECT (.+) FROM carowners WHERE ID = \\$1").
+	mock.ExpectQuery("SELECT (.+) FROM carowners WHERE id = \\$1").
 		WithArgs(targetOwner.ID).
 		WillReturnRows(rows)
 	
