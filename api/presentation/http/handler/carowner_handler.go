@@ -4,6 +4,7 @@ import(
     "encoding/json"
     "net/http"
     "github.com/taatolu/ParkingHub/api/usecase"
+    "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
 type CarOwnerHandler struct{
