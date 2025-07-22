@@ -4,6 +4,7 @@ import(
     "strconv"
     "encoding/json"
     "net/http"
+    "time"
     "github.com/taatolu/ParkingHub/api/usecase"
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
@@ -33,7 +34,7 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
     //取得したリクエストボディの型（取得時は文字列）をエンティティの型と一致するよう修正
     idInt, err := strconv.Atoi(param.ID)
     if err != nil{
-        http.Errorf(w, "IDの型変換に失敗", http.StatusBadRequest)
+        http.Error(w, "IDの型変換に失敗", http.StatusBadRequest)
         return
     }
     
