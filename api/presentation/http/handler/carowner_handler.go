@@ -1,6 +1,7 @@
 package handler
 
 import(
+    "strconv"
     "encoding/json"
     "net/http"
     "github.com/taatolu/ParkingHub/api/usecase"
@@ -29,14 +30,27 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
         return
     }
     
+    //取得したリクエストボディの型（取得時は文字列）をエンティティの型と一致するよう修正
+    idInt, err := strconv.Atoi(param.ID)
+    if err != nil{
+        http.Errorf(w, "IDの型変換に失敗", http.StatusBadRequest)
+        return
+    }
+    
+    expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
+    if err != nil {
+        http.Error(w, "Invalid LicenseExpiration format", http.StatusBadRequest)
+        return
+    }
+    
     //model構築
     owner := &model.CarOwner{
-        ID: param.ID,
+        ID: idInt,
         FirstName:  param.FirstName,
         MiddleName: param.MiddleName,
         LastName:   param.LastName,
         // 文字列 → time.Time変換する処理が必要
-        LicenseExpiration:  param.LicenseExpiration,
+        LicenseExpiration:  expiry,
     }
     
     // ユースケースを呼んで新規登録
