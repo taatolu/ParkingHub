@@ -2,7 +2,7 @@ package http
 
 import (
     "net/http"
-    "github.com/taatolu/ParkingHub/api/presentation/handler"
+    "github.com/taatolu/ParkingHub/api/presentation/http/handler"
     )
 
 func InitRouters()http.Handler{
