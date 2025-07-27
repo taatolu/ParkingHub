@@ -17,7 +17,7 @@ type CarOwnerHandler struct{
 // CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
 func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
     switch r.Method {
-    case r.MethodPost:  h.CreateCarOwner(w, r)
+    case http.MethodPost:  h.CreateCarOwner(w, r)
     default:    w.Header().Set("Content-Type", "application/json")
                 w.WriteHeader(http.StatusMethodNotAllowed)
                 w.Write([]byte(fmt.Sprintf(`{"error":"リクエストメソッドが不正です"}`)))
