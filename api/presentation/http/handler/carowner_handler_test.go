@@ -2,6 +2,7 @@ package handler
 
 import(
 	"github.com/taatolu/ParkingHub/api/usecase"
+	"github.com/taatolu/ParkingHub/api/domain/model"
 )
 
 //CarOwneeUsecaseのモック作成
