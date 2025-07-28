@@ -2,7 +2,6 @@ package handler
 
 import(
 	"github.com/taatolu/ParkingHub/api/domain/model"
-	"github.com/taatolu/ParkingHub/api/usecase"
 	"testing"
 	"net/http/httptest"
 	"net/http"
