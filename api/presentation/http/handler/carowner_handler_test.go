@@ -2,12 +2,14 @@ package handler
 
 import(
 	"github.com/taatolu/ParkingHub/api/domain/model"
+	"github.com/taatolu/ParkingHub/api/usecase"
 	"testing"
 	"net/http/httptest"
 	"net/http"
 )
 
 //CarOwneeUsecaseのモック作成
+///暗黙的にインターフェース宣言…Goでは明示的にinterfaseを宣言しなくても、同じメソッドを持っていれば「満たしている」ことになる
 type MockCarOwnerUsecase struct{
 	//usecase/carowner_handler.goのcarOwnerのメソッドセットを満たす
 	RegistCarOwnerFunc func(owner *model.CarOwner) error
@@ -27,11 +29,12 @@ func TestRegistCarOwner(t *testing.T){
     mockUsecase := &MockCarOwnerUsecase{
         RegistCarOwnerFunc : func(owner *model.CarOwner) error{
             return nil
-        }
+        },
     }
     
-    //ハンドラーのインスタンス生成
-    handler := &CarOwnerHandler{Usecase: mockUsecase}
+    //ハンドラーのインスタンス生成時にmockUsecaseを型アサーションする
+    ///上記Usecaseのモック（MockCarOwnerUsecase）を暗黙的に宣言した為の弊害（型アサーションしないと認識してくれない）
+    handler := &CarOwnerHandler{Usecase: usecase.CarOwnerUsecase(mockUsecase)}
     
     // httptest.NewRecorder() でレスポンス記録
     rec := httptest.NewRecorder()
