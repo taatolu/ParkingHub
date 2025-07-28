@@ -40,7 +40,7 @@ func TestRegistCarOwner(t *testing.T){
     
     // http.NewRequest() でリクエスト作成
     ///http.NewRequestの第3引数に渡すrequest.Body(json)を作成
-    body := `{"id":"1", "first_name":"test", "middle_name":"山田", "last_name":"太郎", "license_expiration":"1234"}`
+    body := `{"id":"1", "first_name":"test", "middle_name":"山田", "last_name":"太郎", "license_expiration":"2025-12-31"}`
     req, err := http.NewRequest("POST", "/api/v1/car_owners", strings.NewReader(body))
     if err != nil {
         t.Fatal(err)
