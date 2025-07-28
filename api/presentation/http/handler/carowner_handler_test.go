@@ -6,7 +6,7 @@ import(
 	"net/http/httptest"
 	"net/http"
 	"strings"
-	"io"
+	"io/ioutil"
 	"bytes"
 )
 
@@ -131,7 +131,7 @@ func TestRegistCarOwner(t *testing.T){
             defer resp.Body.Close()
             
             //respからBodyの値を取得
-            bodyBytes, _ := io.ReadAll(resp.Body)
+            bodyBytes, _ := ioutil.ReadAll(resp.Body)
             bodyString := string(bodyBytes)
             
             if tt.wantError{
