@@ -6,6 +6,7 @@ import(
 	"net/http/httptest"
 	"net/http"
 	"strings"
+	"io"
 )
 
 //CarOwneeUsecaseのモック作成
