@@ -7,6 +7,7 @@ import(
 	"net/http"
 	"strings"
 	"io"
+	"bytes"
 )
 
 //CarOwneeUsecaseのモック作成
