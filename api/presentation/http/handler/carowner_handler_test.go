@@ -25,38 +25,126 @@ func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 
 //テストの実行
 func TestRegistCarOwner(t *testing.T){
-    //CarOwnerUsecaseモックのインスタンス化
-    mockUsecase := &MockCarOwnerUsecase{
-        RegistCarOwnerFunc : func(owner *model.CarOwner) error{
-            return nil
+    //tableTest
+    tests := [] struct {
+        testname    string
+        method      string
+        url         string
+        body        io.Reader
+        wantError   bool
+    }{
+        //テストケースの作成
+        {
+            testname:   "正常系",
+            method:     "POST",
+            url:        "/api/v1/car_owners",
+            body:       bytes.NewBufferString(`{"id":"1",
+                                                "first_name":"test",
+                                                "middle_name":"山田",
+                                                "last_name":"太郎",
+                                                "license_expiration":"2030-12-31"}`),
+            wantError:  false,
+        },
+        {
+            testname:   "異常系（method不正）",
+            method:     "GET",
+            url:        "/api/v1/car_owners",
+            body:       bytes.NewBufferString(`{"id":"1"}`),
+            wantError:  true,
+        },
+        {
+            testname:   "異常系（url不正）",
+            method:     "POST",
+            url:        "/api/v1/car_ownerss",
+            body:       bytes.NewBufferString(`{"id":"1",
+                                                "first_name":"test",
+                                                "middle_name":"山田",
+                                                "last_name":"太郎",
+                                                "license_expiration":"2030-12-31"}`),
+            wantError:  true,
+        },
+        {
+            testname:   "異常系（url不正(意図しないパスパラメータ付き)）",
+            method:     "POST",
+            url:        "/api/v1/car_owners/123",
+            body:       bytes.NewBufferString(`{"id":"1",
+                                                "first_name":"test",
+                                                "middle_name":"山田",
+                                                "last_name":"太郎",
+                                                "license_expiration":"2030-12-31"}`),
+            wantError:  true,
+        },
+        {
+            testname:   "異常系（name入力不足）",
+            method:     "POST",
+            url:        "/api/v1/car_owners",
+            body:       bytes.NewBufferString(`{"id":"1",
+                                                "first_name":"",
+                                                "middle_name":"",
+                                                "last_name":"太郎",
+                                                "license_expiration":"2030-12-31"}`),
+            wantError:  true,
+        },
+        {
+            testname:   "異常系（免許期限切れ）",
+            method:     "POST",
+            url:        "/api/v1/car_owners",
+            body:       bytes.NewBufferString(`{"id":"1",
+                                                "first_name":"test",
+                                                "middle_name":"山田",
+                                                "last_name":"太郎",
+                                                "license_expiration":"2020-12-31"}`),
+            wantError:  true,
         },
     }
-    
-    //ハンドラーのインスタンス生成
-    handler := &CarOwnerHandler{Usecase: mockUsecase}
-    
-    // httptest.NewRecorder() でレスポンス記録
-    rec := httptest.NewRecorder()
-    
-    // http.NewRequest() でリクエスト作成
-    ///http.NewRequestの第3引数に渡すrequest.Body(json)を作成
-    body := `{"id":"1", "first_name":"test", "middle_name":"山田", "last_name":"太郎", "license_expiration":"2025-12-31"}`
-    req, err := http.NewRequest("POST", "/api/v1/car_owners", strings.NewReader(body))
-    if err != nil {
-        t.Fatal(err)
+    //テストケースをループで回す
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            //CarOwnerUsecaseモックのインスタンス化
+            mockUsecase := &MockCarOwnerUsecase{
+                RegistCarOwnerFunc : func(owner *model.CarOwner) error{
+                    return nil
+                },
+            }
+            
+            //ハンドラーのインスタンス生成
+            handler := &CarOwnerHandler{Usecase: mockUsecase}
+            
+            // httptest.NewRecorder() でレスポンス記録
+            rec := httptest.NewRecorder()
+            
+            // http.NewRequest() でリクエスト作成
+        
+            req, err := http.NewRequest(tt.method, tt.url, tt.body)
+            if err != nil {
+                t.Fatal(err)
+            }
+            req.Header.Set("Content-Type", "application/json")
+            
+            // handler.ServeHTTPで実行
+            handler.ServeHTTP(rec, req)
+            
+            // recorder.Result() でレスポンス検証
+            resp := rec.Result()
+            defer resp.Body.Close()
+            
+            if tt.wantError{
+                //wantErrorがtrue　=　異常系だったら
+                if resp.StatusCode == http.StatusCreated {
+                    t.Errorf("異常系なのに201が返っています")
+                }
+                if !strings.Contains(bodyString, "error") && resp.StatusCode != http.StatusNotFound {
+                    t.Errorf("エラーメッセージが含まれていません: %s", bodyString)
+                }
+            }else{
+                //wantErrorがfalse　=　正常系だったら
+                if resp.StatusCode != http.StatusCreated {
+                    t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusCreated)
+                }
+            }
+            
+            
+        })
     }
-    req.Header.Set("Content-Type", "application/json")
-    
-    // handler.ServeHTTPで実行
-    handler.ServeHTTP(rec, req)
-    
-    // recorder.Result() でレスポンス検証
-    resp := rec.Result()
-    defer resp.Body.Close()
-    
-    if resp.StatusCode != http.StatusCreated {
-        t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusCreated)
-    }
-    
 }
 
