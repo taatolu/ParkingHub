@@ -38,10 +38,13 @@ func TestRegistCarOwner(t *testing.T){
     rec := httptest.NewRecorder()
     
     // http.NewRequest() でリクエスト作成
-    req, err := http.NewRequest("POST", "/api/v1/car_owners", nil)
+    ///http.NewRequestの第3引数に渡すrequest.Body(json)を作成
+    body := `{"id":"1", "first_name":"test", "middle_name":"山田", "last_name":"太郎", "license_expiration":"1234"}`
+    req, err := http.NewRequest("POST", "/api/v1/car_owners", strings.NewReader(body))
     if err != nil {
         t.Fatal(err)
     }
+    req.Header.Set("Content-Type", "application/json")
     
     // handler.ServeHTTPで実行
     handler.ServeHTTP(rec, req)
@@ -53,6 +56,6 @@ func TestRegistCarOwner(t *testing.T){
     if resp.StatusCode != http.StatusCreated {
         t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusCreated)
     }
-
+    
 }
 
