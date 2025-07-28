@@ -9,7 +9,7 @@ import(
 )
 
 //CarOwneeUsecaseのモック作成
-///暗黙的にインターフェース宣言…Goでは明示的にinterfaseを宣言しなくても、同じメソッドを持っていれば「満たしている」ことになる
+///同じメソッドを持っていればインターフェースを「満たしている」ことになる
 type MockCarOwnerUsecase struct{
 	//usecase/carowner_handler.goのcarOwnerのメソッドセットを満たす
 	RegistCarOwnerFunc func(owner *model.CarOwner) error
@@ -32,9 +32,8 @@ func TestRegistCarOwner(t *testing.T){
         },
     }
     
-    //ハンドラーのインスタンス生成時にmockUsecaseを型アサーションする
-    ///上記Usecaseのモック（MockCarOwnerUsecase）を暗黙的に宣言した為の弊害（型アサーションしないと認識してくれない）
-    handler := &CarOwnerHandler{Usecase: usecase.CarOwnerUsecase(mockUsecase)}
+    //ハンドラーのインスタンス生成
+    handler := &CarOwnerHandler{Usecase: mockUsecase}
     
     // httptest.NewRecorder() でレスポンス記録
     rec := httptest.NewRecorder()
