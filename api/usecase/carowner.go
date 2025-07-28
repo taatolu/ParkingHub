@@ -12,6 +12,11 @@ type CarOwnerUsecase struct {
 	CarOwnerRepo repository.CarOwnerRepository
 }
 
+// CarOwnerUsecaseのインターフェースを作成(後に作成するHandlerのテストの際にUsecseの際し変えが見込まれるから)
+type CarOwnerUsecaseIF interface {
+    RegistCarOwner(owner *model.CarOwner) error
+}
+
 // owner登録処理
 func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 	//入力漏れの確認
