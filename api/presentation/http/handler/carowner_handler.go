@@ -11,7 +11,8 @@ import(
     )
 
 type CarOwnerHandler struct{
-    Usecase usecase.CarOwnerUsecase
+    //usecase層のインターフェースから実装
+    Usecase usecase.CarOwnerUsecaseIF
 }
 
 // CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
