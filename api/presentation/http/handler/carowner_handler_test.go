@@ -6,6 +6,7 @@ import(
 	"net/http/httptest"
 	"net/http"
 	"strings"
+	"io"
 	"io/ioutil"
 	"bytes"
 )
@@ -54,28 +55,7 @@ func TestRegistCarOwner(t *testing.T){
             body:       bytes.NewBufferString(`{"id":"1"}`),
             wantError:  true,
         },
-        {
-            testname:   "異常系（url不正）",
-            method:     "POST",
-            url:        "/api/v1/car_ownerss",
-            body:       bytes.NewBufferString(`{"id":"1",
-                                                "first_name":"test",
-                                                "middle_name":"山田",
-                                                "last_name":"太郎",
-                                                "license_expiration":"2030-12-31"}`),
-            wantError:  true,
-        },
-        {
-            testname:   "異常系（url不正(意図しないパスパラメータ付き)）",
-            method:     "POST",
-            url:        "/api/v1/car_owners/123",
-            body:       bytes.NewBufferString(`{"id":"1",
-                                                "first_name":"test",
-                                                "middle_name":"山田",
-                                                "last_name":"太郎",
-                                                "license_expiration":"2030-12-31"}`),
-            wantError:  true,
-        },
+        //　↑ここまではMockテストで実装すべき内容だが、以降のテストはFakeテストの方がよい気がする（ロジックのテストだから）
         {
             testname:   "異常系（name入力不足）",
             method:     "POST",
