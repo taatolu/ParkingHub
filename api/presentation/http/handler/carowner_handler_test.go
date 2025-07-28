@@ -130,6 +130,10 @@ func TestRegistCarOwner(t *testing.T){
             resp := rec.Result()
             defer resp.Body.Close()
             
+            //respからBodyの値を取得
+            bodyBytes, _ := io.ReadAll(resp.Body)
+            bodyString := string(bodyBytes)
+            
             if tt.wantError{
                 //wantErrorがtrue　=　異常系だったら
                 if resp.StatusCode == http.StatusCreated {
