@@ -9,7 +9,6 @@ import(
 	"io/ioutil"
 	"bytes"
     "github.com/taatolu/ParkingHub/api/mocks/usecase"
-    "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
 func TestRegistCarOwner_FakeUsecase(t *testing.T){
@@ -60,9 +59,7 @@ func TestRegistCarOwner_FakeUsecase(t *testing.T){
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
             //CarOwnerUsecaseフェイクのインスタンス化
-            fakeUsecase := &usecase.FakeCarOwnerUsecase{
-                },
-            }
+            fakeUsecase := &usecase.FakeCarOwnerUsecase{}
             
             //ハンドラーのインスタンス生成
             handler := &CarOwnerHandler{Usecase: fakeUsecase}
