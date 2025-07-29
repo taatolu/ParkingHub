@@ -7,7 +7,7 @@ import(
     )
 
 type FakeCarOwnerUsecase struct{
-    RgistCarOwnerFunc   func(owner *model.CarOwner) error
+    RegistCarOwnerFunc   func(owner *model.CarOwner) error
 }
 
 func (f *FakeCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {

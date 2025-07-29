@@ -44,29 +44,6 @@ func TestRegistCarOwner(t *testing.T){
             body:       bytes.NewBufferString(`{"id":"1"}`),
             wantError:  true,
         },
-        //　↑ここまではMockテストで実装すべき内容だが、以降のテストはFakeテストの方がよい気がする（ロジックのテストだから）
-        {
-            testname:   "異常系（name入力不足）",
-            method:     "POST",
-            url:        "/api/v1/car_owners",
-            body:       bytes.NewBufferString(`{"id":"1",
-                                                "first_name":"",
-                                                "middle_name":"",
-                                                "last_name":"太郎",
-                                                "license_expiration":"2030-12-31"}`),
-            wantError:  true,
-        },
-        {
-            testname:   "異常系（免許期限切れ）",
-            method:     "POST",
-            url:        "/api/v1/car_owners",
-            body:       bytes.NewBufferString(`{"id":"1",
-                                                "first_name":"test",
-                                                "middle_name":"山田",
-                                                "last_name":"太郎",
-                                                "license_expiration":"2020-12-31"}`),
-            wantError:  true,
-        },
     }
     //テストケースをループで回す
     for _, tt := range tests {
