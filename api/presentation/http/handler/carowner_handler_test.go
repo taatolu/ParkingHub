@@ -2,6 +2,7 @@ package handler
 
 import(
 	"github.com/taatolu/ParkingHub/api/domain/model"
+	"github.com/taatolu/ParkingHub/api/mocks/usecase"
 	"testing"
 	"net/http/httptest"
 	"net/http"
@@ -12,19 +13,7 @@ import(
 )
 
 //CarOwneeUsecaseのモック作成
-///同じメソッドを持っていればインターフェースを「満たしている」ことになる
-type MockCarOwnerUsecase struct{
-	//usecase/carowner_handler.goのcarOwnerのメソッドセットを満たす
-	RegistCarOwnerFunc func(owner *model.CarOwner) error
-}
 
-func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
-	if m.RegistCarOwnerFunc != nil{
-		//RegistCarOwnerFuncがnilでなかったら
-		return m.RegistCarOwnerFunc(owner)
-	}
-	return nil
-}
 
 //テストの実行
 func TestRegistCarOwner(t *testing.T){
@@ -83,7 +72,7 @@ func TestRegistCarOwner(t *testing.T){
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
             //CarOwnerUsecaseモックのインスタンス化
-            mockUsecase := &MockCarOwnerUsecase{
+            mockUsecase := &usecase.MockCarOwnerUsecase{
                 RegistCarOwnerFunc : func(owner *model.CarOwner) error{
                     return nil
                 },
