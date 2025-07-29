@@ -59,10 +59,8 @@ func TestRegistCarOwner_FakeUsecase(t *testing.T){
     //テストケースをループで回す
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
-            //CarOwnerUsecaseモックのインスタンス化
+            //CarOwnerUsecaseフェイクのインスタンス化
             fakeUsecase := &usecase.FakeCarOwnerUsecase{
-                RegistCarOwnerFunc : func(owner *model.CarOwner) error{
-                    return nil
                 },
             }
             

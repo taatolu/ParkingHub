@@ -7,7 +7,8 @@ import(
     )
 
 type FakeCarOwnerUsecase struct{
-    RegistCarOwnerFunc   func(owner *model.CarOwner) error
+    //今回のFakeテストではFakeの挙動を差し替えしないので一旦削除
+    //RegistCarOwnerFunc   func(owner *model.CarOwner) error
 }
 
 func (f *FakeCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
