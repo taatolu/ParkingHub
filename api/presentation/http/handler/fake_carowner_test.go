@@ -96,7 +96,10 @@ func TestRegistCarOwner_FakeUsecase(t *testing.T){
                 if resp.StatusCode == http.StatusCreated {
                     t.Errorf("異常系なのに201が返っています")
                 }
-                if !strings.Contains(bodyString, "error") && resp.StatusCode != http.StatusNotFound {
+                if !strings.Contains(bodyString, "少なくとも２つ以上のフィールドに名前を入力ください") && resp.StatusCode != http.StatusNotFound {
+                    t.Errorf("エラーメッセージが含まれていません: %s", bodyString)
+                }
+                if !strings.Contains(bodyString, "免許証期限切れの為登録不可") && resp.StatusCode != http.StatusNotFound {
                     t.Errorf("エラーメッセージが含まれていません: %s", bodyString)
                 }
             }else{
