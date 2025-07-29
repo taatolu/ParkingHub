@@ -2,6 +2,7 @@ package handler
 
 import(
 	"github.com/taatolu/ParkingHub/api/domain/model"
+	"github.com/taatolu/ParkingHub/api/mocks/usecase"
 	"testing"
 	"net/http/httptest"
 	"net/http"
@@ -12,19 +13,7 @@ import(
 )
 
 //CarOwneeUsecaseのモック作成
-///同じメソッドを持っていればインターフェースを「満たしている」ことになる
-type MockCarOwnerUsecase struct{
-	//usecase/carowner_handler.goのcarOwnerのメソッドセットを満たす
-	RegistCarOwnerFunc func(owner *model.CarOwner) error
-}
 
-func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
-	if m.RegistCarOwnerFunc != nil{
-		//RegistCarOwnerFuncがnilでなかったら
-		return m.RegistCarOwnerFunc(owner)
-	}
-	return nil
-}
 
 //テストの実行
 func TestRegistCarOwner(t *testing.T){
@@ -55,35 +44,12 @@ func TestRegistCarOwner(t *testing.T){
             body:       bytes.NewBufferString(`{"id":"1"}`),
             wantError:  true,
         },
-        //　↑ここまではMockテストで実装すべき内容だが、以降のテストはFakeテストの方がよい気がする（ロジックのテストだから）
-        {
-            testname:   "異常系（name入力不足）",
-            method:     "POST",
-            url:        "/api/v1/car_owners",
-            body:       bytes.NewBufferString(`{"id":"1",
-                                                "first_name":"",
-                                                "middle_name":"",
-                                                "last_name":"太郎",
-                                                "license_expiration":"2030-12-31"}`),
-            wantError:  true,
-        },
-        {
-            testname:   "異常系（免許期限切れ）",
-            method:     "POST",
-            url:        "/api/v1/car_owners",
-            body:       bytes.NewBufferString(`{"id":"1",
-                                                "first_name":"test",
-                                                "middle_name":"山田",
-                                                "last_name":"太郎",
-                                                "license_expiration":"2020-12-31"}`),
-            wantError:  true,
-        },
     }
     //テストケースをループで回す
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
             //CarOwnerUsecaseモックのインスタンス化
-            mockUsecase := &MockCarOwnerUsecase{
+            mockUsecase := &usecase.MockCarOwnerUsecase{
                 RegistCarOwnerFunc : func(owner *model.CarOwner) error{
                     return nil
                 },
