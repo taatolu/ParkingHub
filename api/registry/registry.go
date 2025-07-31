@@ -4,7 +4,7 @@ import(
     _ "github.com/taatolu/ParkingHub/api/domain/service"
     "github.com/taatolu/ParkingHub/api/domain/repository"
     "github.com/taatolu/ParkingHub/api/infrastructure/infrarepo"
-    _ "github.com/taatolu/ParkingHub/api/usecase"
+    "github.com/taatolu/ParkingHub/api/usecase"
     _ "github.com/taatolu/ParkingHub/api/presentation/http/handler"
     )
     
