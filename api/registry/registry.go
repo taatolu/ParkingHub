@@ -23,7 +23,7 @@ func (r *Registry) NewCarOwnerRepository() repository.CarOwnerRepository {
 // --- Usecase生成 ---
 //Usecaseはリポジトリをラップしているので、Usecaseを作成するためにはリポジトリが必要
 func (r *Registry) NewCarOwnerUsecase() usecase.CarOwnerUsecaseIF{
-    return usecase.CarOwnerUsecase{carOwnerPero: r.NewCarOwnerRepository()}
+    return usecase.CarOwnerUsecase{CarOwnerRepo: r.NewCarOwnerRepository()}
 }
 
 
