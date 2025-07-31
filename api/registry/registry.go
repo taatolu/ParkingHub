@@ -18,3 +18,15 @@ func NewRegistry() *Registry {
 func (r *Registry) NewCarOwnerRepository () repository.CarOwnerRepository {
     return &infrarepo.CarOwnerRepositoryImpl{}
 }
+
+// --- Service生成 ---
+func (r *Registry) NewCarOwnerService () service.CarOwnerValidation {
+    return 
+}
+
+
+// --- Usecase生成 ---
+
+
+// --- Handler生成 ---
+
