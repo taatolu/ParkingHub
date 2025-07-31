@@ -15,17 +15,15 @@ func NewRegistry() *Registry {
 }
 
 //// --- リポジトリインターフェースと実装（implementation）をつなぐ ---
-func (r *Registry) NewCarOwnerRepository () repository.CarOwnerRepository {
+func (r *Registry) NewCarOwnerRepository() repository.CarOwnerRepository {
     return &infrarepo.CarOwnerRepositoryImpl{}
-}
-
-// --- Service生成 ---
-func (r *Registry) NewCarOwnerService () service.CarOwnerValidation {
-    return 
 }
 
 
 // --- Usecase生成 ---
+func (r *Registry) NewCarOwnerUsecase() usecase.CarOwnerUsecase{
+    return r.
+}
 
 
 // --- Handler生成 ---
