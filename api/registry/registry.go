@@ -1,11 +1,11 @@
 package registry
 
 import(
-    "github.com/taatolu/ParkingHub/domain/service"
-    "github.com/taatolu/ParkingHub/domain/repository"
-    "github.com/taatolu/ParkingHub/infrastructure/infrarepo"
-    "github.com/taatolu/ParkingHub/usecase"
-    "github.com/taatolu/ParkingHub/presentation/http/handler"
+    "github.com/taatolu/ParkingHub/api/domain/service"
+    "github.com/taatolu/ParkingHub/api/domain/repository"
+    "github.com/taatolu/ParkingHub/api/infrastructure/infrarepo"
+    "github.com/taatolu/ParkingHub/api/usecase"
+    "github.com/taatolu/ParkingHub/api/presentation/http/handler"
     )
     
 type Registry struct{}
