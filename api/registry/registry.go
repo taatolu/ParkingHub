@@ -16,5 +16,5 @@ func NewRegistry() *Registry {
 
 //// --- リポジトリインターフェースと実装（implementation）をつなぐ ---
 func (r *Registry) NewCarOwnerRepository () repository.CarOwnerRepository {
-    return infrarepo.CarOwnerRepositoryImpl
+    return infrarepo.CarOwnerRepositoryImpl{}
 }
