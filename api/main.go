@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"fmt"
 	"net/http"
 	"github.com/taatolu/ParkingHub/api/registry"
 	presentation "github.com/taatolu/ParkingHub/api/presentation/http"

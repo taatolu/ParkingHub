@@ -2,6 +2,7 @@ package registry
 
 import(
     "database/sql"
+    "fmt"
     "github.com/taatolu/ParkingHub/api/config"
     "github.com/taatolu/ParkingHub/api/infrastructure/postgres"
     _ "github.com/taatolu/ParkingHub/api/domain/service"
@@ -62,7 +63,7 @@ func (r *Registry) NewCarOwnerUsecase() usecase.CarOwnerUsecaseIF {
 func (r *Registry) NewCarOwnerHandler() *handler.CarOwnerHandler {
     //*返り値が構造体の場合、ポインタ型は返せません（handler.CarOwnerHandlerは構造体なので、”*”をつけてポインタで返すようにした）
     return &handler.CarOwnerHandler{
-        Usecase: r.NewCarOwnerUsecase()
+        Usecase: r.NewCarOwnerUsecase(),
     }
 }
 
