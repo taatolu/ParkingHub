@@ -16,6 +16,15 @@ type Registry struct{
     DB *sql.DB
 }
 
+// --- DBクローズ用の設定 ---
+func (r *Registry) Close() error {
+    //アプリケーション終了時にDBを安全にクローズするためのメソッド
+    if r.DB != nil {
+        return r.DB.Close()
+    }
+    return nil
+}
+
 //Registryのファクトリ関数
 func NewRegistry() *Registry {
     //Registryのファクトリ関数の中で、DBにpostgresをDIする
@@ -37,6 +46,7 @@ func NewRegistry() *Registry {
 func (r *Registry) NewCarOwnerRepository() repository.CarOwnerRepository {
     //CarOwnerRepositoryImplはDBフィールドを持つので、RegistryにDIしたpostgrtesをさらにDI
     return &infrarepo.CarOwnerRepositoryImpl{DB: r.DB}
+    //*返り値がインターフェースの場合、そのインターフェースを満たす値型でもポインタ型でもどちらでも返せます。（repository.CarOwnerRepositoryはインターフェース型）
 }
 
 
@@ -44,10 +54,18 @@ func (r *Registry) NewCarOwnerRepository() repository.CarOwnerRepository {
 //Usecaseはリポジトリをラップしているので、Usecaseを作成するためにはリポジトリが必要
 func (r *Registry) NewCarOwnerUsecase() usecase.CarOwnerUsecaseIF {
     return &usecase.CarOwnerUsecase{CarOwnerRepo: r.NewCarOwnerRepository()}
+    //*返り値がインターフェースの場合、そのインターフェースを満たす値型でもポインタ型でもどちらでも返せます。（usecase.CarOwnerUsecaseIFはインターフェース型）
 }
 
 
 // --- Handler生成 ---
-func (r *Registry) NewCarOwnerHandler() handler.CarOwnerHandler {
-
+func (r *Registry) NewCarOwnerHandler() *handler.CarOwnerHandler {
+    //*返り値が構造体の場合、ポインタ型は返せません（handler.CarOwnerHandlerは構造体なので、”*”をつけてポインタで返すようにした）
+    return &handler.CarOwnerHandler{
+        Usecase: r.NewCarOwnerUsecase()
+    }
 }
+
+
+// --- ロギングのDI ---
+// --- ルーターの初期化をここで行ってもOK --- 
