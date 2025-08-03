@@ -19,11 +19,13 @@ func LoadConfig() (*Config, error) {
 	viper.AddConfigPath(".") //ここまでで、config.iniというファイルを指定
 	viper.AutomaticEnv()     //環境変数を優先するように指示
 
-	//viperを使用して設定ファイル（.env/ini）を読込む
-	err := viper.ReadInConfig()
-	if err != nil {
-		return nil, fmt.Errorf("設定ファイル読込失敗 %w", err)
-	}
+    err := viper.ReadInConfig()
+    if err != nil {
+        // 設定ファイル(config.ini)が見つからない場合は無視
+        if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+            return nil, fmt.Errorf("設定ファイル読込失敗 %w", err)
+        }
+    }
 
 	//上記viperで読込んだ設定情報をconfig構造体にマッピング
 
