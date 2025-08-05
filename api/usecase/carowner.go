@@ -40,8 +40,21 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
     //idのバリデーション
     if id<0 {
-        return fmt.Errorf("IDは負の値は不可: ID=%v", id)
+        return nil, fmt.Errorf("IDは負の値は不可: ID=%v", id)
     }
-    return uc.FindByID(id)
+    //idのOwner存在するか
+    owner, err := uc.CarOwnerRepo.FindByID(id)
+    
+    if err != nil{
+        //errorの場合
+        return nil, err
+    }
+    
+    if owner == nil {
+        //ownerのデータが存在しない場合
+        retun nil, fmt.Errorf("IDに対応するownerが存在しません: ID=%v", id)
+    }
+    
+    return uc.FindByID(id), nil
 }
 
