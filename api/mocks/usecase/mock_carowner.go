@@ -9,6 +9,7 @@ type MockCarOwnerUsecase struct {
     //RegistCarOwnerFuncという変数をfunc(owner *model.CarOwner) error型で宣言
     //返値はError型
     RegistCarOwnerFunc func(owner *model.CarOwner) error
+    FindByIDFunc func(id int)(*model.CarOwner, error)
 }
 
 func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error{
@@ -18,4 +19,8 @@ func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error{
         return m.RegistCarOwnerFunc(owner)
     }
     return nil
+}
+
+func (m *MockCarOwnerUsecase)FindByID(id int) (*model.CarOwner, error) {
+    return m.FindByIDFunc(id)
 }
