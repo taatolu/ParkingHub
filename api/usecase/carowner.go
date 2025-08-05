@@ -15,6 +15,7 @@ type CarOwnerUsecase struct {
 // CarOwnerUsecaseのインターフェースを作成(後に作成するHandlerのテストの際にUsecseの際し変えが見込まれるから)
 type CarOwnerUsecaseIF interface {
     RegistCarOwner(owner *model.CarOwner) error
+    FindByID(id int) (*model.CarOwner, error)
 }
 
 // owner登録処理
@@ -28,8 +29,19 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 	//免許証期限が切れている場合(若しくはIsLicenseExpiredが入力されていない場合)、エラーを返す
 	if owner.IsLicenseExpired() {
 		//IsLicenseExpiredがtrueだったら（期限切れだったら）、、、
-		return fmt.Errorf("免許証期限切れの為登録不可 %v", owner.LicenseExpiration)
+		return fmt.Errorf("免許証期限切れの為登録不可: %v", owner.LicenseExpiration)
 	}
 
 	return uc.CarOwnerRepo.Save(owner)
 }
+
+
+// owner検索（ID）
+func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
+    //idのバリデーション
+    if id<0 {
+        return fmt.Errorf("IDは負の値は不可: ID=%v", id)
+    }
+    return uc.FindByID(id)
+}
+
