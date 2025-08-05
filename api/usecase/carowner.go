@@ -38,6 +38,6 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 
 // owner検索（ID）
 func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
-    return FindByID(id)
+    return uc.FindByID(id)
 }
 
