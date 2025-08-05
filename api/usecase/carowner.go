@@ -33,6 +33,11 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 	}
 
 	return uc.CarOwnerRepo.Save(owner)
+	//【蛇足説明】何でerror（エラー型）にuc.CarOwnerRepo.Save(owner)が返るのよ
+	//これ、uc.CarOwnerRepo.Save(owner)はerrorを返す
+	//
+	//err = uc.CarOwnerRepo.Save(owner)
+	//return err と同義（errにnilが返ろうがerrorが返ろうがエラー型に返せるでしょ）
 }
 
 
@@ -40,8 +45,21 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
     //idのバリデーション
     if id<0 {
-        return fmt.Errorf("IDは負の値は不可: ID=%v", id)
+        return nil, fmt.Errorf("IDは負の値は不可: ID=%v", id)
     }
-    return uc.FindByID(id)
+    //idのOwner存在するか
+    owner, err := uc.CarOwnerRepo.FindByID(id)
+    
+    if err != nil{
+        //errorの場合
+        return nil, err
+    }
+    
+    if owner == nil {
+        //ownerのデータが存在しない場合
+        return nil, fmt.Errorf("IDに対応するownerが存在しません: ID=%v", id)
+    }
+    
+    return owner, nil
 }
 

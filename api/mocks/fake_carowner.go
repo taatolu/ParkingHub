@@ -27,3 +27,10 @@ func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
 	f.SavedOwner = carOwner
 	return nil
 }
+
+
+// FindByIDはFakeCarOwnerRepoのダミー実装です。
+// 常に"未実装"エラーを返します。
+func (f *FakeCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
+    return nil, fmt.Errorf("FakeCarOwnerRepo.FindByIDは未実装です")
+}
