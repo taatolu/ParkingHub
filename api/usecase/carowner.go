@@ -52,7 +52,7 @@ func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
     
     if owner == nil {
         //ownerのデータが存在しない場合
-        retun nil, fmt.Errorf("IDに対応するownerが存在しません: ID=%v", id)
+        return nil, fmt.Errorf("IDに対応するownerが存在しません: ID=%v", id)
     }
     
     return uc.FindByID(id), nil
