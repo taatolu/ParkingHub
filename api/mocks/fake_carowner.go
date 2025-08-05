@@ -8,7 +8,6 @@ import(
 
 type FakeCarOwnerRepo struct{
 	SavedOwner	*model.CarOwner
-	TargetOwners    []*model.CarOwner
 }
 
 func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
@@ -29,24 +28,9 @@ func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
 	return nil
 }
 
+
+// FindByIDはFakeCarOwnerRepoのダミー実装です。
+// 常に"未実装"エラーを返します。
 func (f *FakeCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
-    //idのバリデーション
-    if id<0{
-        return nil, fmt.Errorf("IDは負の値は不可: ID=%v", id)
-    }
-    
-    //FakeCarOwnerRepoのTargetOwnersから一致するOwnerを検索
-    //FakeTestではTargetOwnersに複数のownerサンプルを登録する
-    owner, err := f.TargetOwners.FindByID(id)
-    if err != nil{
-        //errorの場合
-        return nil, err
-    }
-    
-    if owner == nil {
-        //ownerのデータが存在しない場合
-        return nil, fmt.Errorf("IDに対応するownerが存在しません: ID=%v", id)
-    }
-    
-    return owner, nil
+    return nil, fmt.Errorf("FakeCarOwnerRepo.FindByIDは未実装です")
 }
