@@ -37,3 +37,35 @@ func TestIsLicenseExpired(t *testing.T) {
 		})
 	}
 }
+
+func TestIsIDPositive(t *testing.T) {
+    tests := []struct {
+        testname    string
+        id          int
+        wantBool    bool
+    }{
+        //testケースの作成
+        {
+            testname:   "正常系",
+            id:         1,
+            wantBool:   true,
+        },
+        {
+            testname:   "異常系（値が0）",
+            id:         0,
+            wantBool:   false,
+        },
+        {
+            testname:   "異常系（値が負の数）",
+            id:         -1,
+            wantBool:   false,
+        },
+    }
+    //テストケースをループで回す
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            result := IsIDPositive(tt.id)
+            assert.Equal(t, tt.wantBool, result)
+        })
+    }
+}
