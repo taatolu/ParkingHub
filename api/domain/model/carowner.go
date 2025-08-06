@@ -20,8 +20,18 @@ func (c *CarOwner) IsLicenseExpired() bool {
 	return time.Now().After(c.LicenseExpiration)
 }
 
+//name枠に該当する名前があるか確認する
 func (c *CarOwner) ContainsName(name string) bool {
 	return strings.Contains(c.FirstName, name) ||
 		strings.Contains(c.MiddleName, name) ||
 		strings.Contains(c.LastName, name)
 }
+
+//IDが正の数かどうか確認する
+func (c *CarOwner)IsIDPositive() bool {
+    if c.ID <= 0 {
+        return false
+    }
+    return true
+}
+
