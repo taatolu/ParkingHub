@@ -73,3 +73,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T){
 		})
 	}
 }
+
+
+//FindByIDについてはFakeテスト未実装（意味がないため）
+
