@@ -42,37 +42,30 @@ func TestIsIDPositive(t *testing.T) {
     tests := []struct {
         testname    string
         id          int
-        wantError   bool
+        wantBool    bool
     }{
         //testケースの作成
         {
             testname:   "正常系",
             id:         1,
-            wantError:  false,
+            wantBool:   true,
         },
         {
             testname:   "異常系（値が0）",
             id:         0,
-            wantError:  true,
+            wantBool:   false,
         },
         {
             testname:   "異常系（値が負の数）",
             id:         -1,
-            wantError:  true,
+            wantBool:   false,
         },
     }
-    //テストケースrをループで回す
+    //テストケースをループで回す
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
-            if tt.wantError{
-                //wantError=true(異常系の場合)
-                result := IsIDPositive(tt.id)
-                assert.Error(t, result, "エラーを期待していたのにエラーが返らない")
-            } else {
-                //wantError=false(正常系の場合)
-                result := IsIDPositive(tt.id)
-                assert.NoError(t, result, "エラになってしまった")
-            }
+            result := IsIDPositive(tt.id)
+            assert.Equal(t, tt.wantBool, result)
         })
     }
 }
