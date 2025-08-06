@@ -30,3 +30,8 @@ func (f *FakeCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
     }
     return nil
 }
+
+func (f *FakeCarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
+    //とり急ぎUsecase層の作成時にエラーが出ないよう、errorを返させる
+    return nil, fmt.Errorf("FakeCarOwnerUsecase.FindByIDは未実装(handlerのテストを書くときに実装します)")
+}
