@@ -64,7 +64,10 @@ func TestIsIDPositive(t *testing.T) {
     //テストケースをループで回す
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
-            result := IsIDPositive(tt.id)
+            c := &CarOwner{
+                ID: tt.id,
+            }
+            result := c.IsIDPositive()
             assert.Equal(t, tt.wantBool, result)
         })
     }
