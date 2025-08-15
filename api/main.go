@@ -11,12 +11,13 @@ import (
 
 func main() {
 	//configの設定
-	if err := config.LoadConfig(); err != nil {
+	conf, err := config.LoadConfig()
+	if err != nil {
         log.Fatal("設定読み込み失敗:", err)
     }
-	
+
 	//DBbのマイグレーション
-	if err := migrate.RunMigration(); err != nil {
+	if err := migrate.RunMigration(conf); err != nil {
 	log.Fatal("マイグレーション失敗:", err)
     }
 

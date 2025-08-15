@@ -9,11 +9,11 @@ import(
 	"github.com/taatolu/ParkingHub/api/config"
 )
 
-func RunMigration() error {
-	dbHost := config.Config.DBHost
-	dbName := config.Config.DBName
-	dbUser := config.Config.DBUser
-	dbPassword := config.Config.DBPass
+func RunMigration(conf config.Config) error {
+	dbHost := conf.DBHost
+	dbName := conf.DBName
+	dbUser := conf.DBUser
+	dbPassword := conf.DBPass
 	
 	//golang-migrateではPostgreSQL URL 形式を使用する必要があります
 	databaseURL := fmt.Sprintf(`postgres://%s:%s@%s:5432/%s?sslmode=disable`, dbUser, dbPassword, dbHost, dbName)
