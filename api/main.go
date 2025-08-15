@@ -27,7 +27,7 @@ func main() {
 	router := presentation.InitRouters(reg)
 
 	log.Println("サーバ起動: http://localhost:8080")
-	err := http.ListenAndServe(":8080", router) //作成したマルチプレクサでサーバ起動
+	err = http.ListenAndServe(":8080", router) //作成したマルチプレクサでサーバ起動
 	if err != nil{
 		log.Fatal(err)
 	}
