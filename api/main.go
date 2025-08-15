@@ -17,7 +17,7 @@ func main() {
     }
 
 	//DBbのマイグレーション
-	if err := migrate.RunMigration(conf); err != nil {
+	if err := migrate.RunMigration(*conf); err != nil {
 	log.Fatal("マイグレーション失敗:", err)
     }
 
