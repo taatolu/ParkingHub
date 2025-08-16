@@ -74,6 +74,36 @@ func TestRegistCarOwner_FakeRepo(t *testing.T){
 	}
 }
 
-
-//FindByIDについてはFakeテスト未実装（意味がないため）
-
+//FindByIDのテスト（引数の型チェックのみ実装）
+func TestFindByID(t *testing.T){
+	tests := []struct {
+		testname string
+		id int
+		wantError bool
+	}{
+		//テストケースの作成
+		{
+			testname: "正常系",
+			id: 1,
+			wantError: false,
+		},
+		{
+			testname: "異常系",
+			id: -1,
+			wantError: true,
+		},
+	}
+	//テスト実行
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T){
+			fakeRepo := &mocks.FakeCarOwnerRepo{}
+			carOwner, err := fakeRepo.FindByID(tt.id)
+			if tt.wantError {
+				//異常系の場合
+				assert.Error(t, err, "IDがマイナスなのでエラーを期待したが、エラーにならない")
+			} else {
+				assert.NoError(t, err, "エラーが発生してしまった")
+			}
+		})
+	}
+}
