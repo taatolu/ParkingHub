@@ -16,6 +16,14 @@ func main() {
         log.Fatal("設定読み込み失敗:", err)
     }
 
+	// デバッグ用ログ（一時的に追加）
+    log.Printf("=== 設定確認 ===")
+    log.Printf("DB_HOST: '%s'", conf.DBHost)
+    log.Printf("DB_NAME: '%s'", conf.DBName)
+    log.Printf("DB_USER: '%s'", conf.DBUser)
+    log.Printf("DB_PASSWORD: '%s'", conf.DBPass)
+    log.Printf("================")
+
 	//DBbのマイグレーション
 	if err := migrate.RunMigration(*conf); err != nil {
 	log.Fatal("マイグレーション失敗:", err)

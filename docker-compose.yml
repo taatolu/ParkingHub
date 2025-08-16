@@ -12,7 +12,12 @@ services:
             - "5432:5432"
         volumes:
             # db_parkinghubという名前をつけたボリュームをコンテナの/var/lib/postgresql/data にマウントするという意味
-            - db_parkinghub:/var/lib/
+            - db_parkinghub:/var/lib/ostgresql/data
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
             
     api:
         build: ./api
