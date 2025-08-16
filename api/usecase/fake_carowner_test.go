@@ -91,7 +91,7 @@ func TestFindByID(t *testing.T){
 			testname: "異常系",
 			id: -1,
 			wantError: true,
-		}
+		},
 	}
 	//テスト実行
 	for _, tt := range tests {
