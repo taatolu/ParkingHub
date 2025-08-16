@@ -75,7 +75,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T){
 }
 
 //FindByIDのテスト（引数の型チェックのみ実装）
-func TestFindByID(t *testing.T){
+func TestFindByID_FakeRepo(t *testing.T){
 	tests := []struct {
 		testname string
 		id int
@@ -103,6 +103,8 @@ func TestFindByID(t *testing.T){
 				assert.Error(t, err, "IDがマイナスなのでエラーを期待したが、エラーにならない")
 			} else {
 				assert.NoError(t, err, "エラーが発生してしまった")
+				assert.NotNil(t, carOwner, "carOwnerがnilです")
+				assert.Equal(t, tt.id, carOwner.ID)
 			}
 		})
 	}

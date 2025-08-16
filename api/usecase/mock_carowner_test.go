@@ -12,7 +12,7 @@ import (
 // /usecaseのMockテスト
 
 // Saveシグネチャの確認
-func TestSaveCarOwner(t *testing.T) {
+func TestSaveCarOwner_MockRepo(t *testing.T) {
 	//mockリポジトリのインスタンス（正確には構造体のポインタ）を生成
 	mockRepo := &mocks.MockCarOwnerRepo{}
 
@@ -36,7 +36,7 @@ func TestSaveCarOwner(t *testing.T) {
 
 }
 
-func TestSaveCarOwner_Error(t *testing.T) {
+func TestSaveCarOwner_Error_MockRepo(t *testing.T) {
 	mockRepo := &mocks.MockCarOwnerRepo{
 		SaveErr: errors.New("save失敗"),
 	}
@@ -51,7 +51,7 @@ func TestSaveCarOwner_Error(t *testing.T) {
 }
 
 // FindByIDシグネチャのテスト
-func TestFindByID(t *testing.T) {
+func TestFindByID_MockRepo(t *testing.T) {
 	owner := &model.CarOwner{
 		ID:                1,
 		FirstName:         "test",
@@ -79,7 +79,7 @@ func TestFindByID(t *testing.T) {
 }
 
 // FindByNameシグネチャのテスト(ownerのリストを返すか？)
-func TestFindByName(t *testing.T) {
+func TestFindByName_MockRepo(t *testing.T) {
 	owners := []*model.CarOwner{
 		{ID: 1, FirstName: "test", MiddleName: "山田", LastName: "太郎",
 			LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local)},
@@ -100,7 +100,7 @@ func TestFindByName(t *testing.T) {
 }
 
 // FindByNameシグネチャのテスト(Errorを返すか？)
-func TestFindByName_Error(t *testing.T){
+func TestFindByName_Error_MockRepo(t *testing.T){
 	//モックリポジトリをインスタンス化するときに、ownerのリストを渡さない(FoundOwners=nilとする)
 	mock := &mocks.MockCarOwnerRepo{}
 	//モックテストの本番
