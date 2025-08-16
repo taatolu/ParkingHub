@@ -31,8 +31,8 @@ func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
 
 func (f *FakeCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
 	tempOwner := &model.CarOwner{ID:id}
-	if !tempOwner.IsIDPositive(id){
-		return nil, fmt.Errorf("IDが不正です(負の数): %v". id)
+	if !tempOwner.IsIDPositive(){
+		return nil, fmt.Errorf("IDが不正です(負の数): %v", id)
 	}
     return nil, fmt.Errorf("FakeCarOwnerRepo.FindByIDは未実装です")
 }
