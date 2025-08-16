@@ -45,7 +45,7 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
     //idのバリデーション
 	//一時的にCarOwnerインスタンスを作成してIsIDPositiveメソッドを実行
-	tempOwner := &model.CarOuner{ID: id}
+	tempOwner := &model.CarOwner{ID: id}
     if !tempOwner.IsIDPositive(id) {
 		return nil, fmt.Errorf("IDが不正です(負の数): %v". id)
 	}
