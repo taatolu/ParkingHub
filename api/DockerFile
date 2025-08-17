@@ -12,6 +12,8 @@ RUN go mod download
 
 # golang-migrateをインストール
 RUN go install github.com/golang-migrate/migrate/v4/cmd/migrate@v4.15.2
+# golang-migrateのCLIツールをインストール
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 # 本番用なら go build でバイナリを作成しCMDで実行
 # 開発運用の場合は go run でOK
