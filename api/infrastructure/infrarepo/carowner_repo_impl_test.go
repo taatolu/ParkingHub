@@ -45,16 +45,82 @@ func TestCarOwnerRepositoryImpl_Save(t *testing.T){
 
 
 func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("sqlmock作成に失敗")
-	}
-	defer db.Close()
+    //テーブル駆動テスト(Mockテスト)
+    tests := []struct{
+        testname    string
+        inputID     int
+        mockRows     *sqlmock.Rows             // モックで返す行データ
+        mockError    error                     // モックで返すエラ
+        expectError bool
+        expectOwner *model.CarOwner
+    }{
+        //testケースの作成
+        {
+            testname:   "正常系:1件ヒット",
+            inputID:    1,
+            mockRows:   sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}).
+                AddRow(1, "taro", "山田", "yusuke", time.Now().AddDate(1, 0, 0)),
+            expectError:    false,
+            expectOwner:    &model.CarOwner{
+                ID: 1,
+                FirstName:  "taro",
+        	    MiddleName: "山田",
+        	    LastName:   "yusuke",
+        	    LicenseExpiration): time.Now().AddDate(1, 0, 0),
+            },
+        },
+        {
+            testname:   "正常系:ヒット無し（IDが存在しない）",
+            inputID:    2,
+            mockRows:   sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}),
+            //レコード無し
+            expectError:    false,
+            expectOwner:    nil,
+            },
+        },
+        {
+            testname:   "異常系:エラーが返る",
+            inputID:    3,
+            mockRows:   nil,    // エラーなのでrowsを返さずnilが返る
+            mockError: fmt.Errorf("DB接続失敗"),
+            expectError:    true,
+            expectOwner:    nil,
+            },
+        },
+    }
+    //testケースを実行
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            db, mock, err := sqlmock.New()
+        	if err != nil {
+        		t.Fatalf("sqlmock作成に失敗")
+        	}
+        	defer db.Close()
+        	
+        	//テスト用のモックリポジトリを生成
+        	repo := &CarOwnerRepositoryImpl{DB:	db}
+        	
+        	//SQLモックのセット
+        	query := "SELECT (.+) from carowners WHERE id = \\$1"
+        	
+        	if tt.mockError != nil {
+        	    //クエリの実行結果Errorを返すように作成
+        	    mock.ExpectQuery(query).
+        	        WithArgs(tt.inputID).
+        	        WillReturnError(tt.mockError)
+        	} else {
+        	    //クエリの実行結果Rowを返すように作成
+        	    mock.ExpectQuery(query).
+        	        WithArgs(tt.inputID).
+        	        WillReturnRows(tt.mockRows)
+        	}
+        	
+        	//テスト対象メソッドの呼び出し
+        })
+    }
+	
 
-	//テスト用のモックリポジトリを生成
-	repo := &CarOwnerRepositoryImpl{
-		DB:	db,
-	}
+	
 	targetOwner:=&model.CarOwner{
 		ID:	1,
 		FirstName:	"taro",
