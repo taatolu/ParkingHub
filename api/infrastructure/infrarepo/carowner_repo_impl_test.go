@@ -116,36 +116,26 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
         	}
         	
         	//テスト対象メソッドの呼び出し
+        	gotOwner, err :=repo.FindByID(tt.inputID)
+        	
+        	//errorが発生するかどうかの確認
+        	if tt.expectError{
+        	    assert.Error(t, err, "エラーを期待していたがエラーが返らない")
+        	} else {
+        	    assert.Noerror(t, err , "予定外にエラーが発生しました")
+        	}
+        	
+        	// Ownerの取得結果を検証
+            if !reflect.DeepEqual(gotOwner, tt.expectOwner) {
+                t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", gotOwner, tt.expectOwner)
+            }
+
+            // SQLモックの期待を満たしているか検証
+            ///mock.ExpectQuery()でセットしたものが、テスト実行中に本当に実行されたかをmock.ExpectationsWereMet()で検証
+            if err := mock.ExpectationsWereMet(); err != nil {
+                t.Errorf("SQLモックの期待が満たされていません: %v", err)
+            }
         })
     }
-	
 
-	
-	targetOwner:=&model.CarOwner{
-		ID:	1,
-		FirstName:	"taro",
-		MiddleName:	"山田",
-		LastName:	"Yusuke",
-		LicenseExpiration:	time.Now().AddDate(1, 0, 0),
-	}
-
-	//期待するSQLと返り値の設定
-	///期待する返り値
-	rows := sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}).
-		AddRow(targetOwner.ID, targetOwner.FirstName, targetOwner.MiddleName, targetOwner.LastName, targetOwner.LicenseExpiration)
-
-	mock.ExpectQuery("SELECT (.+) FROM carowners WHERE id = \\$1").
-		WithArgs(targetOwner.ID).
-		WillReturnRows(rows)
-	
-	//テスト対象メソッドの呼び出し
-	gotOwner, err := repo.FindByID(targetOwner.ID)
-	if err != nil {
-		t.Errorf("取得失敗: %v", err)
-	}
-	assert.Equal(t, targetOwner.ID, gotOwner.ID)
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("期待したSQLが実行されていません: %v", err)
-	}
 }
