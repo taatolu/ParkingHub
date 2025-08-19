@@ -76,7 +76,6 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
             //レコード無し
             expectError:    false,
             expectOwner:    nil,
-            },
         },
         {
             testname:   "異常系:エラーが返る",
@@ -85,7 +84,6 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
             mockError: fmt.Errorf("DB接続失敗"),
             expectError:    true,
             expectOwner:    nil,
-            },
         },
     }
     //testケースを実行
