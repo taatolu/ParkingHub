@@ -122,7 +122,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
         	if tt.expectError{
         	    assert.Error(t, err, "エラーを期待していたがエラーが返らない")
         	} else {
-        	    assert.Noerror(t, err , "予定外にエラーが発生しました")
+        	    assert.NoError(t, err , "予定外にエラーが発生しました")
         	}
         	
         	// Ownerの取得結果を検証
