@@ -66,7 +66,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
                 FirstName:  "taro",
         	    MiddleName: "山田",
         	    LastName:   "yusuke",
-        	    LicenseExpiration): time.Now().AddDate(1, 0, 0),
+        	    LicenseExpiration: time.Now().AddDate(1, 0, 0),
             },
         },
         {
