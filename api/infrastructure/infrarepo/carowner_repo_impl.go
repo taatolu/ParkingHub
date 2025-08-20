@@ -47,7 +47,7 @@ func (r *CarOwnerRepositoryImpl) FindByID (id int)(*model.CarOwner, error){
 	
 	//sql実行の結果、該当するデータが無ければsql: no rows in result setとエラーが帰ってしまう
 	//本質的にはerrorではないので、model.CarOwner=nil, error=nilとして返したい
-	if err == sql.ErrorNoRows {
+	if err == sql.ErrNoRows {
 	    return nil, nil     //データが存在しない場合はnilを返す
 	}
 	
