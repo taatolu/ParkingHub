@@ -48,6 +48,7 @@ func TestCarOwnerRepositoryImpl_Save(t *testing.T){
 
 func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
     //テーブル駆動テスト(Mockテスト)
+    atThisTime := time.Now()
     tests := []struct{
         testname    string
         inputID     int
@@ -61,14 +62,14 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
             testname:   "正常系:1件ヒット",
             inputID:    1,
             mockRows:   sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}).
-                AddRow(1, "taro", "山田", "yusuke", time.Now().AddDate(1, 0, 0)),
+                AddRow(1, "taro", "山田", "yusuke", atThisTime.AddDate(1, 0, 0)),
             expectError:    false,
             expectOwner:    &model.CarOwner{
                 ID: 1,
                 FirstName:  "taro",
         	    MiddleName: "山田",
         	    LastName:   "yusuke",
-        	    LicenseExpiration: time.Now().AddDate(1, 0, 0),
+        	    LicenseExpiration: atThisTime.AddDate(1, 0, 0),
             },
         },
         {
