@@ -1,10 +1,11 @@
 package usecase
 
 import(
+    "fmt"
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
     
-//api/usecase/carowner.goのモック作成
+//api/usecase/carowner.goのインターフェースを満たすモック作成
 type MockCarOwnerUsecase struct {
     //RegistCarOwnerFuncという変数をfunc(owner *model.CarOwner) error型で宣言
     //返値はError型
@@ -22,5 +23,9 @@ func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error{
 }
 
 func (m *MockCarOwnerUsecase)FindByID(id int) (*model.CarOwner, error) {
-    return m.FindByIDFunc(id)
+    if m.FindByIDFunc != nil {
+        return m.FindByIDFunc(id)
+    }
+    return nil, fmt.Errorf("エラー発生")
 }
+

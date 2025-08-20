@@ -15,6 +15,11 @@ type CarOwnerHandler struct{
     Usecase usecase.CarOwnerUsecaseIF
 }
 
+type CarOwnersHandler struct{
+    //usecase層のインターフェースから実装
+    Usecase usecase.CarOwnerUsecaseIF
+}
+
 // CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
 func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
     switch r.Method {
@@ -24,6 +29,17 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
                 w.Write([]byte(fmt.Sprintf(`{"error":"リクエストメソッドが不正です"}`)))
     }
 }
+
+// CarOwnersHandler definition（ルーターでCarOwnersHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
+func (h CarOwnersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
+    switch r.Method {
+    case http.MethodGet:  h.FindByID(w, r)
+    default:    w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusMethodNotAllowed)
+                w.Write([]byte(fmt.Sprintf(`{"error":"リクエストメソッドが不正です"}`)))
+    }
+}
+
 
 //POST api car_owners
 func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
@@ -75,4 +91,9 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
     
     w.WriteHeader(http.StatusCreated)
     json.NewEncoder(w).Encode(owner)
+}
+
+// TODO: handlerを本実装に差し替える（Issue #54）
+func (h CarOwnersHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+    return     // TODO: 実装内容に合わせて後で修正
 }
