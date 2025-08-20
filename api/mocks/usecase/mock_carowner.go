@@ -1,6 +1,7 @@
 package usecase
 
 import(
+    "fmt"
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
     
