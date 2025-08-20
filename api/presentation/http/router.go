@@ -3,7 +3,7 @@ package http
 import (
     "net/http"
     "github.com/taatolu/ParkingHub/api/registry"
-    _ "github.com/taatolu/ParkingHub/api/presentation/http/handler"
+    "github.com/taatolu/ParkingHub/api/presentation/http/handler"
     )
 
 func InitRouters(reg *registry.Registry)http.Handler{
