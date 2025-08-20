@@ -25,5 +25,6 @@ func (m *MockCarOwnerUsecase)FindByID(id int) (*model.CarOwner, error) {
     if m.FindByIDFunc != nil {
         return m.FindByIDFunc(id)
     }
-    return nil
+    return nil, fmt.Errorf("エラー発生")
 }
+
