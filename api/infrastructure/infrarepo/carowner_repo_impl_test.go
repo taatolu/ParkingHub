@@ -101,7 +101,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
         	repo := &CarOwnerRepositoryImpl{DB:	db}
         	
         	//SQLモックのセット
-        	query := "SELECT (.+) from carowners WHERE id = \\$1"
+        	query := "SELECT (.+) FROM carowners WHERE id = \\$1"
         	
         	if tt.mockError != nil {
         	    //クエリの実行結果Errorを返すように作成
