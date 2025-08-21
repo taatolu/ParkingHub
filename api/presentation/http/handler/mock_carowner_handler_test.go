@@ -12,10 +12,12 @@ import(
 	"bytes"
 )
 
-//CarOwneeUsecaseのモック作成
+// このテストでは異常系として「URL不正（404）」は検証していません。
+// 理由：GoのHTTPマルチプレクサがルートにマッチしない場合は自動で404レスポンスを返すため、
+// ハンドラーレベルでその挙動をテストする意味が薄いからです。
+// 代わりに、method不正やbody不正など、ハンドラーが直接扱う異常系のみをテスト対象としています。
 
 
-//テストの実行
 func TestRegistCarOwner(t *testing.T){
     //tableTest
     tests := [] struct {
@@ -56,7 +58,7 @@ func TestRegistCarOwner(t *testing.T){
             }
             
             //ハンドラーのインスタンス生成
-            handler := &CarOwnerHandler{Usecase: mockUsecase}
+            handler := &CarOwnersHandler{Usecase: mockUsecase}
             
             // httptest.NewRecorder() でレスポンス記録
             rec := httptest.NewRecorder()
@@ -94,9 +96,15 @@ func TestRegistCarOwner(t *testing.T){
                     t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusCreated)
                 }
             }
-            
-            
         })
+    }
+}
+
+func TestFindByID(t *testing.T){
+    //tableTest
+    tests := []struct{
+        testname    string
+        
     }
 }
 

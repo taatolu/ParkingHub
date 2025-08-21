@@ -60,9 +60,9 @@ func (r *Registry) NewCarOwnerUsecase() usecase.CarOwnerUsecaseIF {
 
 
 // --- Handler生成 ---
-func (r *Registry) NewCarOwnerHandler() *handler.CarOwnerHandler {
-    //*返り値が構造体の場合、ポインタ型は返せません（handler.CarOwnerHandlerは構造体なので、”*”をつけてポインタで返すようにした）
-    return &handler.CarOwnerHandler{
+func (r *Registry) NewCarOwnersHandler() *handler.CarOwnersHandler {
+    //*返り値が構造体の場合、ポインタ型は返せません（handler.CarOwnersHandlerは構造体なので、”*”をつけてポインタで返すようにした）
+    return &handler.CarOwnersHandler{
         Usecase: r.NewCarOwnerUsecase(),
     }
 }
