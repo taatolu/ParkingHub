@@ -100,11 +100,4 @@ func TestRegistCarOwner(t *testing.T){
     }
 }
 
-func TestFindByID(t *testing.T){
-    //tableTest
-    tests := []struct{
-        testname    string
-        
-    }
-}
 
