@@ -100,4 +100,52 @@ func TestRegistCarOwner(t *testing.T){
     }
 }
 
+func TestFindByID(t *testing.T){
+    //tableTest
+    tests := []struct{
+        testname    string
+        method      string
+        url         string
+        wantError   bool
+    }{
+        //testcae作成
+        {
+            testname:   "正常系",
+            method:     "GET",
+            url:        "/api/v1/car_owners/1",
+            wantError:  false,
+        },
+        {
+            testname:   "異常系（メソッド不正）",
+            method:     "POSTPOST",
+            url:        "/api/v1/car_owners/",
+            wantError:  true,
+        },
+        {
+            testname:   "異常系（url不正：パスパラメータ無し）",
+            method:     "GET",
+            url:        "/api/v1/car_owners/",
+            wantError:  true,
+        }
+    }
+    //testをループ処理する
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            
+            //まずはハンドラにDIするためのCarOwnerUsecaseモックのインスタンスを生成
+            mockUsecase := &usecase.MockCarOwnerUsecase{
+                FindByIDFunc:   func(id int)(*model.CarOwner, error){
+                    if id==1 && !tt.wantError {
+                        return &model.CarOwner{
+                            id:1,
+                            FirstName:  "Test",
+                            LastName:   "User",
+                        }, nil
+                    }
+                    
+                    return nil,  fmt.Errorf("インフラストラクチャ層の実装をしたときにデータが返ってこなかった体（テイ）")
+            }
+        })
+    }
+}
 
