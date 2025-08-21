@@ -64,7 +64,6 @@ func TestRegistCarOwner(t *testing.T){
             rec := httptest.NewRecorder()
             
             // http.NewRequest() でリクエスト作成
-        
             req, err := http.NewRequest(tt.method, tt.url, tt.body)
             if err != nil {
                 t.Fatal(err)
@@ -142,9 +141,33 @@ func TestFindByID(t *testing.T){
                             LastName:   "User",
                         }, nil
                     }
-                    
                     return nil,  fmt.Errorf("インフラストラクチャ層の実装をしたときにデータが返ってこなかった体（テイ）")
             }
+
+            //handlerのインスタンス生成(上で作成したCarOwnerUsecaseのモックをDI)
+            handler := &CarOwnerHandler{Usecase:mockUsecase}
+
+            //http.NewRecorderでレスポンスを記録(テスト時にhttp.ResponseWriterの代わりで動くもの)
+            rec := httptest.NewRecorder
+
+            //http.NewRequest()でリクエスト作成
+            req, err := http.NewRequest(tt.method, tt.url)
+            if err != nil {
+                t.Fatal(err)
+            }
+            //リクエストのボディに JSON データを含める場合には以下の設定が必要です。
+            // しかし、FindByID のようにパスパラメータのみでリクエストし、ボディにデータを含めない場合は、Content-Type ヘッダーは不要
+            // req.Header.Set("Content-Type", "application/json")
+            //　※返却値（レスポンス）が JSON であれば、サーバー側が Content-Type: application/json を返しますが、リクエスト側で設定する必要はない
+            //【そもそも】テストのリクエストが GET メソッドで、ボディが空なら Content-Type ヘッダーは省略しましょう。
+            //         POST や PUT で JSON ボディを送る場合は必須です。
+
+            //handler.ServeHttpで実行
+            handler.ServeHttp(rec, req)
+
+            //recorder.Resultでrec(http.ResponseWriterの代わりで動くもの)に帰ってきたレスポンスを検証
+            resp := rec.Result()
+
         })
     }
 }
