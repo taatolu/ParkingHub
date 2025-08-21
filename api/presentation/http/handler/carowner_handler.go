@@ -10,18 +10,18 @@ import(
     "github.com/taatolu/ParkingHub/api/domain/model"
     )
 
-type CarOwnerHandler struct{
-    //usecase層のインターフェースから実装
-    Usecase usecase.CarOwnerUsecaseIF
-}
-
 type CarOwnersHandler struct{
     //usecase層のインターフェースから実装
     Usecase usecase.CarOwnerUsecaseIF
 }
 
-// CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
-func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
+type CarOwnerHandler struct{
+    //usecase層のインターフェースから実装
+    Usecase usecase.CarOwnerUsecaseIF
+}
+
+// CarOwnersHandler definition（ルーターでCarOwnersHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
+func (h CarOwnersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
     switch r.Method {
     case http.MethodPost:  h.CreateCarOwner(w, r)
     default:    w.Header().Set("Content-Type", "application/json")
@@ -30,8 +30,8 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
     }
 }
 
-// CarOwnersHandler definition（ルーターでCarOwnersHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
-func (h CarOwnersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
+// CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
+func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
     switch r.Method {
     case http.MethodGet:  h.FindByID(w, r)
     default:    w.Header().Set("Content-Type", "application/json")
@@ -42,7 +42,7 @@ func (h CarOwnersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request){
 
 
 //POST api car_owners
-func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
+func (h CarOwnersHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
     //リクエストボディの内容を取得
     ///取得したリクエストボディの内容を格納する構造体を作成
     var param struct{
@@ -94,6 +94,6 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request){
 }
 
 // TODO: handlerを本実装に差し替える（Issue #54）
-func (h CarOwnersHandler) FindByID(w http.ResponseWriter, r *http.Request) {
+func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
     return     // TODO: 実装内容に合わせて後で修正
 }

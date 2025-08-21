@@ -62,7 +62,7 @@ func TestRegistCarOwner_FakeUsecase(t *testing.T){
             fakeUsecase := &usecase.FakeCarOwnerUsecase{}
             
             //ハンドラーのインスタンス生成
-            handler := &CarOwnerHandler{Usecase: fakeUsecase}
+            handler := &CarOwnersHandler{Usecase: fakeUsecase}
             
             // httptest.NewRecorder() でレスポンス記録
             rec := httptest.NewRecorder()
