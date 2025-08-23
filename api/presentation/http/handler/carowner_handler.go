@@ -84,5 +84,37 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 
 // TODO: handlerを本実装に差し替える（Issue #54）
 func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
-	return // TODO: 実装内容に合わせて後で修正
+	path := r.URL.Path
+
+	//サンプルとして泥臭く正規表現処理でパスパラメータを取得した場合
+	parts := strings.Split(path, "/")
+
+	//パスパラメータなしの場合
+	if parts[4] == ""{
+		http.Error(w, "パスパラメータがありません", http.StatusBadRequest)
+		return
+	}
+
+	//パスパラメータが数値に変換できない場合
+	id, err := strconv.Atoi(parts[4])
+	if err != nil {
+		http.Error(w, "パスパラメータが数値でありません", http.StatusBadRequest)
+		return
+	}
+
+	owner, err := h.Usecase.FindByID(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	// 一時的なレスポンス きちんとCarOwnerの構造体を返すように修正する（Issue #54）
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    response := map[string]interface{}{
+        "id": id,
+        "message": "User found",
+    }
+    json.NewEncoder(w).Encode(response)
+
 }
