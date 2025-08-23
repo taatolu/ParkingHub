@@ -1,7 +1,6 @@
 package http
 
 import (
-	"github.com/taatolu/ParkingHub/api/presentation/http/handler"
 	"github.com/taatolu/ParkingHub/api/registry"
 	"net/http"
 )
