@@ -7,35 +7,21 @@ import (
 	"github.com/taatolu/ParkingHub/api/usecase"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
-
-type CarOwnersHandler struct {
-	//usecase層のインターフェースから実装
-	Usecase usecase.CarOwnerUsecaseIF
-}
 
 type CarOwnerHandler struct {
 	//usecase層のインターフェースから実装
 	Usecase usecase.CarOwnerUsecaseIF
 }
 
-// CarOwnersHandler definition（ルーターでCarOwnersHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
-func (h CarOwnersHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.CreateCarOwner(w, r)
-	default:
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte(fmt.Sprintf(`{"error":"リクエストメソッドが不正です"}`)))
-	}
-}
-
 // CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
 func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
+	switch {
+	case r.URL.Path == "/api/v1/car_owners" && r.Method == http.MethodPost:
+		h.CreateCarOwner(w, r)
+	case strings.HasPrefix(r.URL.Path, "/api/v1/car_owners/") && r.Method == http.MethodGet:
 		h.FindByID(w, r)
 	default:
 		w.Header().Set("Content-Type", "application/json")
@@ -45,7 +31,7 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST api car_owners
-func (h CarOwnersHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) {
+func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) {
 	//リクエストボディの内容を取得
 	///取得したリクエストボディの内容を格納する構造体を作成
 	var param struct {

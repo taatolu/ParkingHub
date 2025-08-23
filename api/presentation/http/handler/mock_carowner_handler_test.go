@@ -2,10 +2,10 @@ package handler
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 	"github.com/taatolu/ParkingHub/api/mocks/usecase"
 	"io"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -57,7 +57,7 @@ func TestRegistCarOwner(t *testing.T) {
 			}
 
 			//ハンドラーのインスタンス生成
-			handler := &CarOwnersHandler{Usecase: mockUsecase}
+			handler := &CarOwnerHandler{Usecase: mockUsecase}
 
 			// httptest.NewRecorder() でレスポンス記録
 			rec := httptest.NewRecorder()
@@ -175,7 +175,7 @@ func TestFindByID(t *testing.T) {
 
 			if tt.wantError {
 				//tt.wantErrorがtrue=異常値の場合
-				if resp.StatusCode == http.StatusOK{
+				if resp.StatusCode == http.StatusOK {
 					t.Errorf("異常系なのに200番が返っています")
 				}
 				if resp.StatusCode != http.StatusNotFound && !strings.Contains(bodyString, "error") {
@@ -183,7 +183,7 @@ func TestFindByID(t *testing.T) {
 				}
 			} else {
 				//tt.wantErrorがfalse=正常値の場合
-				if resp.StatusCode != http.StatusOK{
+				if resp.StatusCode != http.StatusOK {
 					t.Errorf("Got:%d Want:%d", resp.StatusCode, http.StatusOK)
 				}
 			}

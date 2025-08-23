@@ -9,7 +9,10 @@ import (
 func InitRouters(reg *registry.Registry) http.Handler {
 	//マルチプレクサを作成
 	mux := http.NewServeMux()
-	mux.Handle("/api/v1/car_owners", reg.NewCarOwnersHandler())   //GET(ALL),POST メソッド
-	mux.Handle("/api/v1/car_owners/", &handler.CarOwnerHandler{}) //GET,PUSH,DELETE メソッド
+
+	carOwnerHandler := reg.NewCarOwnerHandler()
+
+	mux.Handle("/api/v1/car_owners", carOwnerHandler)   //GET(ALL),POST メソッド
+	mux.Handle("/api/v1/car_owners/", carOwnerHandler) //GET,PUSH,DELETE メソッド
 	return mux
 }
