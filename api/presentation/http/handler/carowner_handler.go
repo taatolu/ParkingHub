@@ -108,7 +108,7 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 一時的なレスポンス きちんとCarOwnerの構造体を返すように修正する（Issue #54）
+	// CarOwnerの構造体を返す
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     if err = json.NewEncoder(w).Encode(owner); err != nil {
