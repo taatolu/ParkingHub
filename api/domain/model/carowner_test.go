@@ -72,3 +72,40 @@ func TestIsIDPositive(t *testing.T) {
         })
     }
 }
+
+func TestContainsName(t *testing.T) {
+    //Create tableTest
+    tests := []struct {
+        testname    string
+        owner       *CarOwner
+        wantString  string
+        wantContains   bool
+    }{
+        //testCaseの作成
+        {
+            testname:   "検索ヒット",
+            owner:      &CarOwner{ID:1, FirstName:"yanada", MiddleName:"taro", LastName:"一世"},
+            wantString: "taro",
+            wantContains:  true,
+        },
+        {
+            testname:   "検索ヒットしない：大文字",
+            owner:      &CarOwner{ID:1, FirstName:"yanada", MiddleName:"taro", LastName:"一世"},
+            wantString: "Taro",
+            wantContains:  false,
+        },
+        {
+            testname:   "検索ヒットしない",
+            owner:      &CarOwner{ID:1, FirstName:"yanada", MiddleName:"taro", LastName:"一世"},
+            wantString: "Naro",
+            wantContains:  false,
+        },
+    }
+    //testCaseをループ処理
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            IsContains := tt.owner.IsContainsName(tt.wantString)
+            assert.Equal(t, tt.wantContains, IsContains) 
+        })
+    }
+}
