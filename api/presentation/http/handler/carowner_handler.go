@@ -85,18 +85,21 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 // TODO: handlerを本実装に差し替える（Issue #54）
 func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
-
-	//サンプルとして泥臭く正規表現処理でパスパラメータを取得した場合
-	parts := strings.Split(path, "/")
-
-	//パスパラメータなしの場合
-	if parts[4] == ""{
-		http.Error(w, "error:パスパラメータがありません", http.StatusBadRequest)
-		return
+    
+    //パス形式の検証: /api/v1/car_owners/{id}
+    if !strings.HasPrefix(path, "/api/v1/car_owners/"){
+        http.Error(w, "パスが不正です", http.StatusBadRequest)
+        return
+    }
+	//パラメータを取得（パスから"/api/v1/car_owners/"を引く）
+	idStr := strings.TrimPrefix(path, "/api/v1/car_owners/")
+	if idStr == "" {
+	    http.Error(w, "パラメータが存在しません", http.StatusBadRequest)
+	    return
 	}
 
 	//パスパラメータが数値に変換できない場合
-	id, err := strconv.Atoi(parts[4])
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "error:パスパラメータが数値でありません", http.StatusBadRequest)
 		return
