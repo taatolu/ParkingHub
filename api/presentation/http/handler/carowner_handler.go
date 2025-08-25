@@ -91,14 +91,14 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 
 	//パスパラメータなしの場合
 	if parts[4] == ""{
-		http.Error(w, "パスパラメータがありません", http.StatusBadRequest)
+		http.Error(w, "error:パスパラメータがありません", http.StatusBadRequest)
 		return
 	}
 
 	//パスパラメータが数値に変換できない場合
 	id, err := strconv.Atoi(parts[4])
 	if err != nil {
-		http.Error(w, "パスパラメータが数値でありません", http.StatusBadRequest)
+		http.Error(w, "error:パスパラメータが数値でありません", http.StatusBadRequest)
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     if err = json.NewEncoder(w).Encode(owner); err != nil {
-        http.Error(w, "エンコード失敗", http.StatusInternalServerError)
+        http.Error(w, "error:エンコード失敗", http.StatusInternalServerError)
     }
 
 }
