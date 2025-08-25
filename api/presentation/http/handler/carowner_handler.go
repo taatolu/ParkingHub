@@ -88,13 +88,13 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
     
     //パス形式の検証: /api/v1/car_owners/{id}
     if !strings.HasPrefix(path, "/api/v1/car_owners/"){
-        http.Error(w, "パスが不正です", http.StatusBadRequest)
+        http.Error(w, "error:パスが不正です", http.StatusBadRequest)
         return
     }
 	//パラメータを取得（パスから"/api/v1/car_owners/"を引く）
 	idStr := strings.TrimPrefix(path, "/api/v1/car_owners/")
 	if idStr == "" {
-	    http.Error(w, "パラメータが存在しません", http.StatusBadRequest)
+	    http.Error(w, "error:パラメータが存在しません", http.StatusBadRequest)
 	    return
 	}
 
