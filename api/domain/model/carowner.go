@@ -21,7 +21,7 @@ func (c *CarOwner) IsLicenseExpired() bool {
 }
 
 //name枠に該当する名前があるか確認する
-func (c *CarOwner) ContainsName(name string) bool {
+func (c *CarOwner) IsContainsName(name string) bool {
 	return strings.Contains(c.FirstName, name) ||
 		strings.Contains(c.MiddleName, name) ||
 		strings.Contains(c.LastName, name)
