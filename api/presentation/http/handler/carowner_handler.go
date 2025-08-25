@@ -82,7 +82,7 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(owner)
 }
 
-// TODO: handlerを本実装に差し替える（Issue #54）
+// GET (Find By id)
 func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
     
