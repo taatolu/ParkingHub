@@ -8,6 +8,7 @@ import(
 
 type FakeCarOwnerRepo struct{
 	SavedOwner	*model.CarOwner
+	allOwners	[]*model.CarOwner
 }
 
 func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
@@ -35,4 +36,15 @@ func (f *FakeCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
 		return nil, fmt.Errorf("IDが不正です(負の数): %v", id)
 	}
     return tempOwner, nil
+}
+
+func (f *FakeCarOwnerRepo) FindByName(name string)([]*model.CarOwner, error) {
+	foundOwners := []*model.CarOwner{}
+
+	for _, owner := range f.allOwners {
+		if owner.IsContainsName(name) {
+			foundOwners = append(foundOwners, owner)
+		}
+	}
+	return foundOwners, nil
 }
