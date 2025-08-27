@@ -73,7 +73,7 @@ func TestIsIDPositive(t *testing.T) {
     }
 }
 
-func TestContainsName(t *testing.T) {
+func TestIsContainsName(t *testing.T) {
     //Create tableTest
     tests := []struct {
         testname    string
