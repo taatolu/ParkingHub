@@ -109,3 +109,56 @@ func TestFindByID_FakeRepo(t *testing.T){
 		})
 	}
 }
+
+
+func TestFindByName_FakeRepo(t *testing.T) {
+    //tableテスト
+    tests := []struct{
+        testname    string
+        findName    string      //検索したい名前
+        Owners      []*model.CarOwner
+        ownerExists bool        //検索した結果ownerがヒットするか
+    }{
+        //testCaseの作成
+        {
+            testname:   "正常系(ownerあり)",
+            findName:   "太",
+            Owners:     []*model.CarOwner{
+                {ID:1, FirstName:"横山", MiddleName:"", LastName:"健太",LicenseExpiration: time.Now().AddDate(1, 0, 0),},
+                {ID:2, FirstName:"横山", MiddleName:"忠", LastName:"",LicenseExpiration: time.Now().AddDate(1, 0, 0),},
+                {ID:3, FirstName:"横山", MiddleName:"雄太", LastName:"",LicenseExpiration: time.Now().AddDate(1, 0, 0),},
+            },
+            ownerExists:    true,
+        },
+        {
+            testname:   "正常系(ownerなし)",
+            findName:   "井",
+            Owners:  []*model.CarOwner{
+                {ID:1, FirstName:"横山", MiddleName:"", LastName:"健太",LicenseExpiration: time.Now().AddDate(1, 0, 0),},
+                {ID:2, FirstName:"横山", MiddleName:"忠", LastName:"",LicenseExpiration: time.Now().AddDate(1, 0, 0),},
+                {ID:3, FirstName:"横山", MiddleName:"雄太", LastName:"",LicenseExpiration: time.Now().AddDate(1, 0, 0),},
+            },
+            ownerExists:    false,
+        },
+    }
+    //testCaseをループ処理
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            fakeRepo := &mocks.FakeCarOwnerRepo{
+                AllOwners:  tt.Owners,
+            }
+            
+            if tt.ownerExists {
+                foundOwners, err := fakeRepo.FindByName(tt.findName)
+                assert.NoError(t, err, "error:エラーが発生してしまった")
+                assert.NotEmpty(t, foundOwners, "error:Ownerが不存在")
+            } else {
+                foundOwners, err := fakeRepo.FindByName(tt.findName)
+                assert.NoError(t, err, "error:エラーが発生してしまった")
+                assert.Empty(t, foundOwners, "error:Ownerがなぜか存在している")
+            }
+        })
+    }
+}
+
+

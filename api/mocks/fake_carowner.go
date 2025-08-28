@@ -8,7 +8,7 @@ import(
 
 type FakeCarOwnerRepo struct{
 	SavedOwner	*model.CarOwner
-	allOwners	[]*model.CarOwner
+	AllOwners	[]*model.CarOwner
 }
 
 func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
@@ -41,7 +41,7 @@ func (f *FakeCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
 func (f *FakeCarOwnerRepo) FindByName(name string)([]*model.CarOwner, error) {
 	foundOwners := []*model.CarOwner{}
 
-	for _, owner := range f.allOwners {
+	for _, owner := range f.AllOwners {
 		if owner.IsContainsName(name) {
 			foundOwners = append(foundOwners, owner)
 		}
