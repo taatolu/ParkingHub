@@ -65,3 +65,19 @@ func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
     return owner, nil
 }
 
+// owner検索（Name）
+func (uc *CarOwnerUsecase)FindByName(name string)([]*model.CarOwner, error){
+    //引数のバリデーション
+    if name == "" {
+        return nil, fmt.Errorf("nameに検索したい名前を渡してください")
+    }
+    
+    foundOwners, err := uc.CarOwnerRepo.FindByName(name)
+    if err != nil {
+        return nil, fmt.Errorf("DBのCarOwnersから対象の名前を検索するところでエラー: %w", err)
+    }
+    return foundOwners, nil
+}
+
+
+

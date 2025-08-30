@@ -109,3 +109,8 @@ func TestFindByID_FakeRepo(t *testing.T){
 		})
 	}
 }
+
+//FindByNameのFakeTestは実装しない（必要に応じて追加）
+
+
+
