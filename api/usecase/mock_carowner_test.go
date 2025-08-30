@@ -80,23 +80,45 @@ func TestFindByID_MockRepo(t *testing.T) {
 
 // FindByNameのテスト(ownerのリストを返すか？)
 func TestFindByName_MockRepo(t *testing.T) {
-	owners := []*model.CarOwner{
-		{ID: 1, FirstName: "test", MiddleName: "山田", LastName: "太郎",
-			LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local)},
-		{ID: 2, FirstName: "test", MiddleName: "佐藤", LastName: "一郎",
-			LicenseExpiration: time.Date(2025, 2, 2, 0, 0, 0, 0, time.Local)},
-		{ID: 3, FirstName: "sample", MiddleName: "横田", LastName: "健二",
-			LicenseExpiration: time.Date(2025, 3, 3, 0, 0, 0, 0, time.Local)},
+	//tableTest
+	tests := []struct{
+		testname    string
+		foundOwners []*model.CarOwner
+		wantName    string
+	}{
+		{
+			testname: "正常系",
+			foundOwners: []*model.CarOwner{
+				{ID: 1, FirstName: "test", MiddleName: "山田", LastName: "太郎",
+					LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local)},
+				{ID: 3, FirstName: "sample", MiddleName: "横田", LastName: "健二",
+					LicenseExpiration: time.Date(2025, 3, 3, 0, 0, 0, 0, time.Local)},
+			},
+			wantName: "田",
+		},
+		{
+			testname: "異常系",
+			foundOwners: nil,
+			wantName: "",	//検索したいnameを入力していない
+		},
 	}
-	mock := &mocks.MockCarOwnerRepo{
-		FoundOwners: owners,
+	//testCaseをループ処理
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T){
+			mock := &mocks.MockCarOwnerRepo{
+				FoundOwners: tt.foundOwners,
+			}
+			if tt.wantName == "" {
+				gotOwners, err := mock.FindByName(tt.wantName)
+				assert.Error(t, err, "引数が空の時、FindByNameはエラーを返すべき")
+				assert.Nil(t, gotOwners, "引数が空の時gotOwnersはnilになるはず")
+			} else {
+				gotOwners, err := mock.FindByName(tt.wantName)
+				assert.NoError(t, err, "FindByNameの正常系でエラーが発生した")
+				assert.Equal(t, tt.foundOwners, gotOwners)
+			}
+		})
 	}
-
-	//モックテストの本番処理
-	//FindByName関数の引数に何を渡そうともowner=mock.FoundOwnersが帰るので、引数には適当な値（test）を渡す
-	GotOwners, err := mock.FindByName("test")
-	assert.NoError(t, err)
-	assert.Equal(t, mock.FoundOwners, GotOwners)
 }
 
 // FindByNameシグネチャのテスト(Errorを返すか？)
@@ -104,7 +126,7 @@ func TestFindByName_Error_MockRepo(t *testing.T){
 	//モックリポジトリをインスタンス化するときに、ownerのリストを渡さない(FoundOwners=nilとする)
 	mock := &mocks.MockCarOwnerRepo{}
 	//モックテストの本番
-	GotOwners, err := mock.FindByName("test")
+	gotOwners, err := mock.FindByName("test")
 	assert.Error(t, err)
-	assert.Nil(t, GotOwners)
+	assert.Nil(t, gotOwners)
 }
