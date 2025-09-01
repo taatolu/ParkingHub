@@ -64,10 +64,10 @@ func (r *CarOwnerRepositoryImpl) FindByName (name string) ([]*model.CarOwner, er
     
     cmd := `SELECT * FROM carowners WHERE FirstName ILIKE $1
             OR MiddleName ILIKE $1
-            OR LastName ILIKE &1`
+            OR LastName ILIKE $1`
     
     //DBから一致するデータを(rowsに)取得
-    rows, err := r.DB.Query(cmd)
+    rows, err := r.DB.Query(cmd, name)
     if err != nil {
         return nil, fmt.Errorf("DBからの取得に失敗")
     }
