@@ -62,14 +62,12 @@ func (r *CarOwnerRepositoryImpl) FindByName (name string) ([]*model.CarOwner, er
     //DBかから取得した値を保存するためのリストを作成
     owners := []*model.CarOwner{}
     
-    cmd := `SELECT * FROM carowners WHERE FirstName ILIKE $1
-            OR MiddleName ILIKE $1
-            OR LastName ILIKE $1`
+    cmd := `SELECT ID, FirstName, MiddleName, LastName, LicenseExpiration FROM carowners WHERE FirstName ILIKE $1 OR MiddleName ILIKE $1 OR LastName ILIKE $1`
     
     //DBから一致するデータを(rowsに)取得
     rows, err := r.DB.Query(cmd, name)
     if err != nil {
-        return nil, fmt.Errorf("DBからの取得に失敗")
+        return nil, fmt.Errorf("DBからの取得に失敗: %w", err)
     }
     defer rows.Close()
     
@@ -84,7 +82,7 @@ func (r *CarOwnerRepositoryImpl) FindByName (name string) ([]*model.CarOwner, er
             &owner.LastName,
             &owner.LicenseExpiration,)
         if err != nil {
-            return nil, fmt.Errorf("対象のOwner取得に失敗")
+            return nil, fmt.Errorf("対象のOwner取得に失敗: %w", err)
         }
         //errorなくここまで進んだら、作成しておいたowners配列にOwnerを保存
         owners = append(owners, owner)

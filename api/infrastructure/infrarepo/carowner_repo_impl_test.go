@@ -203,9 +203,7 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
             
             //DBアクセスの挙動をテスト用に制御
             ///FindByName関数が実行すると予想されるSQLクエリ文（正規表現）を設定
-            query := `SELECT (.+) FROM carowners WHERE FirstName ILIKE \\$1
-                        OR MiddleName ILIKE \\$1
-                        OR LastName ILIKE \\$1`
+            query := `SELECT .+ FROM carowners WHERE FirstName ILIKE \$1 OR MiddleName ILIKE \$1 OR LastName ILIKE \$1`
             
             //mockの挙動を条件分岐
             if tt.expectError {
@@ -219,8 +217,10 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
             
             //テスト対象メソッドの呼び出し
             gotOwner, err := repo.FindByName(tt.findName)
-            if err != nil{
-                t.Errorf("FindByName()の実行に失敗: %v", err)
+            if tt.expectError {
+                assert.Error(t, err)
+            } else {
+                assert.NoError(t, err)
             }
             
             //mockの挙動制御通りにErrorの有り無しが動くか確認
