@@ -22,7 +22,17 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case r.URL.Path == "/api/v1/car_owners" && r.Method == http.MethodPost:
 		h.CreateCarOwner(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/v1/car_owners/") && r.Method == http.MethodGet:
-		h.FindByID(w, r)
+		//パラメータの値を取得
+		param := strings.TrimPrefix(r.URL.Path, "/api/v1/car_owners/")
+		//パラメータの値が数値か文字列かでパンドラの呼び分け
+		if _, err := strconv.Atoi(param); err != nil {
+			//取得したパラメーターが数値でない場合
+			h.FindByName(w, r)
+		} else {
+			//取得したパラメーターが数値の場合
+			h.FindByID(w, r)
+		}
+
 	default:
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -105,6 +115,7 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//Usecaeに渡して検索してもらう
 	owner, err := h.Usecase.FindByID(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -119,3 +130,38 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
     }
 
 }
+
+// FindByNameは、URLパスから名前で車の所有者を取得するGETリクエストを処理します。
+func (h *CarOwnerHandler) FindByName (w http.ResponseWriter, r *http.Request) {
+	//pathの検証
+	path := r.URL.Path
+	if !strings.HasPrefix(path, "/api/v1/car_owners/") {
+		http.Error(w, "error:Pathが不正です", http.StatusBadRequest)
+		return
+	}
+
+	//パラメーターを取得
+	name := strings.TrimPrefix(path, "/api/v1/car_owners/")
+	if name == "" {
+		http.Error(w, "error:パラメータが存在しません", http.StatusBadRequest)
+		return
+	}
+
+	//Usecaseに渡して検索してもらう
+	owners, err := h.Usecase.FindByName(name)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	//CarOwner構造体のリストを返す
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(owners)
+	if err != nil {
+		http.Error(w, "error:エンコード失敗", http.StatusInternalServerError)
+	}
+}
+
+
+

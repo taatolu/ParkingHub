@@ -56,3 +56,37 @@ func (r *CarOwnerRepositoryImpl) FindByID (id int)(*model.CarOwner, error){
 	}
 	return owner, nil
 }
+
+
+func (r *CarOwnerRepositoryImpl) FindByName (name string) ([]*model.CarOwner, error) {
+    //DBかから取得した値を保存するためのリストを作成
+    owners := []*model.CarOwner{}
+    
+    cmd := `SELECT ID, FirstName, MiddleName, LastName, LicenseExpiration FROM carowners WHERE FirstName ILIKE $1 OR MiddleName ILIKE $1 OR LastName ILIKE $1`
+    
+    //DBから一致するデータを(rowsに)取得
+    rows, err := r.DB.Query(cmd, name)
+    if err != nil {
+        return nil, fmt.Errorf("DBからの取得に失敗: %w", err)
+    }
+    defer rows.Close()
+    
+    for rows.Next() {
+        //取得したrowsからownerを一つ取り出して保存するための変数作成
+        owner := &model.CarOwner{}
+        //上記変数に保存
+        err = rows.Scan(
+            &owner.ID,
+            &owner.FirstName,
+            &owner.MiddleName,
+            &owner.LastName,
+            &owner.LicenseExpiration,)
+        if err != nil {
+            return nil, fmt.Errorf("対象のOwner取得に失敗: %w", err)
+        }
+        //errorなくここまで進んだら、作成しておいたowners配列にOwnerを保存
+        owners = append(owners, owner)
+    }
+    return owners, nil
+}
+

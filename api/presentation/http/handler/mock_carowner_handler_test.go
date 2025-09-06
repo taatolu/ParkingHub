@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 // このテストでは異常系として「URL不正（404）」は検証していません。
@@ -185,6 +186,90 @@ func TestFindByID(t *testing.T) {
 				//tt.wantErrorがfalse=正常値の場合
 				if resp.StatusCode != http.StatusOK {
 					t.Errorf("Got:%d Want:%d", resp.StatusCode, http.StatusOK)
+				}
+			}
+		})
+	}
+}
+
+
+func TestFindByName(t *testing.T) {
+	//tableTest
+	tests := []struct{
+		testname	string
+		method		string
+		url			string
+		expectError	error
+	}{
+		//testCaseの作成
+		{
+			testname:	"正常系",
+			method:		"GET",
+			url:		"/api/v1/car_owners/田",
+			expectError:	nil,
+		},
+		{
+			testname:	"異常系（method不正）",
+			method:		"POST",
+			url:		"/api/v1/car_owners/田",
+			expectError:	fmt.Errorf("error:methodが不正です"),
+		},
+		{
+			testname:	"異常系（パラメータ不正）",
+			method:		"GET",
+			url:		"/api/v1/car_owners/",
+			expectError:	fmt.Errorf("error:パラメータが空です"),
+		},
+	}
+	//TestCaseをループ処理
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			// モックユースケースの用意
+			mock := &usecase.MockCarOwnerUsecase{
+				FindByNameFunc: func(name string) ([]*model.CarOwner, error) {
+					if tt.expectError != nil {
+						return nil, tt.expectError
+					}
+					return []*model.CarOwner{
+						{ID: 1, FirstName: "山田", MiddleName: "jon", LastName: "健二", LicenseExpiration: time.Now().AddDate(1, 0, 0)},
+						{ID: 2, FirstName: "井本", MiddleName: "有田", LastName: "", LicenseExpiration: time.Now().AddDate(1, 0, 0)},
+					}, nil
+				},
+			}
+
+			//handlerのインスタンス生成(UsecaseのモックをDI)
+			handler := &CarOwnerHandler{Usecase: mock}
+
+			//httptest.NewRecorder()でレスポンスを記録（テストの時にhttp.ResposseWriterの代わりになるもの）
+			rec := httptest.NewRecorder()
+
+			// http.NewRequest() でリクエスト作成
+			req, err := http.NewRequest(tt.method, tt.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// handler.ServeHTTPで実行
+			handler.ServeHTTP(rec, req)
+			// recorder.Result() でレスポンス検証
+			// 受け取ったrecのBodyを取得
+			resp := rec.Result()
+			defer resp.Body.Close()
+
+			//上記Bodyの中身を取得
+			bodyBytes, err := io.ReadAll(resp.Body)
+			bodyString := string(bodyBytes)
+
+			if tt.expectError != nil {
+				if resp.StatusCode == http.StatusOK {
+					t.Errorf("異常系なのに200番が返っています")
+				}
+				if resp.StatusCode != http.StatusNotFound && !strings.Contains(bodyString, "error") {
+					t.Errorf("エラーメッセージが含まれていません")
+				}
+			} else {
+				if resp.StatusCode != http.StatusOK {
+					t.Errorf("エラーになってしまった: got: %d  want: %d ", resp.StatusCode, http.StatusOK)
 				}
 			}
 		})
