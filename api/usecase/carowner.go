@@ -16,6 +16,7 @@ type CarOwnerUsecase struct {
 type CarOwnerUsecaseIF interface {
     RegistCarOwner(owner *model.CarOwner) error
     FindByID(id int) (*model.CarOwner, error)
+	FindByName(name string) ([]*model.CarOwner, error)
 }
 
 // owner登録処理

@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 // このテストでは異常系として「URL不正（404）」は検証していません。
@@ -192,26 +193,32 @@ func TestFindByID(t *testing.T) {
 }
 
 
-func TestFindByNae(t *testing.T) {
+func TestFindByName(t *testing.T) {
 	//tableTest
 	tests := []struct{
 		testname	string
 		method		string
 		url			string
-		expctError	error
+		expectError	error
 	}{
 		//testCaseの作成
 		{
 			testname:	"正常系",
 			method:		"GET",
-			url:		"/api/v1/car_owners/",
-			expctError:	nil,
+			url:		"/api/v1/car_owners/田",
+			expectError:	nil,
 		},
 		{
 			testname:	"異常系（method不正）",
 			method:		"POST",
+			url:		"/api/v1/car_owners/田",
+			expectError:	fmt.Errorf("error:methodが不正です"),
+		},
+		{
+			testname:	"異常系（パラメータ不正）",
+			method:		"GET",
 			url:		"/api/v1/car_owners/",
-			expctError:	fmt.Errorf("methodが不正です"),
+			expectError:	fmt.Errorf("error:パラメータが空です"),
 		},
 	}
 	//TestCaseをループ処理
@@ -219,9 +226,15 @@ func TestFindByNae(t *testing.T) {
 		t.Run(tt.testname, func(t *testing.T) {
 			// モックユースケースの用意
 			mock := &usecase.MockCarOwnerUsecase{
-			FindByNameFunc: func(name string) ([]*model.CarOwner, error) {
-				return nil, tt.expctError
-			},
+				FindByNameFunc: func(name string) ([]*model.CarOwner, error) {
+					if tt.expectError != nil {
+						return nil, tt.expectError
+					}
+					return []*model.CarOwner{
+						{ID: 1, FirstName: "山田", MiddleName: "jon", LastName: "健二", LicenseExpiration: time.Now().AddDate(1, 0, 0)},
+						{ID: 2, FirstName: "井本", MiddleName: "有田", LastName: "", LicenseExpiration: time.Now().AddDate(1, 0, 0)},
+					}, nil
+				},
 			}
 
 			//handlerのインスタンス生成(UsecaseのモックをDI)
@@ -247,7 +260,7 @@ func TestFindByNae(t *testing.T) {
 			bodyBytes, err := io.ReadAll(resp.Body)
 			bodyString := string(bodyBytes)
 
-			if tt.expctError != nil {
+			if tt.expectError != nil {
 				if resp.StatusCode == http.StatusOK {
 					t.Errorf("異常系なのに200番が返っています")
 				}
@@ -262,5 +275,3 @@ func TestFindByNae(t *testing.T) {
 		})
 	}
 }
-
-
