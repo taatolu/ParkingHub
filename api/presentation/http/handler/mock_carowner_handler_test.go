@@ -190,3 +190,77 @@ func TestFindByID(t *testing.T) {
 		})
 	}
 }
+
+
+func TestFindByNae(t *testing.T) {
+	//tableTest
+	tests := []struct{
+		testname	string
+		method		string
+		url			string
+		expctError	error
+	}{
+		//testCaseの作成
+		{
+			testname:	"正常系",
+			method:		"GET",
+			url:		"/api/v1/car_owners/",
+			expctError:	nil,
+		},
+		{
+			testname:	"異常系（method不正）",
+			method:		"POST",
+			url:		"/api/v1/car_owners/",
+			expctError:	fmt.Errorf("methodが不正です"),
+		},
+	}
+	//TestCaseをループ処理
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			// モックユースケースの用意
+			mock := &usecase.MockCarOwnerUsecase{
+			FindByNameFunc: func(name string) ([]*model.CarOwner, error) {
+				return nil, tt.expctError
+			},
+			}
+
+			//handlerのインスタンス生成(UsecaseのモックをDI)
+			handler := &CarOwnerHandler{Usecase: mock}
+
+			//httptest.NewRecorder()でレスポンスを記録（テストの時にhttp.ResposseWriterの代わりになるもの）
+			rec := httptest.NewRecorder()
+
+			// http.NewRequest() でリクエスト作成
+			req, err := http.NewRequest(tt.method, tt.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// handler.ServeHTTPで実行
+			handler.ServeHTTP(rec, req)
+			// recorder.Result() でレスポンス検証
+			// 受け取ったrecのBodyを取得
+			resp := rec.Result()
+			defer resp.Body.Close()
+
+			//上記Bodyの中身を取得
+			bodyBytes, err := io.ReadAll(resp.Body)
+			bodyString := string(bodyBytes)
+
+			if tt.expctError != nil {
+				if resp.StatusCode == http.StatusOK {
+					t.Errorf("異常系なのに200番が返っています")
+				}
+				if resp.StatusCode != http.StatusNotFound && !strings.Contains(bodyString, "error") {
+					t.Errorf("エラーメッセージが含まれていません")
+				}
+			} else {
+				if resp.StatusCode != http.StatusOK {
+					t.Errorf("エラーになってしまった: got: %d  want: %d ", resp.StatusCode, http.StatusOK)
+				}
+			}
+		})
+	}
+}
+
+
