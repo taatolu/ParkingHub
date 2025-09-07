@@ -10,6 +10,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.9.0
+	gorm.io/gorm v1.30.3
 )
 
 require (
@@ -18,6 +19,8 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
