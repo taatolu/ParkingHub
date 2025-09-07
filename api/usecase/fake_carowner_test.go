@@ -78,7 +78,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T){
 func TestFindByID_FakeRepo(t *testing.T){
 	tests := []struct {
 		testname string
-		id int
+		id uint
 		wantError bool
 	}{
 		//テストケースの作成
@@ -89,7 +89,7 @@ func TestFindByID_FakeRepo(t *testing.T){
 		},
 		{
 			testname: "異常系",
-			id: -1,
+			id: 0,      //idはuint型なので負の数にはなりえない
 			wantError: true,
 		},
 	}
@@ -100,7 +100,7 @@ func TestFindByID_FakeRepo(t *testing.T){
 			carOwner, err := fakeRepo.FindByID(tt.id)
 			if tt.wantError {
 				//異常系の場合
-				assert.Error(t, err, "IDがマイナスなのでエラーを期待したが、エラーにならない")
+				assert.Error(t, err, "IDが0なのでエラーを期待したが、エラーにならない")
 			} else {
 				assert.NoError(t, err, "エラーが発生してしまった")
 				assert.NotNil(t, carOwner, "carOwnerがnilです")

@@ -133,7 +133,7 @@ func TestFindByID(t *testing.T) {
 
 			//まずはハンドラにDIするためのCarOwnerUsecaseモックのインスタンスを生成
 			mockUsecase := &usecase.MockCarOwnerUsecase{
-				FindByIDFunc: func(id int) (*model.CarOwner, error) {
+				FindByIDFunc: func(id uint) (*model.CarOwner, error) {
 					if id == 1 && !tt.wantError {
 						return &model.CarOwner{
 							ID:        1,
