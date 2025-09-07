@@ -64,6 +64,7 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, "IDの型変換に失敗", http.StatusBadRequest)
 		return
 	}
+	idUint := uint(idInt)
 
 	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
 	if err != nil {
@@ -73,7 +74,7 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 
 	//model構築
 	owner := &model.CarOwner{
-		ID:         idInt,
+		ID:         idUint,
 		FirstName:  param.FirstName,
 		MiddleName: param.MiddleName,
 		LastName:   param.LastName,
@@ -115,8 +116,10 @@ func (h CarOwnerHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	uid := uint(id)
+
 	//Usecaeに渡して検索してもらう
-	owner, err := h.Usecase.FindByID(id)
+	owner, err := h.Usecase.FindByID(uid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

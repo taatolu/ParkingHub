@@ -15,7 +15,7 @@ type CarOwnerUsecase struct {
 // CarOwnerUsecaseのインターフェースを作成(後に作成するHandlerのテストの際にUsecseの際し変えが見込まれるから)
 type CarOwnerUsecaseIF interface {
     RegistCarOwner(owner *model.CarOwner) error
-    FindByID(id int) (*model.CarOwner, error)
+    FindByID(id uint) (*model.CarOwner, error)
 	FindByName(name string) ([]*model.CarOwner, error)
 }
 
@@ -43,7 +43,7 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 
 
 // owner検索（ID）
-func (uc *CarOwnerUsecase) FindByID(id int) (*model.CarOwner, error) {
+func (uc *CarOwnerUsecase) FindByID(id uint) (*model.CarOwner, error) {
     //idのバリデーション
 	//一時的にCarOwnerインスタンスを作成してIsIDPositiveメソッドを実行
 	tempOwner := &model.CarOwner{ID: id}

@@ -51,7 +51,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
     atThisTime := time.Now()
     tests := []struct{
         testname    string
-        inputID     int
+        inputID     uint
         mockRows    *sqlmock.Rows             // モックで返す行データ
         mockError   error                     // モックで返すエラ
         expectError bool
