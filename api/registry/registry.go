@@ -14,7 +14,7 @@ import(
     
 type Registry struct{
     //DBフィールドを作成
-    DB *sql.DB
+    DB *gorm.DB
 }
 
 // --- DBクローズ用の設定 ---

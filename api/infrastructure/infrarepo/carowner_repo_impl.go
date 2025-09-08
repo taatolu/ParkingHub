@@ -1,13 +1,13 @@
 package infrarepo
 
 import (
-	"database/sql"
+	"gorm.io/gorm"
 	"fmt"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 )
 
 type CarOwnerRepositoryImpl struct{
-	DB *sql.DB
+	DB *gorm.DB
 }
 
 //repositoryの具体的な実装部分
