@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"github.com/stretchr/testify/assert"
 	"time"
-
+    "gorm.io/gorm"
 	"gorm.io/driver/sqlite"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 )
@@ -51,91 +51,68 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
     tests := []struct{
         testname    string
         inputID     uint
-        mockRows    *sqlmock.Rows             // モックで返す行データ
-        mockError   error                     // モックで返すエラ
         expectError bool
+        Owners []*model.CarOwner
         expectOwner *model.CarOwner
     }{
         //testケースの作成
         {
             testname:   "正常系:1件ヒット",
             inputID:    1,
-            mockRows:   sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}).
-                AddRow(1, "taro", "山田", "yusuke", atThisTime.AddDate(1, 0, 0)),
             expectError:    false,
-            expectOwner:    &model.CarOwner{
-                ID: 1,
-                FirstName:  "taro",
-        	    MiddleName: "山田",
-        	    LastName:   "yusuke",
-        	    LicenseExpiration: atThisTime.AddDate(1, 0, 0),
+            Owners:    []*model.CarOwner{&model.CarOwner{ID:1,　FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
+                &model.CarOwner{ID:2,　FirstName:"tamaki", MiddleName:"山田", LastName:"yuichi", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
             },
+            expectOwner:    &model.CarOwner{ID:1,　FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
         },
         {
             testname:   "正常系:ヒット無し（IDが存在しない）",
-            inputID:    2,
-            mockRows:   sqlmock.NewRows([]string{"ID", "FirstName", "MiddleName", "LastName", "LicenseExpiration"}),
-            //レコード無し
+            inputID:    3,
             expectError:    false,
-            expectOwner:    nil,
+             Owners:    []*model.CarOwner{&model.CarOwner{ID:1,　FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
+                &model.CarOwner{ID:2,　FirstName:"tamaki", MiddleName:"山田", LastName:"yuichi", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
+            },
+            expectOwner:    nil,    //ヒットしない場合はnilが返る
         },
         {
             testname:   "異常系:エラーが返る",
-            inputID:    3,
-            mockRows:   nil,    // エラーなのでrowsを返さずnilが返る
-            mockError: fmt.Errorf("DB接続失敗"),
+            inputID:    2,
             expectError:    true,
-            expectOwner:    nil,
+            Owners:    nil,
+            expectOwner:   nil,    //ヒットしない場合はnilが返る
         },
     }
     //testケースを実行
     for _, tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
-            db, mock, err := sqlmock.New()
+            //★ テストの前準備
+            /// Test用にSQLiteでインメモリのDB作成
+            db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
         	if err != nil {
-        		t.Fatalf("sqlmock作成に失敗")
+        		t.Fatalf("sqlite初期化に失敗")
         	}
-        	defer db.Close()
         	
-        	//テスト用のモックリポジトリを生成
+        	/// テスト用のモックリポジトリを生成
         	repo := &CarOwnerRepositoryImpl{DB:	db}
+            
+            /// gormで接続したDB(sqliteにデータ投入)
+            /// tt.Ownersが存在する場合のみCreate（存在しない状態でCreateするとエラーとなるため）
+            if tt.Owners != nil { db.Create(tt.Owners) }
         	
-        	//DBアクセスの挙動をテスト用に制御
-        	///FindByID関数が実行すると予想されるSQLクエリ文（正規表現）を設定
-        	query := "SELECT (.+) FROM carowners WHERE id = \\$1"
+        	//★ テスト
+        	///テスト対象メソッドの呼び出し
+        	got, err :=repo.FindByID(tt.inputID)
         	
-        	///モックの挙動を条件分岐
-        	if tt.mockError != nil {
-        	    //クエリの実行結果Errorを返すように作成
-        	    mock.ExpectQuery(query).
-        	        WithArgs(tt.inputID).
-        	        WillReturnError(tt.mockError)
-        	} else {
-        	    //クエリの実行結果Rowを返すように作成
-        	    mock.ExpectQuery(query).
-        	        WithArgs(tt.inputID).
-        	        WillReturnRows(tt.mockRows)
-        	}
-        	
-        	//テスト対象メソッドの呼び出し
-        	gotOwner, err :=repo.FindByID(tt.inputID)
-        	
-        	//errorが発生するかどうかの確認
-        	if tt.expectError{
-        	    assert.Error(t, err, "エラーを期待していたがエラーが返らない")
-        	} else {
-        	    assert.NoError(t, err , "予定外にエラーが発生しました")
-        	}
-        	
-        	// Ownerの取得結果を検証
-            if !reflect.DeepEqual(gotOwner, tt.expectOwner) {
-                t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", gotOwner, tt.expectOwner)
+        	/// エラーの有無を検証
+            if tt.expectError {
+                assert.Error(t, err, "エラーを期待していたが返らなかった")
+            } else {
+                assert.NoError(t, err, "予定外のエラーが発生しました")
             }
 
-            // SQLモックの期待を満たしているか検証
-            ///mock.ExpectQuery()でセットしたものが、テスト実行中に本当に実行されたかをmock.ExpectationsWereMet()で検証
-            if err := mock.ExpectationsWereMet(); err != nil {
-                t.Errorf("SQLモックの期待が満たされていません: %v", err)
+            /// Ownerの取得結果を検証（ポインタ型はreflect.DeepEqualが便利）
+            if !reflect.DeepEqual(got, tt.expectOwner) {
+                t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", got, tt.expectOwner)
             }
         })
     }
