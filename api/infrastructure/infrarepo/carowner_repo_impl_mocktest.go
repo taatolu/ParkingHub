@@ -7,17 +7,19 @@ import (
 	"github.com/stretchr/testify/assert"
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
+	"gorm.io/driver/sqlite"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 )
 
 func TestCarOwnerRepositoryImpl_Save(t *testing.T){
 	//mockDBとコントローラの生成
-	db, mock, err := sqlmock.New()
-	if err != nil{
-		t.Fatalf("sqlmock作成失敗")
-	}
-	defer db.Close()
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+        t.Fatalf("SQLiteメモリDB初期化失敗: %v", err)
+    }
+
+    // gormでテスト用テーブル作成
+    db.AutoMigrate(&model.CarOwner{})
 
 	//テスト用のモックリポジトリを設定
 	repo := &CarOwnerRepositoryImpl{DB: db}
@@ -29,20 +31,17 @@ func TestCarOwnerRepositoryImpl_Save(t *testing.T){
 		LicenseExpiration:	time.Now().AddDate(1, 0, 0),
 	}
 
-	//期待するSQL・引数・返り値の設定
-	mock.ExpectExec("INSERT INTO carowners").
-	WithArgs(owner.ID, owner.FirstName, owner.MiddleName, owner.LastName, owner.LicenseExpiration).
-	WillReturnResult(sqlmock.NewResult(1, 1))
-
 	//テスト対象メソッドの呼び出し
 	err = repo.Save(owner)
 	if err != nil {
 		t.Errorf("保存に失敗: %v", err)
 	}
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("期待したSQLが実行されていません: %v", err)
-	}
+	// DBから取得して検証
+    var got model.CarOwner
+    result := db.First(&got, owner.ID)
+    assert.NoError(t, result.Error, "取得失敗")
+    assert.Equal(t, owner.ID, got.ID, "IDが一致しない")
 }
 
 
