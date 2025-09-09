@@ -2,7 +2,6 @@ package infrarepo
 
 import (
 	"testing"
-	"fmt"
 	"reflect"
 	"github.com/stretchr/testify/assert"
 	"time"
