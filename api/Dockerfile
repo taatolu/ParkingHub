@@ -9,10 +9,6 @@ COPY go.mod go.sum ./
 # 依存関係をダウンロード
 RUN go mod download
 
-# GORMパッケージを明示的にインストール
-RUN go get gorm.io/gorm@latest
-RUN go get gorm.io/driver/postgres@latest
-
 # アプリケーションのソースコードをコピー
 COPY . .
 
@@ -23,4 +19,4 @@ RUN go mod tidy
 RUN go build -o main .
 
 # アプリケーション実行
-CMD ["./main"]
+CMD ["go","run","."]
