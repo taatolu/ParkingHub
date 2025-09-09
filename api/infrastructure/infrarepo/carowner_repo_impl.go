@@ -22,28 +22,28 @@ func (r *CarOwnerRepositoryImpl) Save (carOwner *model.CarOwner) error {
 	return nil
 }
 
-func (r *CarOwnerRepositoryImpl) FindByID (id uint)(*model.CarOwner, error){
-	//DBから取得したownerを格納する場所を作成
-	owner := &model.CarOwner{}
-	
-	cmd := `SELECT ID, FirstName, MiddleName, LastName, LicenseExpiration FROM carowners WHERE id = $1`
-	err := r.DB.QueryRow(cmd, id).Scan(
-	    &owner.ID,
-	    &owner.FirstName,
-	    &owner.MiddleName,
-	    &owner.LastName,
-	    &owner.LicenseExpiration)
-	
-	//sql実行の結果、該当するデータが無ければsql: no rows in result setとエラーが帰ってしまう
-	//本質的にはerrorではないので、model.CarOwner=nil, error=nilとして返したい
-	if err == sql.ErrNoRows {
-	    return nil, nil     //データが存在しない場合はnilを返す
-	}
-	
-	if err != nil{
-	    return nil, fmt.Errorf("CarOwnerの取得失敗: %w", err)
-	}
-	return owner, nil
+// IDでCarOwnerを検索する
+// レコードが見つからない場合は nil, gorm.ErrRecordNotFound を返す
+func (r *CarOwnerRepositoryImpl) FindByID(id uint) (*model.CarOwner, error) {
+    // CarOwnerモデルの値（検索結果を格納する箱）を用意
+    var owner model.CarOwner
+
+    // 指定IDでCarOwnerを1件検索
+    result := r.DB.First(&owner, id)
+
+    // レコードが見つからなかった場合
+    if result.Error == gorm.ErrRecordNotFound {
+        // データがなかった場合は nil, gorm.ErrRecordNotFound を返す
+        return nil, gorm.ErrRecordNotFound
+    }
+
+    // その他のエラー（DB接続失敗など）があれば、そのまま返す
+    if result.Error != nil {
+        return nil, fmt.Errorf("CarOwnerの取得失敗: %w", result.Error)
+    }
+
+    // 正常に取得できた場合は、ownerのポインタとnil（エラーなし）を返す
+    return &owner, nil
 }
 
 
