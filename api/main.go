@@ -24,10 +24,6 @@ func main() {
 	log.Printf("DB_PASSWORD: '%s'", conf.DBPass)
 	log.Printf("================")
 
-	//DBbのマイグレーション
-	if err := migrate.RunMigration(*conf); err != nil {
-		log.Fatal("マイグレーション失敗:", err)
-	}
 
 	reg := registry.NewRegistry()
 	defer reg.Close() //アプリ終了時に安全にDBクローズするためにregistry.goに作成したもの
