@@ -3,17 +3,24 @@ FROM golang:1.23
 # 作業ディレクトリを設定
 WORKDIR /go/src/app
 
-# カレントディレクトリの内容をコンテナにコピー
-COPY . .
+# go.modとgo.sumを最初にコピー（キャッシュ効率化）
+COPY go.mod go.sum ./
 
-# 必要なGoモジュールをインストール
-RUN go mod tidy
+# 依存関係をダウンロード
 RUN go mod download
 
-# GORMをインストール
-RUN go get gorm.io/gorm@latest && \
-    go get gorm.io/driver/postgres@latest
+# GORMパッケージを明示的にインストール
+RUN go get gorm.io/gorm@latest
+RUN go get gorm.io/driver/postgres@latest
 
-# 本番用なら go build でバイナリを作成しCMDで実行
-# 開発運用の場合は go run でOK
-CMD ["go", "run", "main.go"]
+# アプリケーションのソースコードをコピー
+COPY . .
+
+# 依存関係を再整理
+RUN go mod tidy
+
+# ビルドして動作確認
+RUN go build -o main .
+
+# アプリケーション実行
+CMD ["./main"]

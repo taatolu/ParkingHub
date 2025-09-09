@@ -1,8 +1,8 @@
 package registry
 
 import(
-    "database/sql"
     "fmt"
+    "gorm.io/gorm"
     "github.com/taatolu/ParkingHub/api/config"
     "github.com/taatolu/ParkingHub/api/infrastructure/postgres"
     _ "github.com/taatolu/ParkingHub/api/domain/service"

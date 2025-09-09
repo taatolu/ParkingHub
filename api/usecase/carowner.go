@@ -5,6 +5,7 @@ import (
 	"github.com/taatolu/ParkingHub/api/domain/model"
 	"github.com/taatolu/ParkingHub/api/domain/repository"
 	"github.com/taatolu/ParkingHub/api/domain/service"
+	"gorm.io/gorm"
 )
 
 // ユースケース構造体の作成
@@ -52,7 +53,7 @@ func (uc *CarOwnerUsecase) FindByID(id uint) (*model.CarOwner, error) {
 	}
     // Owner検索
     owner, err := uc.CarOwnerRepo.FindByID(id)
-    if errors.Is(err, gorm.ErrRecordNotFound) {
+    if err==gorm.ErrRecordNotFound {
         // レコードが無い場合は分かりやすい日本語エラー
         return nil, fmt.Errorf("ID=%v に対応するオーナーは存在しません", id)
     }
