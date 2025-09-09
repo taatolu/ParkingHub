@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/taatolu/ParkingHub/api/config"
-	"github.com/taatolu/ParkingHub/api/infrastructure/migrate"
 	presentation "github.com/taatolu/ParkingHub/api/presentation/http"
 	"github.com/taatolu/ParkingHub/api/registry"
 	"log"
