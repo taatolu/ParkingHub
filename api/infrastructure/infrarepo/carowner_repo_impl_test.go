@@ -91,6 +91,9 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
         		t.Fatalf("sqlite初期化に失敗")
         	}
         	
+        	// gormでテスト用テーブル作成
+            db.AutoMigrate(&model.CarOwner{})
+        	
         	/// テスト用のモックリポジトリを生成
         	repo := &CarOwnerRepositoryImpl{DB:	db}
             
@@ -174,6 +177,9 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
         	if err != nil {
         		t.Fatalf("sqlite初期化に失敗")
         	}
+        	
+        	// gormでテスト用テーブル作成
+            db.AutoMigrate(&model.CarOwner{})
         	
         	/// テスト用のモックリポジトリを生成
         	repo := &CarOwnerRepositoryImpl{DB:	db}
