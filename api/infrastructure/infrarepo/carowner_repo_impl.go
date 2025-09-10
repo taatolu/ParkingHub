@@ -2,6 +2,7 @@ package infrarepo
 
 import (
 	"gorm.io/gorm"
+	"errors"
 	"fmt"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 )
@@ -32,7 +33,7 @@ func (r *CarOwnerRepositoryImpl) FindByID(id uint) (*model.CarOwner, error) {
     result := r.DB.First(&owner, id)
 
     // レコードが見つからなかった場合
-    if result.Error == gorm.ErrRecordNotFound {
+    if errors.Is(result.Error, gorm.ErrRecordNotFound) {
         // データがなかった場合は nil, gorm.ErrRecordNotFound を返す
         return nil, gorm.ErrRecordNotFound
     }

@@ -59,7 +59,8 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
             testname:   "正常系:1件ヒット",
             inputID:    1,
             expectError:    false,
-            Owners:         []*model.CarOwner{&model.CarOwner{ID:1, FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
+            Owners:         []*model.CarOwner{
+                &model.CarOwner{ID:1, FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
                 &model.CarOwner{ID:2, FirstName:"tamaki", MiddleName:"山田", LastName:"yuichi", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
             },
             expectOwner:    &model.CarOwner{ID:1, FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
@@ -67,8 +68,8 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
         {
             testname:   "正常系:ヒット無し（IDが存在しない）",
             inputID:    3,
-            expectError:    false,
-             Owners:    []*model.CarOwner{&model.CarOwner{ID:1, FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
+            expectError:    true,       //RecordNotFoundのエラーが返る使用だから
+            Owners:    []*model.CarOwner{&model.CarOwner{ID:1, FirstName:"taro", MiddleName:"山田", LastName:"yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
                 &model.CarOwner{ID:2, FirstName:"tamaki", MiddleName:"山田", LastName:"yuichi", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
             },
             expectOwner:    nil,    //ヒットしない場合はnilが返る
@@ -99,7 +100,11 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
             
             /// gormで接続したDB(sqliteにデータ投入)
             /// tt.Ownersが存在する場合のみCreate（存在しない状態でCreateするとエラーとなるため）
-            if tt.Owners != nil { db.Create(tt.Owners) }
+            if tt.Owners != nil {
+                for _, o := range tt.Owners {
+                    db.Create(o) // 1件ずつ登録
+                }
+            }
         	
         	//★ テスト
         	///テスト対象メソッドの呼び出し
@@ -111,10 +116,18 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
             } else {
                 assert.NoError(t, err, "予定外のエラーが発生しました")
             }
-
-            /// Ownerの取得結果を検証（ポインタ型はreflect.DeepEqualが便利）
-            if !reflect.DeepEqual(got, tt.expectOwner) {
-                t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", got, tt.expectOwner)
+            
+            //gotがnilでなかったら
+            if got != nil {
+                // DB登録後の値で期待値をセット
+                // gormが自動でCreatedAt等の値を作成するため、実際にDBから取得した値で期待値をセットする
+                tt.expectOwner.CreatedAt = got.CreatedAt
+                tt.expectOwner.UpdatedAt = got.UpdatedAt
+                
+                /// Ownerの取得結果を検証（ポインタ型はreflect.DeepEqualが便利）
+                if !reflect.DeepEqual(got, tt.expectOwner) {
+                    t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", got, tt.expectOwner)
+                }
             }
         })
     }
@@ -162,6 +175,7 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
         {
             testname:   "異常系（ownersリストがnil）",
             owners:     nil,    //DBが存在しない
+            //このowners=nil つまりDBが存在しない場合は、本番実装のr.DB.Where～を通ってもerrには何も返らず、&ownersに空スライスが返る
             findName:   "井",
             expectOwners:   []*model.CarOwner{},
             expectError:    true,
@@ -178,8 +192,8 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
         		t.Fatalf("sqlite初期化に失敗")
         	}
         	
-        	// gormでテスト用テーブル作成
-            db.AutoMigrate(&model.CarOwner{})
+        	// tt.Ownersが存在する場合のみgormでテスト用テーブル作成
+            if tt.owners != nil {db.AutoMigrate(&model.CarOwner{})}
         	
         	/// テスト用のモックリポジトリを生成
         	repo := &CarOwnerRepositoryImpl{DB:	db}
@@ -196,12 +210,20 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
                 assert.NoError(t, err)
             }
             
-            //Ownerの取得結果を検証
-            if !reflect.DeepEqual(got, tt.expectOwners){
-                t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", got, tt.expectOwners)
+            // 期待値リストと実際の取得結果リストを比較する例
+            for i, gotOwner := range got {
+                // 期待値リスト expectOwners の i 番目を取得
+                expectOwner := tt.expectOwners[i]
+            
+                // フィールドを比較
+                // ここでは比較例
+                if gotOwner.ID != expectOwner.ID {
+                    t.Errorf("取得したOwnerのIDが一致しません: got=%v, expect=%v", gotOwner.ID, expectOwner.ID)
+                }
             }
+            
+            // 最後にdb削除（他のテストに影響しないように）
+            err = db.Migrator().DropTable("car_owners")
         })
     }
 }
-
-
