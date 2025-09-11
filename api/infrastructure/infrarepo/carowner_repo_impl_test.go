@@ -84,6 +84,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
     }
     //testケースを実行
     for _, tt := range tests {
+        tt := tt // クロージャキャプチャ対策として、ループ変数を関数スコープにコピー
         t.Run(tt.testname, func(t *testing.T){
             //★ テストの前準備
             /// Test用にSQLiteでインメモリのDB作成
@@ -184,6 +185,7 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
     }
     //testCaseをループ処理
     for _, tt := range tests {
+        tt := tt // クロージャキャプチャ対策として、ループ変数を関数スコープにコピー
         t.Run(tt.testname, func(t *testing.T){
             //★ テストの前準備
             /// Test用にSQLiteでインメモリのDB作成
