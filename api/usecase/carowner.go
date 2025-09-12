@@ -5,6 +5,7 @@ import (
 	"github.com/taatolu/ParkingHub/api/domain/model"
 	"github.com/taatolu/ParkingHub/api/domain/repository"
 	"github.com/taatolu/ParkingHub/api/domain/service"
+	"gorm.io/gorm"
 )
 
 // ユースケース構造体の作成
@@ -50,19 +51,17 @@ func (uc *CarOwnerUsecase) FindByID(id uint) (*model.CarOwner, error) {
     if !tempOwner.IsIDPositive() {
 		return nil, fmt.Errorf("IDが不正です(負の数): %v", id)
 	}
-    //idのOwner存在するか
+    // Owner検索
     owner, err := uc.CarOwnerRepo.FindByID(id)
-    
-    if err != nil{
-        //errorの場合
+    if err==gorm.ErrRecordNotFound {
+        // レコードが無い場合は分かりやすい日本語エラー
+        return nil, fmt.Errorf("ID=%v に対応するオーナーは存在しません", id)
+    }
+    if err != nil {
+        // その他のエラーはそのまま返却
         return nil, err
     }
-    
-    if owner == nil {
-        //ownerのデータが存在しない場合
-        return nil, fmt.Errorf("IDに対応するownerが存在しません: ID=%v", id)
-    }
-    
+    // 正常取得
     return owner, nil
 }
 

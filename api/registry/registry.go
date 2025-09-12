@@ -1,8 +1,8 @@
 package registry
 
 import(
-    "database/sql"
     "fmt"
+    "gorm.io/gorm"
     "github.com/taatolu/ParkingHub/api/config"
     "github.com/taatolu/ParkingHub/api/infrastructure/postgres"
     _ "github.com/taatolu/ParkingHub/api/domain/service"
@@ -13,17 +13,19 @@ import(
     )
     
 type Registry struct{
-    //DBフィールドを作成
-    DB *sql.DB
+    //dbフィールドを作成
+    db *gorm.DB
 }
 
 // --- DBクローズ用の設定 ---
 func (r *Registry) Close() error {
     //アプリケーション終了時にDBを安全にクローズするためのメソッド
-    if r.DB != nil {
-        return r.DB.Close()
+    //sql.DB インスタンスを取得してからClose
+    sqlDB, err := r.db.DB()
+    if err != nil{
+        return err
     }
-    return nil
+    return sqlDB.Close()
 }
 
 //Registryのファクトリ関数
@@ -40,13 +42,13 @@ func NewRegistry() *Registry {
         panic(fmt.Errorf("DBの初期化失敗; %w", err))
     }
     //DBを依存注入したRegistryを返却
-    return &Registry{DB: db}
+    return &Registry{db: db}
 }
 
 //// --- リポジトリインターフェースと実装（implementation）をつなぐ ---
 func (r *Registry) NewCarOwnerRepository() repository.CarOwnerRepository {
     //CarOwnerRepositoryImplはDBフィールドを持つので、RegistryにDIしたpostgrtesをさらにDI
-    return &infrarepo.CarOwnerRepositoryImpl{DB: r.DB}
+    return &infrarepo.CarOwnerRepositoryImpl{DB: r.db}
     //*返り値がインターフェースの場合、そのインターフェースを満たす値型でもポインタ型でもどちらでも返せます。（repository.CarOwnerRepositoryはインターフェース型）
 }
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/taatolu/ParkingHub/api/config"
-	"github.com/taatolu/ParkingHub/api/infrastructure/migrate"
 	presentation "github.com/taatolu/ParkingHub/api/presentation/http"
 	"github.com/taatolu/ParkingHub/api/registry"
 	"log"
@@ -24,10 +23,6 @@ func main() {
 	log.Printf("DB_PASSWORD: '%s'", conf.DBPass)
 	log.Printf("================")
 
-	//DBbのマイグレーション
-	if err := migrate.RunMigration(*conf); err != nil {
-		log.Fatal("マイグレーション失敗:", err)
-	}
 
 	reg := registry.NewRegistry()
 	defer reg.Close() //アプリ終了時に安全にDBクローズするためにregistry.goに作成したもの

@@ -41,7 +41,7 @@ func TestIsLicenseExpired(t *testing.T) {
 func TestIsIDPositive(t *testing.T) {
     tests := []struct {
         testname    string
-        id          int
+        id          uint
         wantBool    bool
     }{
         //testケースの作成
@@ -53,11 +53,6 @@ func TestIsIDPositive(t *testing.T) {
         {
             testname:   "異常系（値が0）",
             id:         0,
-            wantBool:   false,
-        },
-        {
-            testname:   "異常系（値が負の数）",
-            id:         -1,
             wantBool:   false,
         },
     }

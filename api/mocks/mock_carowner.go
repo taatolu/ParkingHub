@@ -22,7 +22,7 @@ func (m *MockCarOwnerRepo) Save(carOwner *model.CarOwner) error {
 }
 
 // FindByID
-func (m *MockCarOwnerRepo) FindByID(id int) (*model.CarOwner, error) {
+func (m *MockCarOwnerRepo) FindByID(id uint) (*model.CarOwner, error) {
 	return m.FoundOwner, nil
 }
 
