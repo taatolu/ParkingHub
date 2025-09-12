@@ -2,13 +2,25 @@ package infrarepo
 
 import (
 	"testing"
-	"reflect"
 	"github.com/stretchr/testify/assert"
 	"time"
     "gorm.io/gorm"
 	"gorm.io/driver/sqlite"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 )
+
+// CarOwner構造体の比較関数
+func ownerEqual(a, b *model.CarOwner) bool {
+    if a == nil || b == nil {
+        return a == b
+    }
+    return a.ID == b.ID &&
+        a.FirstName == b.FirstName &&
+        a.MiddleName == b.MiddleName &&
+        a.LastName == b.LastName &&
+        a.LicenseExpiration.Equal(b.LicenseExpiration) // time.TimeはEqualで！
+        // 他フィールドも必要なら追加
+}
 
 func TestCarOwnerRepositoryImpl_Save(t *testing.T){
 	//mockDBとコントローラの生成
@@ -125,11 +137,11 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
                 tt.expectOwner.CreatedAt = got.CreatedAt
                 tt.expectOwner.UpdatedAt = got.UpdatedAt
                 
-                /// Ownerの取得結果を検証（ポインタ型はreflect.DeepEqualが便利）
-                if !reflect.DeepEqual(got, tt.expectOwner) {
-                    t.Errorf("取得結果が期待と異なります。got: %+v, want: %+v", got, tt.expectOwner)
+                /// Ownerの取得結果を検証
+                if !ownerEqual(got, tt.expectOwner) {
+                        t.Errorf("取得結果が期待と異なります。\ngot: %+v\nwant: %+v", got, tt.expectOwner)
+                    }
                 }
-            }
         })
     }
 }
