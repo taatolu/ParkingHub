@@ -130,3 +130,34 @@ func TestFindByName_Error_MockRepo(t *testing.T){
 	assert.Error(t, err)
 	assert.Nil(t, gotOwners)
 }
+
+
+// Updateのテスト(引数が適切に渡っているか)
+func TestUpdate_MockRepo(t *testing.T) {
+	//mockRepositoryの初期化
+	mock := &mocks.MockCarOwnerRepo {}
+
+	//UpdateメソッドにセットするOwnerを作成
+	owner := &model.CarOwner{
+		ID:	1,
+		FirstName:	"やまだ",
+		MiddleName:	"sample",
+		LastName:	"太郎",
+		LicenseExpiration:	time.Now().AddDate(1, 0, 0),
+	}
+
+	//MockRepositoryのUpdateメソッドを呼ぶ(引数にownerを渡す)
+	err := mock.Update(owner)
+	assert.NoError(t, err)
+	assert.Equal(t, owner.ID, mock.UpdateOwner.ID)
+}
+
+// Updateのテスト(期待通りにエラーを返すか)
+func TestUpdate_Error_MockRepo(t *testing.T) {
+	//mockRepositoryの初期化
+	mock := &mocks.MockCarOwnerRepo {}
+
+	//MockRepositoryのUpdateメソッドを呼ぶ(引数にnil→エラーが発生)
+	err := mock.Update(nil)
+	assert.Error(t, err)
+}
