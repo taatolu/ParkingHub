@@ -80,4 +80,49 @@ func (uc *CarOwnerUsecase)FindByName(name string)([]*model.CarOwner, error){
 }
 
 
+//ownerのUpdate
+func (uc *CarOwnerUsecase) Update (carOwner *model.CarOwner)error {
+	//引数が渡されていない場合
+	if carOwner == nil {
+		return fmt.Errorf("carOwnerが引数で渡されていません")
+	}
+
+	//引数で渡されたCarOwnerのIDが整数か検証
+	if !carOwner.IsIDPositive() {
+		return fmt.Errorf("引数で渡されたCarOwnerのIDが負の数です")
+	}
+
+	//値が更新されていない場合
+	existingOwner, err := uc.FindByID(carOwner.ID)
+	if err != nil {
+		return fmt.Errorf("現在のOwnerの取得に失敗: %w", err)
+	}
+	if existingOwner.ID == carOwner.ID &&
+	existingOwner.FirstName == carOwner.FirstName &&
+	existingOwner.MiddleName == carOwner.MiddleName &&
+	existingOwner.LastName == carOwner.LastName &&
+	existingOwner.LicenseExpiration == carOwner.LicenseExpiration {
+		return fmt.Errorf("現在のCarOwnerと変更したい値に差がありません")
+	}
+
+	//免許証の期限更新をしようとする時に期限切れがないか確認
+	//元々登録されていた免許期限が切れていて、今回の更新が免許更新でない場合はエラーを吐かない
+	if existingOwner.LicenseExpiration != carOwner.LicenseExpiration {
+		//元々登録されていた免許期限 != 新規に登録使用する免許期限(免許期限を更新しようとする時)
+		if carOwner.IsLicenseExpired() {
+			//新規に登録しようとする免許期限日が、すでに免許切れの場合
+			return fmt.Errorf("更新しようとする免許期限の日付が免許切れです: %v", carOwner.LicenseExpiration)
+		}
+	}
+
+	//domainRepositoryを使って更新
+	// エラーが返る場合:
+	// - DB接続エラー
+	// - 指定したIDのCarOwnerが存在しない場合
+	// - 更新処理中に予期せぬ例外が発生した場合
+	return uc.CarOwnerRepo.Update(carOwner)
+}
+
+
+
 
