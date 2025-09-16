@@ -301,15 +301,27 @@ func TestCarOwnerRepositoryImpl_Update (t *testing.T) {
             } else {
                 assert.NoError(t, updateErr)
             }
+            
             //保存したデータがUpsertされているか確認
             ///更新後のデータを取得
             got, findErr := repo.FindByID(tt.updateOwner.ID)
-            if findErr != nil {
-                t.Errorf("更新後のデータ取得で失敗")
-            }
-            //変更後用として渡したデータが変更後に取得したデータと一致するか確認
-            if !ownerEqual(got, tt.updateOwner) {
-                t.Errorf("取得結果が期待と異なります。\ngot: %+v\nwant: %+v", got, tt.updateOwner)
+            
+            if tt.wantError {
+                //wantErrorがtrueのとき
+                assert.Error(t,findErr)
+            } else {
+                //wantErrorがfalseのとき
+                assert.NoError(t, findErr)
+                
+                //変更後用として渡したデータが変更後に取得したデータと一致するか確認
+                ///gormが自動でセットする項目は引き渡し
+                tt.updateOwner.CreatedAt = got.CreatedAt
+                tt.updateOwner.UpdatedAt = got.UpdatedAt
+                
+                ///確認用の関数で確認
+                if !ownerEqual(got, tt.updateOwner) {
+                    t.Errorf("取得結果が期待と異なります。\ngot: %+v\nwant: %+v", got, tt.updateOwner)
+                }
             }
         })
     }
