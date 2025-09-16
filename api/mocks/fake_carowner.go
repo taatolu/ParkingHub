@@ -9,6 +9,7 @@ import(
 type FakeCarOwnerRepo struct{
 	SavedOwner	*model.CarOwner
 	AllOwners	[]*model.CarOwner
+	WantError	bool	
 }
 
 func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
@@ -48,3 +49,18 @@ func (f *FakeCarOwnerRepo) FindByName(name string)([]*model.CarOwner, error) {
 	}
 	return foundOwners, nil
 }
+
+//Update
+//Usecaseテストで呼ばれたときにRepositoryImplがあたかもDBをUpdateしたかのようにふるまう
+func (f *FakeCarOwnerRepo) Update (carOwner *model.CarOwner) error {
+    if f.SavedOwner == nil {
+        return fmt.Errorf("データが存在しません")
+    }
+
+	if f.WantError {
+		return fmt.Errorf("データの取得でErrorが発生")
+	}
+    return nil
+}
+
+

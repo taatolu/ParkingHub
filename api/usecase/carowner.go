@@ -92,6 +92,12 @@ func (uc *CarOwnerUsecase) Update (carOwner *model.CarOwner)error {
 		return fmt.Errorf("引数で渡されたCarOwnerのIDが負の数です")
 	}
 
+	//更新しようとするOwnerのname項目に不足がないか
+	if !service.CarOwnerNameValidation(carOwner){
+		//CarOwnerNameValidationがFalseだったら
+		return fmt.Errorf("少なくとも２つ以上のフィールドに名前を入力ください")
+	}
+
 	//値が更新されていない場合
 	existingOwner, err := uc.FindByID(carOwner.ID)
 	if err != nil {
