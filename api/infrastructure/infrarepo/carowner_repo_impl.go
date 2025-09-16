@@ -67,3 +67,40 @@ func (r *CarOwnerRepositoryImpl) FindByName (name string) ([]*model.CarOwner, er
     return owners, nil
 }
 
+
+// CarOwnerを更新する
+// 存在しないレコード（ID）を更新しようとするときは Error を返す
+func (r *CarOwnerRepositoryImpl) Update (owner *model.CarOwner) error {
+    //対象の社員がいるか確認（社員IDが一致するデータを検索）
+    var count int64
+    countResult := r.DB.Model(&model.CarOwner{}).Where("id = ?", owner.ID).Count(&count)
+    if countResult.Error != nil {
+        return fmt.Errorf("Update対象のOwnerを検索する過程でError発生: %w", countResult.Error)
+    }
+    //countの結果が0=>Ownerが存在しない場合
+    if count == 0 {
+        return fmt.Errorf("UpdateしたいOwner(ID=%v)は存在しません", owner.ID)
+    }
+    
+    //Updateする(ID以外の項目について)
+    result := r.DB.Model(&model.CarOwner{}).Where("id = ?", owner.ID).Updates(map[string]interface{}{
+        "FirstName": owner.FirstName,
+        "MiddleName": owner.MiddleName,
+        "LastName": owner.LastName,
+        "LicenseExpiration": owner.LicenseExpiration,
+    })
+    
+    if result.Error != nil {
+        return fmt.Errorf("更新失敗: %w", result.Error)
+    }
+    
+    // 更新された行数が0の場合（条件には合致したが実際には更新されなかった場合）
+    if result.RowsAffected == 0 {
+        return fmt.Errorf("レコードは見つかりましたが、更新されませんでした")
+    }
+    
+    return nil
+}
+
+
+
