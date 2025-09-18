@@ -49,6 +49,7 @@ func TestRegistCarOwner(t *testing.T) {
 	}
 	//テストケースをループで回す
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.testname, func(t *testing.T) {
 			//CarOwnerUsecaseモックのインスタンス化
 			mockUsecase := &usecase.MockCarOwnerUsecase{
@@ -129,6 +130,7 @@ func TestFindByID(t *testing.T) {
 	}
 	//testをループ処理する
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.testname, func(t *testing.T) {
 
 			//まずはハンドラにDIするためのCarOwnerUsecaseモックのインスタンスを生成
@@ -223,6 +225,7 @@ func TestFindByName(t *testing.T) {
 	}
 	//TestCaseをループ処理
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.testname, func(t *testing.T) {
 			// モックユースケースの用意
 			mock := &usecase.MockCarOwnerUsecase{
@@ -270,6 +273,101 @@ func TestFindByName(t *testing.T) {
 			} else {
 				if resp.StatusCode != http.StatusOK {
 					t.Errorf("エラーになってしまった: got: %d  want: %d ", resp.StatusCode, http.StatusOK)
+				}
+			}
+		})
+	}
+}
+
+// Updateのテスト(Usecaseのモックを使うのでMockテストといいます)
+func TestUpdate_mock(t *testing.T) {
+	//tableTest
+	tests := []struct {
+		testname   string
+		method     string
+		url        string
+		body       io.Reader
+		wantError bool
+	}{
+		//テストケースの作成
+		{
+			testname: "正常系",
+			method:   "PUT",
+			url:      "/api/v1/car_owners/1",
+			body: bytes.NewBufferString(`{"first_name":"test", "middle_name":"山田", "last_name":"太郎", "license_expiration":"2030-12-31"}`),
+			wantError: false,
+		},
+		{
+			testname:  "異常系（method不正）",
+			method:    "GET",
+			url:       "/api/v1/car_owners/1",
+			body:      bytes.NewBufferString(`{"first_name":"test"}`),
+			wantError: true,
+		},
+		{
+			testname:  "異常系（body不正）",
+			method:    "PUT",
+			url:       "/api/v1/car_owners/1",
+			// 不正なJSON
+			body:      bytes.NewBufferString(`{"first_name":`),
+			wantError: true,
+		},
+	}
+	//テストケースをループで回す
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.testname, func(t *testing.T) {
+			//CarOwnerUsecaseモックのインスタンス化
+			mockUsecase := &usecase.MockCarOwnerUsecase{
+				UpdateFunc: func(owner *model.CarOwner) error {
+					return nil
+				},
+			}
+			
+			//ハンドラーのインスタンス生成
+			handler := &CarOwnerHandler{Usecase: mockUsecase}
+		
+			// httptest.NewRecorder() でレスポンス記録
+			rec := httptest.NewRecorder()
+
+			// http.NewRequest()でリクエストの作成
+			req, err := http.NewRequest(tt.method, tt.url, tt.body)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req.Header.Set("Content-Type", "application/json")
+
+			// handler.ServeHTTPで実行
+			handler.ServeHTTP(rec, req)
+
+			// recorder.Result()でレスポンス情報を検証
+			resp := rec.Result()
+			defer resp.Body.Close()
+
+			// respで受けとたったBodyの値を取得
+			bodyBytes, err := io.ReadAll(resp.Body)
+			if err != nil {
+				t.Fatal(err)
+			}
+			bodyString := string(bodyBytes)
+
+			if tt.wantError {
+				//wantErrorがtrue = 異常系だったら
+				if resp.StatusCode == http.StatusOK {
+					t.Errorf("異常系であるべきなのに200が返っています")
+				}
+				// Bodyに”error”が含まれているか、かつステータスコードが404でないことを確認
+				if !strings.Contains(bodyString, "error") && resp.StatusCode != http.StatusNotFound {
+					t.Errorf("エラーメッセージが含まれていません: %v", bodyString)
+				}
+			} else {
+				//wantErrorがfalse = 正常系だったら
+				if resp.StatusCode != http.StatusOK {
+					t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusOK)
+				}
+				// Bodyに"error"が含まれていないことを確認
+				if strings.Contains(bodyString, "error") {
+					t.Errorf("正常系なのにエラーメッセージが含まれています: %v", bodyString)
 				}
 			}
 		})
