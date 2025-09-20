@@ -186,7 +186,7 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 	}
 
 	//Pathからパラメーターを取得
-	idStr := strings.TrimPrefix(path, "/api/v1/car-owners/")
+	idStr := strings.TrimPrefix(path, "/api/v1/car_owners/")
 	//パラメーターが存在しない場合
 	if idStr == "" {
 		http.Error(w, "error: パラメータが存在しません", http.StatusBadRequest)
@@ -196,7 +196,7 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 	//パスパラメーターを数値に変換
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "パスパラメーターが数値ではありません", http.StatusBadRequest)
+		http.Error(w, "error:パスパラメーターが数値ではありません", http.StatusBadRequest)
 		return
 	}
 	uid := uint(id)		//uint型に変換
@@ -214,7 +214,7 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 	//requestBodyの内容をparamにパースする
 	err = json.NewDecoder(r.Body).Decode(&param)
 	if err != nil {
-		http.Error(w, "Bodyの内容が不正です", http.StatusBadRequest)
+		http.Error(w, "error:Bodyの内容が不正です", http.StatusBadRequest)
 		return
 	}
 
@@ -222,7 +222,7 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 	//その前に、日付を扱うフィールド値を調整
 	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
 	if err != nil {
-		http.Error(w, "Bodyから取得したLicenseExpirationを日付型に変更できない", http.StatusBadRequest)
+		http.Error(w, "error:Bodyから取得したLicenseExpirationを日付型に変更できない", http.StatusBadRequest)
 		return
 	}
 
