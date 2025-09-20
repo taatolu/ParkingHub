@@ -238,7 +238,7 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 	//UsecaseのUpdateメソッドを読んで更新
 	err = h.Usecase.Update(owner)
 	if err != nil {
-		http.Error(w, "err.Error()", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
