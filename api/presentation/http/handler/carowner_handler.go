@@ -166,5 +166,77 @@ func (h *CarOwnerHandler) FindByName (w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Updateメソッドは、車の所有者の情報を更新するためのHTTPメソッドPUTリクエストを処理します。
+func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
+	//URLPathの検証
+	path := r.URL.Path
+	//HasPrefixの第2引数の値がpathの先頭にあるかどうかをチェック
+	if !strings.HasPrefix(path, "/api/v1/car-owners/") {
+		http.Error(w, "error:Pathが不正です", http.StatusBadRequest)
+		return
+	}
+
+	//Pathからパラメーターを取得
+	idStr := strings.TrimPrefix(path, "/api/v1/car-owners/")
+	//パラメーターが存在しない場合
+	if idStr == "" {
+		http.Error(w, "error: パラメータが存在しません", http.StatusBadRequest)
+		return
+	}
+
+	//パスパラメーターを数値に変換
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "パスパラメーターが数値ではありません", http.StatusBadRequest)
+		return
+	}
+	uid := uint(id)		//uint型に変換
+
+	//RequestBodyの内容を取得(UsecaseのUpdateメソッドに渡す引数の準備)
+	//取得したBodyの内容を保存するための構造体を作成(Bodyの内容はstringで取得される)
+	var param struct {
+		//IDについてはパスパラメータの値を使用するのでBodyの値を取得しない
+		FirstName	string `json:"first_name"`
+		MiddleName	string `json:"middle_name"`
+		LastName	string `json:"last_name"`
+		LicenseExpiration	string `json:"license_expiration"`
+	}
+
+	//requestBodyの内容をparamにパースする
+	err = json.NewDecoder(r.Body).Decode(&param)
+	if err != nil {
+		http.Error(w, "Bodyの内容が不正です", http.StatusBadRequest)
+		return
+	}
+
+	//Updateメソッドに渡せるようにするために*modei.CarOwnerの値を作成
+	//その前に、日付を扱うフィールド値を調整
+	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
+	if err != nil {
+		http.Error(w, "Bodyから取得したLicenseExpirationを日付型に変更できない", http.StatusBadRequest)
+		return
+	}
+
+	//modelの作成
+	owner := &model.CarOwner{
+		ID:					uid,
+		FirstName:			param.FirstName,
+		MiddleName:			param.MiddleName,
+		LastName:			param.LastName,
+		LicenseExpiration:	expiry,
+	}
+
+	//UsecaseのUpdateメソッドを読んで更新
+	err = h.Usecase.Update(owner)
+	if err != nil {
+		http.Error(w, "err.Error()", http.StatusBadRequest)
+		return
+	}
+
+	//Updateが成功したら
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(owner)
+}
+
 
 
