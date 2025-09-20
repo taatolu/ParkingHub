@@ -18,6 +18,7 @@ type CarOwnerUsecaseIF interface {
     RegistCarOwner(owner *model.CarOwner) error
     FindByID(id uint) (*model.CarOwner, error)
 	FindByName(name string) ([]*model.CarOwner, error)
+	Update(owner *model.CarOwner) error
 }
 
 // owner登録処理
