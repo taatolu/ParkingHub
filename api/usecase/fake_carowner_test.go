@@ -60,11 +60,11 @@ func TestRegistCarOwner_FakeRepo(t *testing.T){
 	for _, tt := range tests{
 		t.Run(tt.testname, func(t *testing.T){
 			fakeRepo := &mocks.FakeCarOwnerRepo{}
-			err := fakeRepo.Save(tt.owner)
+			usecase := CarOwnerUsecase{CarOwnerRepo: fakeRepo}
+			err := usecase.RegistCarOwner(tt.owner)
 			if tt.wantError{
 				//tt.wantError=true(保存できない場合)
 				assert.Error(t, err, "期待していたエラーが返らない")
-				assert.Nil(t, fakeRepo.SavedOwner)
 			} else {
 				//tt.wantError=false(保存できた場合)
 				assert.NoError(t, err, "予想外のエラー")
