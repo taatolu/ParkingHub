@@ -12,6 +12,7 @@ type MockCarOwnerRepo struct {
 	SaveErr    error
 	FoundOwner *model.CarOwner
     FoundOwners []*model.CarOwner
+	UpdateOwner *model.CarOwner
 }
 
 // リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
@@ -32,4 +33,14 @@ func (m *MockCarOwnerRepo) FindByName(name string) ([]*model.CarOwner, error) {
         return nil, fmt.Errorf("検索値にヒットするOwnrは存在しません")
     }
     return m.FoundOwners, nil
+}
+
+
+// Update
+func (m *MockCarOwnerRepo) Update (carOwner *model.CarOwner) error {
+	m.UpdateOwner = carOwner
+	if m.UpdateOwner == nil {
+		return fmt.Errorf("更新したい値をセットしてください")
+	}
+	return nil
 }

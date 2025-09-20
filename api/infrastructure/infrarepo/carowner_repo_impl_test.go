@@ -18,7 +18,9 @@ func ownerEqual(a, b *model.CarOwner) bool {
         a.FirstName == b.FirstName &&
         a.MiddleName == b.MiddleName &&
         a.LastName == b.LastName &&
-        a.LicenseExpiration.Equal(b.LicenseExpiration) // time.TimeはEqualで！
+        a.LicenseExpiration.Equal(b.LicenseExpiration) &&
+        a.CreatedAt.Equal(b.CreatedAt) &&
+        a.UpdatedAt.Equal(b.UpdatedAt)
         // 他フィールドも必要なら追加
 }
 
@@ -241,3 +243,87 @@ func TestCarOwnerRepositoryImpl_FindByName (t *testing.T) {
         })
     }
 }
+
+
+// TestCarOwnerRepositoryImpl_Update は CarOwnerRepositoryImpl の Update メソッドが
+// 正しく既存のオーナー情報を更新できるか、また存在しないオーナーを更新しようとした場合に
+// エラーが返るかを検証するテストです。
+func TestCarOwnerRepositoryImpl_Update (t *testing.T) {
+    //tableTestの作成
+    tests := []struct {
+        testname        string
+        existingOwner   *model.CarOwner     //DBに初期に設置されるOwner
+        updateOwner     *model.CarOwner     //変更される値
+        wantError       bool
+    }{
+        //testCaseの作成
+        {
+            testname:       "正常系",
+            existingOwner:  &model.CarOwner{ID:1, FirstName:"yamada", MiddleName:"takayuki", LastName:"junior"},
+            updateOwner:    &model.CarOwner{ID:1, FirstName:"yamada", MiddleName:"takayuki", LastName:"senior"},
+            wantError:      false,
+        },
+        {
+            testname:       "異常系（存在しないOwner(ID:2)を更新しようとする）",
+            existingOwner:  &model.CarOwner{ID:1, FirstName:"yamada", MiddleName:"takayuki", LastName:"junior"},
+            updateOwner:    &model.CarOwner{ID:2, FirstName:"yamada", MiddleName:"takayuki", LastName:"senior"},
+            wantError:      true,
+        },
+    }
+    //testCaseをループ処理
+    for _, tt := range tests {
+        tt := tt    // クロージャキャプチャ対策として、ループ変数を関数スコープにコピー
+        t.Run(tt.testname, func(t *testing.T){
+            //testの前準備（DB準備）sqliteのDBをインメモリで作成
+            db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+            if err != nil{
+                t.Fatalf("sqliteの初期化に失敗")
+            }
+            
+            //gormでテスト用テーブル作成
+            if err := db.AutoMigrate(&model.CarOwner{}); err != nil{
+                t.Fatalf("テスト用のテーブルの作成失敗")
+            }
+
+            //上記テーブルにデータ投入
+            if err := db.Create(tt.existingOwner).Error; err != nil {
+                t.Fatalf("テスト用データの初期設定に失敗")
+            }
+
+            //本番で作成したリポジトリの実装（RepositoryImpl）にインメモリのDB(sqlite)をセット
+            repo := &CarOwnerRepositoryImpl{DB: db}
+
+            //テスト対象メソッドの実行
+            updateErr := repo.Update(tt.updateOwner)
+            //実行結果のエラー判定
+            if tt.wantError {
+                assert.Error(t, updateErr)
+            } else {
+                assert.NoError(t, updateErr)
+            }
+            
+            //保存したデータがUpsertされているか確認
+            ///更新後のデータを取得
+            got, findErr := repo.FindByID(tt.updateOwner.ID)
+            
+            if tt.wantError {
+                //wantErrorがtrueのとき
+                assert.Error(t,findErr)
+            } else {
+                //wantErrorがfalseのとき
+                assert.NoError(t, findErr)
+                
+                //変更後用として渡したデータが変更後に取得したデータと一致するか確認
+                ///gormが自動でセットする項目は引き渡し
+                tt.updateOwner.CreatedAt = got.CreatedAt
+                tt.updateOwner.UpdatedAt = got.UpdatedAt
+                
+                ///確認用の関数で確認
+                if !ownerEqual(got, tt.updateOwner) {
+                    t.Errorf("取得結果が期待と異なります。\ngot: %+v\nwant: %+v", got, tt.updateOwner)
+                }
+            }
+        })
+    }
+}
+
