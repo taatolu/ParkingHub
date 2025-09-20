@@ -32,6 +32,8 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			//取得したパラメーターが数値の場合
 			h.FindByID(w, r)
 		}
+	case strings.HasPrefix(r.URL.Path, "/api/v1/car_owners/") && r.Method == http.MethodPut:
+		h.Update(w, r)
 
 	default:
 		w.Header().Set("Content-Type", "application/json")
@@ -178,7 +180,7 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 	//URLPathの検証
 	path := r.URL.Path
 	//HasPrefixの第2引数の値がpathの先頭にあるかどうかをチェック
-	if !strings.HasPrefix(path, "/api/v1/car-owners/") {
+	if !strings.HasPrefix(path, "/api/v1/car_owners/") {
 		http.Error(w, "error:Pathが不正です", http.StatusBadRequest)
 		return
 	}
