@@ -55,5 +55,5 @@ func (f *FakeCarOwnerUsecase) FindByName (name string) ([]*model.CarOwner, error
 
 func (f *FakeCarOwnerUsecase) Update (owner *model.CarOwner) error {
     //とり急ぎUsecase層の作成時にエラーが出ないよう、errorを返させる
-    return fmt.Errorf("FakeCarOwnerUsecase.FindByIDは未実装(handlerのテストを書くときに実装します)")
+    return fmt.Errorf("FakeCarOwnerUsecase.Updateは未実装(handlerのテストを書くときに実装します)")
 }
