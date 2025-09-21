@@ -37,6 +37,7 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.23'
+          cache-dependency-path: api/go.sum  # go.sumファイルの正確なパスを指定
 
       # Debug stepとCache stepを分離する
       - name: Debug api directory
