@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/taatolu/ParkingHub/api/domain/model"
 	"github.com/taatolu/ParkingHub/api/mocks"
@@ -13,42 +12,71 @@ import (
 
 // Saveの確認
 func TestSaveCarOwner_MockRepo(t *testing.T) {
-	//mockリポジトリのインスタンス（正確には構造体のポインタ）を生成
-	mockRepo := &mocks.MockCarOwnerRepo{}
-
-	//テスト用のCarOwnerを作成
-	owner := &model.CarOwner{
-		ID:                1,
-		FirstName:         "test",
-		MiddleName:        "山田",
-		LastName:          "太郎",
-		LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
-	}
-
-	//mockリポジトリのSaveメソッドを呼ぶ
-	err := mockRepo.Save(owner)
-	if err != nil {
-		//モックのインスタンスにSaveErr: errors.New("保存エラー")と化していないのでnilが返るはず
-		t.Fatalf("予期しないエラー: %v", err)
-	}
-	//mock.Save(owner)の引数ownerがSavedOwnerに保存されたか確認
-	assert.Equal(t, owner, mockRepo.SavedOwner, "SavedOwnerが正しくセットされていません")
-
+    tests := []struct{
+        testname    string
+        owner       *model.CarOwner
+        wantError   bool
+    }{
+        //testcase
+        {
+            testname:   "正常系",
+            owner:  &model.CarOwner{
+                ID:                1,
+        		FirstName:         "test",
+        		MiddleName:        "山田",
+        		LastName:          "太郎",
+        		LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+            },
+            wantError:  false,
+        },
+        {
+            testname:   "異常系（名前不正）",
+            owner:  &model.CarOwner{
+                ID:                1,
+        		FirstName:         "",
+        		MiddleName:        "",
+        		LastName:          "太郎",
+        		LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+            },
+            wantError:  true,
+        },
+		{
+            testname:   "異常系（日付不正）",
+            owner:  &model.CarOwner{
+                ID:                1,
+        		FirstName:         "test",
+        		MiddleName:        "山田",
+        		LastName:          "太郎",
+        		LicenseExpiration: time.Now().AddDate(-1, 0, 0),
+            },
+            wantError:  true,
+        },
+    }
+    //testcaseをループ処理
+    for _, tt := range tests {
+        t.Run(tt.testname, func(t *testing.T){
+            //リポジトリのmockをインスタンス化
+	        mockRepo := &mocks.MockCarOwnerRepo{}
+	        
+	        //usecaseにモックのCarOwnerRepoをDI
+        	usecase := CarOwnerUsecase{CarOwnerRepo:mockRepo}
+        	
+        	//CarOwnerUsecaseのRegistCarOwnerメソッドを呼ぶ
+	        err := usecase.RegistCarOwner(tt.owner)
+	        
+	        //usecase実施後のエラーについて検証
+	        if tt.wantError {
+	            assert.Error(t, err, "なぜかエラーが発生しない")
+	        } else {
+	            assert.NoError(t, err, "予期せぬエラーが発生")
+	        }
+	       
+        	//usecase.RegistCarOwner(owner)の引数ownerがSavedOwnerに保存されたか確認
+        	assert.Equal(t, tt.owner, mocks.MockCarOwnerRepo.SavedOwner, "SavedOwnerが正しくセットされていません")
+        })
+    }
 }
 
-func TestSaveCarOwner_Error_MockRepo(t *testing.T) {
-	mockRepo := &mocks.MockCarOwnerRepo{
-		SaveErr: errors.New("save失敗"),
-	}
-
-	owner := &model.CarOwner{
-		ID: 2,
-	}
-
-	err := mockRepo.Save(owner)
-	assert.Error(t, err)
-	assert.Equal(t, mockRepo.SaveErr, err)
-}
 
 // FindByIDのテスト
 func TestFindByID_MockRepo(t *testing.T) {
