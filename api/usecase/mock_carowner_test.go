@@ -10,90 +10,89 @@ import (
 
 // CarOwner構造体の比較関数
 func ownerEqual(a, b *model.CarOwner) bool {
-    if a == nil || b == nil {
-        return a == b
-    }
-    return a.ID == b.ID &&
-        a.FirstName == b.FirstName &&
-        a.MiddleName == b.MiddleName &&
-        a.LastName == b.LastName &&
-        a.LicenseExpiration.Equal(b.LicenseExpiration) &&
-        a.CreatedAt.Equal(b.CreatedAt) &&
-        a.UpdatedAt.Equal(b.UpdatedAt)
-        // 他フィールドも必要なら追加
+	if a == nil || b == nil {
+		return a == b
+	}
+	return a.ID == b.ID &&
+		a.FirstName == b.FirstName &&
+		a.MiddleName == b.MiddleName &&
+		a.LastName == b.LastName &&
+		a.LicenseExpiration.Equal(b.LicenseExpiration) &&
+		a.CreatedAt.Equal(b.CreatedAt) &&
+		a.UpdatedAt.Equal(b.UpdatedAt)
+	// 他フィールドも必要なら追加
 }
 
 // /usecaseのMockテスト
 
 // Saveの確認
 func TestSaveCarOwner_MockRepo(t *testing.T) {
-    tests := []struct{
-        testname    string
-        owner       *model.CarOwner
-        wantError   bool
-    }{
-        //testcase
-        {
-            testname:   "正常系",
-            owner:  &model.CarOwner{
-                ID:                1,
-        		FirstName:         "test",
-        		MiddleName:        "山田",
-        		LastName:          "太郎",
-        		LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
-            },
-            wantError:  false,
-        },
-        {
-            testname:   "異常系（名前不正）",
-            owner:  &model.CarOwner{
-                ID:                1,
-        		FirstName:         "",
-        		MiddleName:        "",
-        		LastName:          "太郎",
-        		LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
-            },
-            wantError:  true,
-        },
+	tests := []struct {
+		testname  string
+		owner     *model.CarOwner
+		wantError bool
+	}{
+		//testcase
 		{
-            testname:   "異常系（日付不正）",
-            owner:  &model.CarOwner{
-                ID:                1,
-        		FirstName:         "test",
-        		MiddleName:        "山田",
-        		LastName:          "太郎",
-        		LicenseExpiration: time.Now().AddDate(-1, 0, 0),
-            },
-            wantError:  true,
-        },
-    }
-    //testcaseをループ処理
-    for _, tt := range tests {
-        t.Run(tt.testname, func(t *testing.T){
-            //リポジトリのmockをインスタンス化
-	        mockRepo := &mocks.MockCarOwnerRepo{}
-	        
-	        //usecaseにモックのCarOwnerRepoをDI
-        	usecase := CarOwnerUsecase{CarOwnerRepo:mockRepo}
-        	
-        	//CarOwnerUsecaseのRegistCarOwnerメソッドを呼ぶ
-	        err := usecase.RegistCarOwner(tt.owner)
-	        
-	        //usecase実施後のエラーについて検証
-	        if tt.wantError {
-	            assert.Error(t, err, "なぜかエラーが発生しない")
-	        } else {
-	            assert.NoError(t, err, "予期せぬエラーが発生")
+			testname: "正常系",
+			owner: &model.CarOwner{
+				ID:                1,
+				FirstName:         "test",
+				MiddleName:        "山田",
+				LastName:          "太郎",
+				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+			},
+			wantError: false,
+		},
+		{
+			testname: "異常系（名前不正）",
+			owner: &model.CarOwner{
+				ID:                1,
+				FirstName:         "",
+				MiddleName:        "",
+				LastName:          "太郎",
+				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+			},
+			wantError: true,
+		},
+		{
+			testname: "異常系（日付不正）",
+			owner: &model.CarOwner{
+				ID:                1,
+				FirstName:         "test",
+				MiddleName:        "山田",
+				LastName:          "太郎",
+				LicenseExpiration: time.Now().AddDate(-1, 0, 0),
+			},
+			wantError: true,
+		},
+	}
+	//testcaseをループ処理
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T) {
+			//リポジトリのmockをインスタンス化
+			mockRepo := &mocks.MockCarOwnerRepo{}
+
+			//usecaseにモックのCarOwnerRepoをDI
+			usecase := CarOwnerUsecase{CarOwnerRepo: mockRepo}
+
+			//CarOwnerUsecaseのRegistCarOwnerメソッドを呼ぶ
+			err := usecase.RegistCarOwner(tt.owner)
+
+			//usecase実施後のエラーについて検証
+			if tt.wantError {
+				assert.Error(t, err, "なぜかエラーが発生しない")
+			} else {
+				assert.NoError(t, err, "予期せぬエラーが発生")
 
 				//usecase.RegistCarOwner(owner)の引数ownerがSavedOwnerに保存されたか確認
 				if !ownerEqual(tt.owner, mockRepo.SavedOwner) {
 					t.Errorf("登録したOwnerと保存されたOwnerが一致しない")
 				}
-	        }
+			}
 		})
-    }
+	}
 }
-
 
 // FindByIDのテスト
 func TestFindByID_MockRepo(t *testing.T) {
@@ -126,7 +125,7 @@ func TestFindByID_MockRepo(t *testing.T) {
 // FindByNameのテスト(ownerのリストを返すか？)
 func TestFindByName_MockRepo(t *testing.T) {
 	//tableTest
-	tests := []struct{
+	tests := []struct {
 		testname    string
 		foundOwners []*model.CarOwner
 		wantName    string
@@ -142,14 +141,14 @@ func TestFindByName_MockRepo(t *testing.T) {
 			wantName: "田",
 		},
 		{
-			testname: "異常系",
+			testname:    "異常系",
 			foundOwners: nil,
-			wantName: "",	//検索したいnameを入力していない
+			wantName:    "", //検索したいnameを入力していない
 		},
 	}
 	//testCaseをループ処理
 	for _, tt := range tests {
-		t.Run(tt.testname, func(t *testing.T){
+		t.Run(tt.testname, func(t *testing.T) {
 			mock := &mocks.MockCarOwnerRepo{
 				FoundOwners: tt.foundOwners,
 			}
@@ -167,7 +166,7 @@ func TestFindByName_MockRepo(t *testing.T) {
 }
 
 // FindByNameシグネチャのテスト(Errorを返すか？)
-func TestFindByName_Error_MockRepo(t *testing.T){
+func TestFindByName_Error_MockRepo(t *testing.T) {
 	//モックリポジトリをインスタンス化するときに、ownerのリストを渡さない(FoundOwners=nilとする)
 	mock := &mocks.MockCarOwnerRepo{}
 	//モックテストの本番
@@ -176,19 +175,18 @@ func TestFindByName_Error_MockRepo(t *testing.T){
 	assert.Nil(t, gotOwners)
 }
 
-
 // Updateのテスト(引数が適切に渡っているか)
 func TestUpdate_MockRepo(t *testing.T) {
 	//mockRepositoryの初期化
-	mock := &mocks.MockCarOwnerRepo {}
+	mock := &mocks.MockCarOwnerRepo{}
 
 	//UpdateメソッドにセットするOwnerを作成
 	owner := &model.CarOwner{
-		ID:	1,
-		FirstName:	"やまだ",
-		MiddleName:	"sample",
-		LastName:	"太郎",
-		LicenseExpiration:	time.Now().AddDate(1, 0, 0),
+		ID:                1,
+		FirstName:         "やまだ",
+		MiddleName:        "sample",
+		LastName:          "太郎",
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
 	}
 
 	//MockRepositoryのUpdateメソッドを呼ぶ(引数にownerを渡す)
@@ -200,7 +198,7 @@ func TestUpdate_MockRepo(t *testing.T) {
 // Updateのテスト(期待通りにエラーを返すか)
 func TestUpdate_Error_MockRepo(t *testing.T) {
 	//mockRepositoryの初期化
-	mock := &mocks.MockCarOwnerRepo {}
+	mock := &mocks.MockCarOwnerRepo{}
 
 	//MockRepositoryのUpdateメソッドを呼ぶ(引数にnil→エラーが発生)
 	err := mock.Update(nil)
