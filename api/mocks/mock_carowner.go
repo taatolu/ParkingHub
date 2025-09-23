@@ -47,3 +47,14 @@ func (m *MockCarOwnerRepo) Update (carOwner *model.CarOwner) error {
 	}
 	return nil
 }
+
+//Delete
+func (m *MockCarOwnerRepo) Delete(id int) error {
+	//usecase層でIDが整数であるようにバリデーションしているので、repository層ではIDが0でないことを確認するだけで良い
+	//本番のrepository層でも同様の判定を何処かに入れた方が良いかも
+	if id == 0 {
+		return fmt.Errorf("削除したいIDをセットしてください")
+	}
+
+	return nil
+}

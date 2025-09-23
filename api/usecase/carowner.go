@@ -127,3 +127,13 @@ func (uc *CarOwnerUsecase) Update(carOwner *model.CarOwner) error {
 	// - 更新処理中に予期せぬ例外が発生した場合
 	return uc.CarOwnerRepo.Update(carOwner)
 }
+
+// Delete(Owner削除)
+func (uc *CarOwnerUsecase) Delete(id int) error {
+	//引数のバリデーション
+	if id <= 0 {
+		return fmt.Errorf("削除したい値は０より大きい整数をセットしてください")
+	}
+	//repository層のDeleteメソッドを呼ぶ
+	return uc.CarOwnerRepo.Delete(id)
+}
