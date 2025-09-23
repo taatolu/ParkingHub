@@ -13,6 +13,7 @@ type MockCarOwnerRepo struct {
 	FoundOwner *model.CarOwner
     FoundOwners []*model.CarOwner
 	UpdateOwner *model.CarOwner
+	DeleteID    int
 }
 
 // リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
@@ -56,5 +57,6 @@ func (m *MockCarOwnerRepo) Delete(id int) error {
 		return fmt.Errorf("削除したいIDをセットしてください")
 	}
 
+	m.DeleteID = id
 	return nil
 }

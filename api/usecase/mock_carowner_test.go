@@ -241,6 +241,7 @@ func TestDelete_MockRepo(t *testing.T) {
 				assert.Error(t, err, "なぜかエラーが発生しない")
 			} else {
 				assert.NoError(t, err, "予期せぬエラーが発生")
+				assert.Equal(t, tt.id, mock.DeleteID, "Deleteメソッドに渡したIDがセットされていない")
 			}
 		})
 	}
