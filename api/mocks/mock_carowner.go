@@ -18,8 +18,11 @@ type MockCarOwnerRepo struct {
 // リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
 // saveメソッド
 func (m *MockCarOwnerRepo) Save(carOwner *model.CarOwner) error {
-	m.SavedOwner = carOwner
-	return m.SaveErr
+	if carOwner != nil {
+		m.SavedOwner = carOwner
+		return nil
+	}
+	return fmt.Errorf("保存失敗")
 }
 
 // FindByID
