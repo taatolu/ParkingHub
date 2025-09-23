@@ -8,6 +8,21 @@ import (
 	"time"
 )
 
+// CarOwner構造体の比較関数
+func ownerEqual(a, b *model.CarOwner) bool {
+    if a == nil || b == nil {
+        return a == b
+    }
+    return a.ID == b.ID &&
+        a.FirstName == b.FirstName &&
+        a.MiddleName == b.MiddleName &&
+        a.LastName == b.LastName &&
+        a.LicenseExpiration.Equal(b.LicenseExpiration) &&
+        a.CreatedAt.Equal(b.CreatedAt) &&
+        a.UpdatedAt.Equal(b.UpdatedAt)
+        // 他フィールドも必要なら追加
+}
+
 // /usecaseのMockテスト
 
 // Saveの確認
@@ -69,11 +84,13 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 	            assert.Error(t, err, "なぜかエラーが発生しない")
 	        } else {
 	            assert.NoError(t, err, "予期せぬエラーが発生")
+
+				//usecase.RegistCarOwner(owner)の引数ownerがSavedOwnerに保存されたか確認
+				if !ownerEqual(tt.owner, mockRepo.SavedOwner) {
+					t.Errorf("登録したOwnerと保存されたOwnerが一致しない")
+				}
 	        }
-	       
-        	//usecase.RegistCarOwner(owner)の引数ownerがSavedOwnerに保存されたか確認
-        	assert.Equal(t, tt.owner, mocks.MockCarOwnerRepo.SavedOwner, "SavedOwnerが正しくセットされていません")
-        })
+		})
     }
 }
 
