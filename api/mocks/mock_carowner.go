@@ -13,7 +13,7 @@ type MockCarOwnerRepo struct {
 	FoundOwner *model.CarOwner
     FoundOwners []*model.CarOwner
 	UpdateOwner *model.CarOwner
-	DeleteID    int
+	DeleteID    uint
 }
 
 // リポジトリインターフェースのメソッドシグネチャを満たすモックのメソッドを作成
@@ -50,7 +50,7 @@ func (m *MockCarOwnerRepo) Update (carOwner *model.CarOwner) error {
 }
 
 //Delete
-func (m *MockCarOwnerRepo) Delete(id int) error {
+func (m *MockCarOwnerRepo) Delete(id uint) error {
 	//usecase層でIDが整数であるようにバリデーションしているので、repository層ではIDが0でないことを確認するだけで良い
 	//本番のrepository層でも同様の判定を何処かに入れた方が良いかも
 	if id == 0 {

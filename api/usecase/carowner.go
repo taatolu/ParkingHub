@@ -129,7 +129,7 @@ func (uc *CarOwnerUsecase) Update(carOwner *model.CarOwner) error {
 }
 
 // Delete(Owner削除)
-func (uc *CarOwnerUsecase) Delete(id int) error {
+func (uc *CarOwnerUsecase) Delete(id uint) error {
 	//引数のバリデーション
 	if id <= 0 {
 		return fmt.Errorf("削除したい値は０より大きい整数をセットしてください")

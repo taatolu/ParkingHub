@@ -102,5 +102,35 @@ func (r *CarOwnerRepositoryImpl) Update (owner *model.CarOwner) error {
     return nil
 }
 
+// CarOwnerを削除する
+// 存在しないレコード（ID）を削除しようとするときは Error を返す
+func (r *CarOwnerRepositoryImpl) Delete(id uint) error {
+    //引数idで渡ってくる値はuint型に変換usecase層で検証済み
+    //対象のOwnerが存在するか確認
+    var count int64 //int64型でないとgormのCountメソッドが受け付けない
+    //carownerテーブルの中で、idが引数で渡されたidと一致するレコードの数を数える
+    countResult := r.DB.Model(&model.CarOwner{}).Where("id = ?", id).Count(&count)
 
+    //Countメソッドの実行中にエラーが発生した場合
+    if countResult.Error != nil {
+        return fmt.Errorf("Delete対象のOwnerを検索する過程でError発生: %w", countResult.Error)
+    }
 
+    //countの結果が0=>Ownerが存在しない場合
+    if count == 0{
+        return fmt.Errorf("DeleteしたいOwnerが存在しません: ID=%v", id)
+    }
+
+    //Ownerが存在する場合、削除を実行
+    resurt := r.DB.Delete(&model.CarOwner{}, id)
+    if resurt.Error != nil {
+        return fmt.Errorf("Ownerの削除に失敗: %w", resurt.Error)
+    }
+
+    //削除された行数が0の場合（条件には合致したが実際には削除されなかった場合）
+    if resurt.RowsAffected == 0 {
+        return fmt.Errorf("レコードは見つかりましたが、削除されませんでした")
+    }
+
+    return nil
+}
