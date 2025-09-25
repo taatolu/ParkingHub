@@ -44,17 +44,6 @@ jobs:
         run: cd api && ls -la
         shell: bash
 
-      - name: Cache Go modules
-        uses: actions/cache@v3
-        continue-on-error: true  # キャッシュエラーを無視
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
       - name: Install dependencies
         run: go mod tidy
         working-directory: api

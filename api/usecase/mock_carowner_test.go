@@ -211,8 +211,8 @@ func TestDelete_MockRepo(t *testing.T) {
 	//テーブルテスト
 	tests := []struct {
 		testname  string
-		id	int
-		wantError	bool
+		id        uint
+		wantError bool
 	}{
 		//テストケース
 		{
@@ -232,9 +232,9 @@ func TestDelete_MockRepo(t *testing.T) {
 			//mockRepositoryの初期化
 			mock := &mocks.MockCarOwnerRepo{}
 
-			//usecase層のDeleteCarOwnerメソッドを呼ぶ
+			//usecase層のDeleteメソッドを呼ぶ
 			usecase := CarOwnerUsecase{CarOwnerRepo: mock}
-			err := usecase.DeleteCarOwner(tt.id)
+			err := usecase.Delete(tt.id)
 
 			//errorの確認
 			if tt.wantError {
