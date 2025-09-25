@@ -204,3 +204,45 @@ func TestUpdate_Error_MockRepo(t *testing.T) {
 	err := mock.Update(nil)
 	assert.Error(t, err)
 }
+
+
+// Deleteのテスト(期待通りにエラーを返すか)
+func TestDelete_MockRepo(t *testing.T) {
+	//テーブルテスト
+	tests := []struct {
+		testname  string
+		id        uint
+		wantError bool
+	}{
+		//テストケース
+		{
+			testname: "正常系",
+			id: 1,
+			wantError: false,
+		},
+		{
+			testname: "異常系（ID未指定）",
+			id: 0,
+			wantError: true,
+		},
+	}
+	//testcaseをループ処理
+	for _, tt := range tests {
+		t.Run(tt.testname, func(t *testing.T){
+			//mockRepositoryの初期化
+			mock := &mocks.MockCarOwnerRepo{}
+
+			//usecase層のDeleteメソッドを呼ぶ
+			usecase := CarOwnerUsecase{CarOwnerRepo: mock}
+			err := usecase.Delete(tt.id)
+
+			//errorの確認
+			if tt.wantError {
+				assert.Error(t, err, "なぜかエラーが発生しない")
+			} else {
+				assert.NoError(t, err, "予期せぬエラーが発生")
+				assert.Equal(t, tt.id, mock.DeleteID, "Deleteメソッドに渡したIDがセットされていない")
+			}
+		})
+	}
+}
