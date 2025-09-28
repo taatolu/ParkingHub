@@ -13,6 +13,7 @@ type MockCarOwnerUsecase struct {
     FindByIDFunc func(id uint)(*model.CarOwner, error)
     FindByNameFunc func(name string)([]*model.CarOwner, error)
     UpdateFunc func(owner *model.CarOwner) error
+    DeleteFunc func(id uint) error
 }
 
 func (m *MockCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error{
@@ -43,6 +44,14 @@ func (m *MockCarOwnerUsecase)FindByName(name string) ([]*model.CarOwner, error) 
 func (m *MockCarOwnerUsecase)Update(owner *model.CarOwner) error {
     if m.UpdateFunc != nil{
         return m.UpdateFunc(owner)
+    }
+    return fmt.Errorf("エラー発生")
+}
+
+//Updateのモック実装
+func (m *MockCarOwnerUsecase)Delete(id uint) error {
+    if m.DeleteFunc != nil{
+        return m.DeleteFunc(id)
     }
     return fmt.Errorf("エラー発生")
 }
