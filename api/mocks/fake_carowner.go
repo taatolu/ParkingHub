@@ -53,3 +53,7 @@ func (f *FakeCarOwnerRepo) Update (carOwner *model.CarOwner) error {
 }
 
 
+func (f *FakeCarOwnerRepo) Delete(id uint) error {
+	//取り急ぎ、実装しない（未実装であることがわかるようにエラーを返す）
+	return fmt.Errorf("Deleteメソッドは未実装です")
+}

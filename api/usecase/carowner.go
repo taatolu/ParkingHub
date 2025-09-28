@@ -19,6 +19,7 @@ type CarOwnerUsecaseIF interface {
 	FindByID(id uint) (*model.CarOwner, error)
 	FindByName(name string) ([]*model.CarOwner, error)
 	Update(owner *model.CarOwner) error
+	Delete(id uint) error
 }
 
 // owner登録処理
@@ -126,4 +127,14 @@ func (uc *CarOwnerUsecase) Update(carOwner *model.CarOwner) error {
 	// - 指定したIDのCarOwnerが存在しない場合
 	// - 更新処理中に予期せぬ例外が発生した場合
 	return uc.CarOwnerRepo.Update(carOwner)
+}
+
+// Delete(Owner削除)
+func (uc *CarOwnerUsecase) Delete(id uint) error {
+	//引数のバリデーション
+	if id <= 0 {
+		return fmt.Errorf("削除したい値は０より大きい整数をセットしてください")
+	}
+	//repository層のDeleteメソッドを呼ぶ
+	return uc.CarOwnerRepo.Delete(id)
 }

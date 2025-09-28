@@ -327,3 +327,92 @@ func TestCarOwnerRepositoryImpl_Update (t *testing.T) {
     }
 }
 
+// TestCarOwnerRepositoryImpl_Delete は CarOwnerRepositoryImpl の Delete メソッドが
+// 正しく既存のオーナー情報を削除できるか、また存在しないオーナーを削除しようとした場合に
+// エラーが返るかを検証するテストです。
+func TestCarOwnerRepositoryImpl_Delete (t *testing.T) {
+    //tableTestの作成
+    tests := [] struct {
+        testname        string
+        existingOwners []*model.CarOwner   //DBに初期に設置されるOwnerリスト
+        afterDeleteOwners []*model.CarOwner  //削除後にDBに存在するOwnerリスト
+        deleteID       uint                //削除されるID
+        wantError      bool
+    }{
+        //testCaseの作成
+        {
+            testname:       "正常系",
+            existingOwners: []*model.CarOwner{
+                {ID:1, FirstName:"yamada", MiddleName:"takayuki", LastName:"junior"},
+                {ID:2, FirstName:"tanaka", MiddleName:"yuuki", LastName:"senior"},
+            },
+            afterDeleteOwners: []*model.CarOwner{
+                {ID:2, FirstName:"tanaka", MiddleName:"yuuki", LastName:"senior"},
+            },
+            deleteID:       1,
+            wantError:      false,
+        },
+        {
+            testname:       "異常系（存在しないOwner(ID:3)を削除しようとする）",
+            existingOwners: []*model.CarOwner{
+                {ID:1, FirstName:"yamada", MiddleName:"takayuki", LastName:"junior"},
+                {ID:2, FirstName:"tanaka", MiddleName:"yuuki", LastName:"senior"},
+            },
+            afterDeleteOwners: []*model.CarOwner{
+                {ID:1, FirstName:"yamada", MiddleName:"takayuki", LastName:"junior"},
+                {ID:2, FirstName:"tanaka", MiddleName:"yuuki", LastName:"senior"},
+            },
+            deleteID:       3,
+            wantError:      true,
+        },
+    }
+    //testCaseをループ処理
+    for _, tt := range tests {
+        tt := tt    // クロージャキャプチャ対策として、ループ変数を関数スコープにコピー
+        t.Run(tt.testname, func(t *testing.T){
+            //testの前準備（DB準備）sqliteのDBをインメモリで作成
+            db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+            if err != nil {
+                t.Fatalf("sqliteの初期化に失敗")
+            }
+
+            //gormでテスト用テーブル作成
+            if err := db.AutoMigrate(&model.CarOwner{}); err != nil {
+                t.Fatalf("テスト用のテーブルの作成失敗")
+            }
+            //上記テーブルにデータ投入
+            for _, owner := range tt.existingOwners {
+                if err := db.Create(owner).Error; err != nil {
+                    t.Fatalf("テスト用データの初期設定に失敗")
+                }
+            }
+
+            //本番のリポジトリの実装（RepositoryImpl）にインメモリのDB(sqlite)をセット
+            repo := &CarOwnerRepositoryImpl{DB: db}
+
+            //テスト対象メソッドの実行
+            deleteError := repo.Delete(tt.deleteID)
+            //実行結果のエラー判定
+            if tt.wantError {
+                assert.Error(t, deleteError, "エラーを期待していたが返らなかった")
+            } else {
+                assert.NoError(t, deleteError, "予定外のエラーが発生しました")
+                //削除後のデータが期待通りか確認
+                for _, expectedOwner := range tt.afterDeleteOwners {
+                    var actualOwner model.CarOwner
+                    err = db.First(&actualOwner, expectedOwner.ID).Error
+                    //データが存在しているか
+                    assert.NoError(t, err, "削除後に存在すべきオーナーが見つかりません:%v", expectedOwner)
+                    // データ内容が一致しているか
+                    assert.Equal(t, expectedOwner.FirstName, actualOwner.FirstName, "FirstNameが一致しません")
+                    assert.Equal(t, expectedOwner.MiddleName, actualOwner.MiddleName, "MiddleNameが一致しません")
+                    assert.Equal(t, expectedOwner.LastName, actualOwner.LastName, "LastNameが一致しません")
+                }
+                // DB内のオーナー数が期待通りか確認
+                var ownersCount int64
+                db.Model(&model.CarOwner{}).Count(&ownersCount)
+                assert.Equal(t, int64(len(tt.afterDeleteOwners)), ownersCount, "DB内のオーナー数が想定と異なります")
+            }
+        })
+    }
+}
