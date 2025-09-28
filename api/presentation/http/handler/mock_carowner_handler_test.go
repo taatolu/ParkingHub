@@ -373,3 +373,87 @@ func TestUpdate_mock(t *testing.T) {
 		})
 	}
 }
+
+// Deleteのテスト(Usecaseのモックを使う)
+func TestDelete_mock(t *testing.T) {
+	//テーブルテスト
+	tests := []struct {
+		testname  string
+		method    string
+		url       string
+		wantError bool
+	}{
+		//テストケースの作成
+		{
+			testname:	"正常系",
+			method:		"DELETE",
+			url:		"/api/v1/car_owners/1",
+			wantError:	false,
+		},
+		{
+			testname:	"異常系(method不正)",
+			method:		"GET",
+			url:		"/api/v1/car_owners/1",
+			wantError:	true,
+		},
+		{
+			testname:	"異常系(パスパラメータ無し)",
+			method:		"DELETE",
+			url:		"/api/v1/car_owners/",
+			wantError:	true,
+		},
+	}
+	//テストケースをループで回す
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.testname, func(t *testing.T) {
+			//CarOwnerUsecaseモックのインスタンス化
+			//tt.wantErrorがtrueのときはエラーを返すようにする
+			mockUsecase := &usecase.MockCarOwnerUsecase{
+				DeleteFunc: func(id uint) error {
+					if tt.wantError {
+						return fmt.Errorf("インフラ層の実装をしたときにデータが返ってこなかった体（テイ）")
+					}
+					return nil
+				},
+			}
+			//test対象のhandlerのインスタンス生成
+			handler := &CarOwnerHandler{Usecase: mockUsecase}
+			//httptest.NewRecorder()でレスポンスを記録(テスト時にhttp.ResponseWriterの代わりで動くもの)
+			rec := httptest.NewRecorder()
+
+			//http.NewRequest()でリクエスト作成
+			req, err := http.NewRequest(tt.method, tt.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			//handler.ServeHTTPで実行
+			handler.ServeHTTP(rec, req)
+
+			//recorder.Result()でレスポンス検証
+			resp := rec.Result()
+			defer resp.Body.Close()
+
+			//respからBodyの値を取得
+			bodyBytes, _ := io.ReadAll(resp.Body)
+			bodyString := string(bodyBytes)
+
+			if tt.wantError {
+				//wantErrorがtrue = 異常系だったら
+				if resp.StatusCode == http.StatusNoContent {
+					t.Errorf("異常系なのに204が返っています")
+				}
+				if resp.StatusCode != http.StatusNotFound && !strings.Contains(bodyString, "error") {
+					t.Errorf("エラーメッセージが含まれていません: %s", bodyString)
+				}
+			} else {
+				//wantErrorがfalse = 正常系だったら
+				if resp.StatusCode != http.StatusNoContent {
+					t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusNoContent)
+				}
+			}
+		})
+
+	}
+}
