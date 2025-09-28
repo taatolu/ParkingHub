@@ -48,7 +48,7 @@ func (m *MockCarOwnerUsecase)Update(owner *model.CarOwner) error {
     return fmt.Errorf("エラー発生")
 }
 
-//Updateのモック実装
+//Deleteのモック実装
 func (m *MockCarOwnerUsecase)Delete(id uint) error {
     if m.DeleteFunc != nil{
         return m.DeleteFunc(id)

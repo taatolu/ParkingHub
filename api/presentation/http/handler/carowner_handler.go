@@ -253,26 +253,30 @@ func (h *CarOwnerHandler) Delete (w http.ResponseWriter, r *http.Request) {
 	//メソッドの判定
 	if r.Method != http.MethodDelete {
 		http.Error(w, `{"error":"リクエストメソッドが不正です"}`, http.StatusBadRequest)
+		return
 	}
 
 	//URL.Pathの検証
-	Path := r.URL.Path
+	path := r.URL.Path
 	//HasPrefixの第2引数の値がpathの先頭にあるかどうかをチェック
-	if !strings.HasPrefix(Path, "/api/v1/car_owners/") {
+	if !strings.HasPrefix(path, "/api/v1/car_owners/") {
 		//存在しない場合
 		http.Error(w, `{"error":"Pathが不正です"}`, http.StatusBadRequest)
+		return
 	}
 
 	//Pathパラメータの検証
-	idStr := strings.TrimPrefix(Path, "/api/v1/car_owners/")
+	idStr := strings.TrimPrefix(path, "/api/v1/car_owners/")
 	if idStr == "" {
 		http.Error(w, `{"error":"Pathパラメータが存在しません"}`, http.StatusBadRequest)
+		return
 	}
 
 	//Pathパラメータを数値に変換
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, `{"error ":"パラメータが数値ではありません"}`, http.StatusBadRequest)
+		http.Error(w, `{"error":"パラメータが数値ではありません"}`, http.StatusBadRequest)
+		return
 	}
 
 	//idをUint型に変更
@@ -281,6 +285,7 @@ func (h *CarOwnerHandler) Delete (w http.ResponseWriter, r *http.Request) {
 	//Usecase層に渡して処理を実行してもらう
 	if err := h.Usecase.Delete(uid); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	//削除が成功したら

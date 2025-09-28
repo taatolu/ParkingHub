@@ -122,13 +122,13 @@ func (r *CarOwnerRepositoryImpl) Delete(id uint) error {
     }
 
     //Ownerが存在する場合、削除を実行
-    resurt := r.DB.Delete(&model.CarOwner{}, id)
-    if resurt.Error != nil {
-        return fmt.Errorf("Ownerの削除に失敗: %w", resurt.Error)
+    result := r.DB.Delete(&model.CarOwner{}, id)
+    if result.Error != nil {
+        return fmt.Errorf("Ownerの削除に失敗: %w", result.Error)
     }
 
     //削除された行数が0の場合（条件には合致したが実際には削除されなかった場合）
-    if resurt.RowsAffected == 0 {
+    if result.RowsAffected == 0 {
         return fmt.Errorf("レコードは見つかりましたが、削除されませんでした")
     }
 

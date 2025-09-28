@@ -366,7 +366,7 @@ func TestCarOwnerRepositoryImpl_Delete (t *testing.T) {
             wantError:      true,
         },
     }
-    //tsetCaseをループ処理
+    //testCaseをループ処理
     for _, tt := range tests {
         tt := tt    // クロージャキャプチャ対策として、ループ変数を関数スコープにコピー
         t.Run(tt.testname, func(t *testing.T){
