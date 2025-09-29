@@ -37,6 +37,22 @@ services:
           - db
         ports:
           - "8080:8080"
+    
+    front:
+        build:
+          context: ./front
+          dockerfile: Dockerfile  # ← ファイル名を明示的に指定
+        volumes:
+          - type: bind
+            source: ./front
+            target: /app
+        environment:
+          - API_URL=http://localhost:8080 # ← こバックエンドAPIの接続先URLをフロントエンドに渡す
+          - CHOKIDAR_USEPOLLING=true  # ← DockerやMac環境でReactのホットリロードを安定させる
+        ports:
+          - "3000:3000" # Reactのデフォルトポート
+        depends_on:
+          - api
 
 volumes:
     #services/db/volumesで作成したdb_parkinghubというボリュームをこのコンテナで使用すると宣言
