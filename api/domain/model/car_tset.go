@@ -30,7 +30,6 @@ func TestIsShakenExpired(t *testing.T) {
             car := &Car{ShakenExpiration: tt.shakenExp}
             result := car.IsShakenExpired()
             assert.Equal(tt.wantError, result)
-            }
         })
     }
 }
