@@ -21,3 +21,9 @@ type Car struct {
     Owner               CarOwner    `json:"owner" gorm:"foreignKey:OwnerID;references:ID"`  //Car構造体のOwnerIDはOwnerのIDにを参照する
     Note                string      `json:"note" gorm:"column:note;size:255"`               //備考欄
 }
+
+// 車検の期限切れ確認
+func (c *Car) IsShakenExpired () bool {
+    //現在時刻がc.ShakenExpirationより後かどうか（現在時刻の方が後ならtrueを返す）
+    return time.Now().After(c.ShakenExpiration)
+}

@@ -29,7 +29,7 @@ func TestIsShakenExpired(t *testing.T) {
         t.Run(tt.testname, func(t *testing.T){
             car := &Car{ShakenExpiration: tt.shakenExp}
             result := car.IsShakenExpired()
-            assert.Equal(tt.wantError, result)
+            assert.Equal(t, tt.wantError, result)
         })
     }
 }
