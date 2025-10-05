@@ -9,10 +9,26 @@ const dummyOwners = [
 ];
 
 const OwnerDashboard: React.FC = () => {
+    // Ownerの詳細ボタンクリック時の処理
+    // この処理(関数)を以下のコンポーネントの中で、OwnerListのプロップスとして、渡す
+    const onDetail = (id : number) => {
+        // 詳細ページへ遷移する処理をここに書く
+    };
+    // Ownerの削除ボタンクリック時の処理
+    // この処理(関数)を以下のコンポーネントの中で、OwnerListのプロップスとして、渡す
+    const onDelete = (id : number) => {
+        // 削除処理をここに書く
+    };
+
+    // オーナー一覧を表示するためのコンポーネント
     return (
         <div>
             <h1>オーナー一覧</h1>
-            <OwnerList owners={dummyOwners} />
+            <OwnerList
+                owners={dummyOwners}    //OwnerListコンポーネントのpropsにダミーデータを渡す
+                onDetail={onDetail}  //OwnerListコンポーネントのpropsにonDetail関数を渡す
+                onDelete={onDelete}  //OwnerListコンポーネントのpropsにonDelete関数を渡す
+            />
         </div>
     );
 };
