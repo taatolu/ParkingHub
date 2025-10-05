@@ -1,0 +1,36 @@
+.navBar {
+    background-color: #333;
+    overflow: hidden;
+}
+.navBar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 10px 20px;
+    text-decoration: none;
+}
+
+.navList {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navItem {
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.navItem:hover {
+    background-color: #575757;
+    cursor: pointer;
+}
+
+/* --- IGNORE --- */
+/* グローバルナビゲーションのスタイル */
+/* ここに他のグローバルスタイルを追加できます */
+/* 例: ボタン、フォーム、レイアウトなど */
+
