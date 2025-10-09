@@ -57,7 +57,7 @@ func TestIsInsuranceExpired(t *testing.T) {
     //テストケースをループ処理
     for _,tt := range tests {
         t.Run(tt.testname, func(t *testing.T){
-            car := &Car{IsShakenExpiration: tt.insuranceExp}
+            car := &Car{InsuranceExpiration: tt.insuranceExp}
             if car.IsInsuranceExpired() {
                 assert.True(t, tt.wantError)
             } else {
