@@ -40,10 +40,12 @@ const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => 
                         <td>{owner.license_expiration}</td>
                         <td>
                             {/* 詳細ページへの遷移ボタン
-                                propsで受け取ったonDetail関数をボタンのonClickに設定 */}
+                                propsで受け取ったonDetail関数をボタンのonClickに設定 
+                                onDetail関数にpropsで受け取ったowner.idを渡す */}
                             <button onClick={() => onDetail(owner.id)}>詳細</button>
                             {/* 削除ボタン
-                                propsで受け取ったonDelete関数をボタンのonClickに設定 */}
+                                propsで受け取ったonDelete関数をボタンのonClickに設定
+                                onDelete関数にpropsで受け取ったowner.idを渡す */}
                             <button onClick={() => onDelete(owner.id)}>削除</button>
                         </td>
                     </tr>
