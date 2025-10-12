@@ -63,55 +63,76 @@ const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, onClose
 
     //モーダルが開いている場合の表示内容
     return (
-        <div className={styles.modal}>
-            <div className={styles.modalContent}>
-                <h2>オーナー情報の編集</h2>
-                <form>
-                    <label>
-                        名:
-                        <input
-                            type="text"
-                            name="first_name"
-                            value={formData.first_name}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <label>
-                        中間名:
-                        <input
-                            type="text"
-                            name="middle_name"
-                            value={formData.middle_name}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <label>
-                        姓:
-                        <input
-                            type="text"
-                            name="last_name"
-                            value={formData.last_name}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <label>
-                        免許証の有効期限:
-                        <input
-                            type="date"
-                            name="license_expiration"
-                            value={formData.license_expiration}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <button type="button" onClick={handleSave}>
-                        保存
-                    </button>
-                    <button type="button" onClick={onClose}>
-                        キャンセル
-                    </button>
-                </form>
-            </div>
-        </div>
+        <>
+            {isOpen && <div className={styles.overlay} onClick={onClose}></div>}
+            {isOpen && (
+                <div className={styles.modal}>
+                    <div className={styles.modalContent}>
+                        <div className={styles.modalHeader}>
+                            <h2>オーナー情報の編集</h2>
+                        </div>
+                        <form>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="first_name">姓</label>
+                                <input
+                                    type="text"
+                                    id="first_name"
+                                    name="first_name"
+                                    value={formData.first_name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="middle_name">ミドルネーム</label>
+                                <input
+                                    type="text"
+                                    id="middle_name"
+                                    name="middle_name"
+                                    value={formData.middle_name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="last_name">名</label>
+                                <input
+                                    type="text"
+                                    id="last_name"
+                                    name="last_name"
+                                    value={formData.last_name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="license_expiration">免許証期限</label>
+                                <input
+                                    type="date"
+                                    id="license_expiration"
+                                    name="license_expiration"
+                                    value={formData.license_expiration}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className={styles.modalFooter}>
+                                <button 
+                                    type="button" 
+                                    className={`${styles.button} ${styles.cancelButton}`}
+                                    onClick={onClose}
+                                >
+                                    キャンセル
+                                </button>
+                                <button 
+                                    type="button" 
+                                    className={`${styles.button} ${styles.saveButton}`}
+                                    onClick={handleSave}
+                                >
+                                    保存
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 
