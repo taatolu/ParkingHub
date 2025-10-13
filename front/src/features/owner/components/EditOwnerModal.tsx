@@ -54,8 +54,8 @@ const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, onClose
 
     //保存ボタン押下時の処理
     const handleSave = () => {
-        onSave(formData); //親コンポーネントに編集されたオーナー情報を渡す
-        onClose(); //モーダルを閉じる
+        onSave(formData); //親コンポーネントで定義されたonSave関数を呼び出して保存処理を実行(PropsとしてformDataを渡す)
+        onClose(); //親コンポーネントで定義されたonClose関数を呼び出してモーダルを閉じる
     };
     
     //モーダルが閉じている場合は何も表示しない

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from "./css/OwnerDashboard.module.css"; // CSSをインポート
 // OwnerDashboardコンポーネント：オーナーダッシュボードのメインコンポーネント
 import OwnerList from "../features/owner/components/OwnerList"
 import EditOwnerModal from "../features/owner/components/EditOwnerModal";
@@ -26,13 +27,13 @@ const OwnerDashboard: React.FC = () => {
     const [selectedOwner, setSelectedOwner] = useState<null | Owner>(null);
 
     // モーダルを開く関数
-    const openModal = (owner: Owner) => {
+    const openModal = (owner: Owner | null) => {
         setSelectedOwner(owner);
         setIsOpen(true);
     };
 
 
-    // Button関連
+    // Button関連の関数（処理を定義）
     // Ownerの詳細ボタンクリック時の処理
     // この処理(関数)を以下のコンポーネントの中で、OwnerListのプロップスとして、渡す
     const onDetail = (id : number) => {
@@ -50,13 +51,20 @@ const OwnerDashboard: React.FC = () => {
 
     // オーナー一覧を表示するためのコンポーネント
     return (
-        <div>
-            <h1>オーナー一覧</h1>
-            <OwnerList
-                owners={dummyOwners}    //OwnerListコンポーネントのpropsにダミーデータを渡す
-                onDetail={onDetail}  //OwnerListコンポーネントのpropsにonDetail関数を渡す
-                onDelete={onDelete}  //OwnerListコンポーネントのpropsにonDelete関数を渡す
-            />
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <h1 className={styles.title}>オーナー一覧</h1>
+                {/* 新規作成ボタン */}
+                <button className={styles.createButton} onClick={() => openModal(null)}>新規作成</button>
+            </div>
+            {/* OwnerListコンポーネントを表示 */}
+            <div className={styles.tableContainer}>
+                <OwnerList
+                    owners={dummyOwners}    //OwnerListコンポーネントのpropsにダミーデータを渡す
+                    onDetail={onDetail}  //OwnerListコンポーネントのpropsにonDetail関数を渡す
+                    onDelete={onDelete}  //OwnerListコンポーネントのpropsにonDelete関数を渡す
+                />
+            </div>
         {/* モーダルコンポーネントを追加 */}
         <EditOwnerModal
             isOpen={isOpen}

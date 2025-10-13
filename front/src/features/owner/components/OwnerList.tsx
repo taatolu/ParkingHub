@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "../assets/css/OwnerList.module.css";
 
 // owner型定義：オーナー１人分の情報を格納するための型
 type Owner = {
@@ -20,7 +21,7 @@ type OwnerListProps = {
 const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => {
     // ownersを使って処理を書く
     return (
-        <table>
+        <table className={styles.table}>
             <thead>
                 <tr>
                     <th>ID</th>
@@ -38,15 +39,19 @@ const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => 
                         <td>{owner.middle_name}</td>
                         <td>{owner.last_name}</td>
                         <td>{owner.license_expiration}</td>
-                        <td>
+                        <td className={styles.actions}>
                             {/* 詳細ページへの遷移ボタン
                                 propsで受け取ったonDetail関数をボタンのonClickに設定 
                                 onDetail関数にpropsで受け取ったowner.idを渡す */}
-                            <button onClick={() => onDetail(owner.id)}>詳細</button>
+                            <button className={styles.detailButton}
+                            onClick={() => onDetail(owner.id)}>詳細
+                            </button>
                             {/* 削除ボタン
                                 propsで受け取ったonDelete関数をボタンのonClickに設定
                                 onDelete関数にpropsで受け取ったowner.idを渡す */}
-                            <button onClick={() => onDelete(owner.id)}>削除</button>
+                            <button className={styles.deleteButton}
+                            onClick={() => onDelete(owner.id)}>削除
+                            </button>
                         </td>
                     </tr>
                 ))}
