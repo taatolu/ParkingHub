@@ -41,6 +41,58 @@
   background-color: #222;
 }
 
+/* トグルボタンのコンテナ */
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* トグルボタンのラベル */
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+}
+
+/* チェックボックス（トグルスイッチ風） */
+.toggleLabel input[type="checkbox"] {
+  appearance: none;
+  width: 40px;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin: 0;
+}
+
+.toggleLabel input[type="checkbox"]:checked {
+  background-color: #333;
+}
+
+.toggleLabel input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background-color: white;
+  transition: transform 0.2s;
+}
+
+.toggleLabel input[type="checkbox"]:checked::before {
+  transform: translateX(20px);
+}
+
 .tableContainer {
   background-color: #fff;
   border-radius: 8px;
@@ -62,5 +114,14 @@
   
   .title {
     font-size: 24px;
+  }
+  
+  .toggleContainer {
+    order: 2;
+  }
+  
+  .createButton {
+    order: 3;
+    width: 100%;
   }
 }
