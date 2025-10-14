@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Owner } from "../types/Owner";  //Ownerの型定義
 import styles from "../assets/css/Modal.module.css";
 
-//編集対象のオーナー、情報の型を定義（useStateのジェネリクスなどとして使用）
-type Owner = {
-    id: number;
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    license_expiration: string;
-};
 
 //モーダルコンポーネントのプロップスの型を定義
 type EditOwnerModalProps = {

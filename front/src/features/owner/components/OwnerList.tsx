@@ -1,18 +1,10 @@
 import React from "react";
+import { Owner } from "../types/Owner"; // Ownerの型定義
 import styles from "../assets/css/OwnerList.module.css";
-
-// owner型定義：オーナー１人分の情報を格納するための型
-type Owner = {
-    id: number;
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    license_expiration: string;
-}
 
 // OwnerListコンポーネントで使用するprops（引数）の型定義
 type OwnerListProps = {
-    owners: Owner[]; // Owner型の配列
+    owners: Owner[]; // Owner型の配列（Owner型は/features/owner/types/Ownerで定義してある）
     onDetail: (id: number) => void; // 詳細ボタン押下時にonDetail関数をPropsとして受け取る(この関数は引数にidを受け取る)
     onDelete: (id: number) => void; // 削除ボタン押下時にonDelete関数をPropsとして受け取る(この関数は引数にidを受け取る)
 }
