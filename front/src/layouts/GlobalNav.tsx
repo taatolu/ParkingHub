@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../assets/css/Global.module.css";
 
-const GlobalNav: React.FC = () => {
+export const GlobalNav: React.FC = () => {
     return (
         <nav className={styles.navBar}>
             <ul className={styles.navList}>
@@ -11,5 +11,3 @@ const GlobalNav: React.FC = () => {
         </nav>
     );
 };
-
-export default GlobalNav;

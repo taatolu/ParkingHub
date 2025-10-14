@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import styles from "./css/OwnerDashboard.module.css"; // CSSをインポート
 // OwnerDashboardコンポーネント：オーナーダッシュボードのメインコンポーネント
-import OwnerList from "../features/owner/components/OwnerList"
-import EditOwnerModal from "../features/owner/components/EditOwnerModal";
+import { OwnerList } from "../features/owner/components/OwnerList"
+import { EditOwnerModal } from "../features/owner/components/EditOwnerModal";
 
 // ダミーデータ：実際にはAPIから取得したデータを使用するが、一旦は仮のデータを使用
 const dummyOwners = [
@@ -10,7 +10,7 @@ const dummyOwners = [
     { id: 2, first_name: "佐藤", middle_name: "花子", last_name: "二郎", license_expiration: "2024-12-31" },
 ];
 
-const OwnerDashboard: React.FC = () => {
+export const OwnerDashboard: React.FC = () => {
     // Owner型の定義（下で出てくるselectedOwnerやopenModalの型として使用）
     type Owner = {
         id: number;
@@ -114,4 +114,3 @@ const OwnerDashboard: React.FC = () => {
     );
 };
 
-export default OwnerDashboard

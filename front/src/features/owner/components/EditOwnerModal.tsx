@@ -12,7 +12,7 @@ type EditOwnerModalProps = {
 }
 
 //EditOwnerModalコンポーネント: オーナー情報を編集するモーダル
-const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, onClose, onSave}) => {
+export const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, onClose, onSave}) => {
     //編集用の状態を管理（初期化）
     const [formData, setFormData] = useState<Owner>({
         id: 0,
@@ -129,4 +129,4 @@ const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, onClose
     );
 };
 
-export default EditOwnerModal;
+

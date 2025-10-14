@@ -10,7 +10,7 @@ type OwnerListProps = {
 }
 
 //OwnerListコンポーネント：オーナーテーブルで表示するテーブルの本体
-const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => {
+export const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => {
     // ownersを使って処理を書く
     return (
         <table className={styles.table}>
@@ -52,4 +52,3 @@ const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => 
     );
 };
 
-export default OwnerList;
