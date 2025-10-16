@@ -57,3 +57,20 @@ export async function getOwners(authToken?:string):Promise<ApiResponse<Owner[]>>
         throw error;
     }
 }
+
+//オーナー詳細取得(ID指定)
+export async function getOwnerByID(id; Number, authToken?:string):Promise<ApiResponse<Owner>>{
+    try {
+        const res = awaait fetch( `${API_BASE_URL}/owners/${id}`,{
+            method: "GET",
+            headers: makeHeaders(authToken)
+        });
+        //レスポンスを共通処理
+        const result = await handleResponse<Owner>(res);
+        return result;
+    //Try内でエラーが発生した場合catchで捕捉(error処理)
+    } catch (error) {
+        console.error("オーナー詳細取得エラー", error);
+        throw error;
+    }
+}
