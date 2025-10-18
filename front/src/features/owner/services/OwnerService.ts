@@ -43,7 +43,7 @@ async function handleResponse<T>(res: Response):Promise<ApiResponse<T>>{
 //オーナー一覧取得
 export async function getOwners(authToken?:string):Promise<ApiResponse<Owner[]>>{
     try {
-        const res = await fetch( `${API_BASE_URL}/owners`,{
+        const res = await fetch( `${API_BASE_URL}/car_owners`,{
             method: "GET",
             headers: makeHeaders(authToken)
         });
@@ -59,9 +59,9 @@ export async function getOwners(authToken?:string):Promise<ApiResponse<Owner[]>>
 }
 
 //オーナー詳細取得(ID指定)
-export async function getOwnerByID(id: Number, authToken?:string):Promise<ApiResponse<Owner>>{
+export async function getOwnerByID(id: number, authToken?:string):Promise<ApiResponse<Owner>>{
     try {
-        const res = await fetch( `${API_BASE_URL}/owners/${id}`,{
+        const res = await fetch( `${API_BASE_URL}/car_owners/${id}`,{
             method: "GET",
             headers: makeHeaders(authToken)
         });
@@ -78,7 +78,7 @@ export async function getOwnerByID(id: Number, authToken?:string):Promise<ApiRes
 //オーナー情報更新
 export async function updateOwner(id:number, ownerData:Partial<Owner>, authToken?:string):Promise<ApiResponse<Owner>>{
     try {
-        const res = await fetch( `${API_BASE_URL}/owners/${id}`, {
+        const res = await fetch( `${API_BASE_URL}/car_owners/${id}`, {
             method: "PUT",
             headers: makeHeaders(authToken),
             body: JSON.stringify(ownerData),
@@ -96,7 +96,7 @@ export async function updateOwner(id:number, ownerData:Partial<Owner>, authToken
 //オーナー作成
 export async function createOwner (ownerData:Owner, authToken?:string):Promise<ApiResponse<Owner>>{
     try {
-        const res = await fetch( `${API_BASE_URL}/owners`, {
+        const res = await fetch( `${API_BASE_URL}/car_owners`, {
             method: "POST",
             headers: makeHeaders(authToken),
             body: JSON.stringify(ownerData),
@@ -114,7 +114,7 @@ export async function createOwner (ownerData:Owner, authToken?:string):Promise<A
 //オーナー削除
 export async function deleteOwner (id:number, authToken?:string):Promise<ApiResponse<Owner>>{
     try {
-        const res = await fetch( `${API_BASE_URL}/owners/${id}`, {
+        const res = await fetch( `${API_BASE_URL}/car_owners/${id}`, {
             method: "DELETE",
             headers: makeHeaders(authToken),
         });
@@ -123,6 +123,23 @@ export async function deleteOwner (id:number, authToken?:string):Promise<ApiResp
         return result;
     } catch (error) {
         console.error("オーナーの削除エラー", error);
+        throw error;
+    }
+}
+
+//オーナー名前検索 (APIエンドポイントがある場合)
+export async function searchOwnersByName(searchText: string, authToken?: string): Promise<ApiResponse<Owner[]>> {
+    try {
+        // バックエンドの実装に合わせて、パスパラメータとして検索テキストを追加
+        const res = await fetch(`${API_BASE_URL}/car_owners/${searchText}`, {
+            method: "GET",
+            headers: makeHeaders(authToken)
+        });
+        //レスポンスを共通処理
+        const result = await handleResponse<Owner[]>(res);
+        return result;
+    } catch (error) {
+        console.error("オーナー名前検索エラー", error);
         throw error;
     }
 }
