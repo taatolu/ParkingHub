@@ -74,3 +74,21 @@ export async function getOwnerByID(id; Number, authToken?:string):Promise<ApiRes
         throw error;
     }
 }
+
+//オーナー情報更新
+export async function updateOwner(id:number, ownerData:Partial<Owner>, authToken?:string):Promise<ApiResponse<Owner>>{
+    try {
+        const res = await  fetch( `&{API_BASE_URL}/owners/${id}`, {
+            method: "PUT",
+            headers: makeHeaders(authToken),
+            body: JSON.stringify(ownerData),
+        });
+        //レスポンスを共通処理
+        const result = await handleResponse<Owner>(res);
+        return result;
+    //Try内でエラーが発生した場合catchで捕捉(error処理)
+    } catch (error) {
+        console.error("オーナー情報更新エラー", error);
+        throw error;
+    }
+}
