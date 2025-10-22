@@ -3,7 +3,7 @@ import { Owner } from '../types/Owner';
 import { getOwners } from '../services/OwnerService';
 
 //カスタムフック：オーナー情報を取得・管理する
-export const useOwners = (authToken?: string) => {
+export const useOwnersList = (authToken?: string) => {
     const [owners, setOwners] = useState<Owner[]>([]); //オーナー一覧の状態管理
     const [loading, setLoading] = useState<boolean>(true); //読み込み状態の管理(初期値はtrueで読み込み中を示す)
     const [error, setError] = useState< string | null>(null); //エラー状態の管理(初期値はnullでエラーなしを示す)
@@ -23,6 +23,7 @@ export const useOwners = (authToken?: string) => {
             setLoading(false); //読み込み完了
         }
     }, [authToken]);
+
     //コンポーネントのマウント時にオーナー情報を取得
     useEffect(() => {
         fetchOwners();

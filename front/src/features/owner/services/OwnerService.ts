@@ -28,6 +28,7 @@ async function handleResponse<T>(res: Response):Promise<ApiResponse<T>>{
             throw new ApiError("Invalid JSON response", res.status);
         }
     }
+    //httpステータスコードが200番台の場合は成功とみなす(res.okはステータスコードが200-299の範囲内でtrueを返す)
     if (res.ok) {
         return { success: true, data:json as T };
     }
