@@ -16,7 +16,7 @@ export const useOwnerDetails = (authToken?: string) => {
         setError(null); //エラー状態をリセット
         setSelectedOwner(null); //前回の選択をリセット
         try {
-            const response = await getOwnerByID( ownerID, authToken); //作成し
+            const response = await getOwnerByID(ownerID, authToken); //作成したサービス関数を呼び出し
             if (response.success && response.data) {
                 setSelectedOwner(response.data); //選択されたオーナーの情報を状態にセット
                 setLoading(false); //読み込み完了
@@ -44,4 +44,5 @@ export const useOwnerDetails = (authToken?: string) => {
             setLoading(false); //読み込み完了
         }
     }
+    return { selectedOwner, loading, error, fetchOwnerDetails, updateOwnerDetails };
 }
