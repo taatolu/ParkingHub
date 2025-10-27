@@ -27,10 +27,11 @@ func main() {
 	reg := registry.NewRegistry()
 	defer reg.Close() //アプリ終了時に安全にDBクローズするためにregistry.goに作成したもの
 
-	router := presentation.InitRouters(reg)
+	handler := presentation.InitRouters(reg)
 
 	log.Println("サーバ起動: http://localhost:8080")
-	err = http.ListenAndServe(":8080", router) //作成したマルチプレクサでサーバ起動
+
+	err = http.ListenAndServe(":8080", handler) //作成したマルチプレクサでサーバ起動
 	if err != nil {
 		log.Fatal(err)
 	}
