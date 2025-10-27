@@ -5,3 +5,6 @@ export type Owner = {
     last_name: string;
     license_expiration: string;
 };
+
+// 新規オーナー作成用の型（idを除く）
+export type CreateOwnerDTO = Omit<Owner, 'id'>;
