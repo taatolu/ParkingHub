@@ -13,5 +13,5 @@ func InitRouters(reg *registry.Registry) http.Handler {
 
 	mux.Handle("/api/v1/car_owners", carOwnerHandler)   //GET(ALL),POST メソッド
 	mux.Handle("/api/v1/car_owners/", carOwnerHandler) //GET,PUSH,DELETE メソッド
-	return mux
+	return CORSMiddleware(mux)
 }
