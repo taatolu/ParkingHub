@@ -47,7 +47,16 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 // owner全件取得
 func (uc *CarOwnerUsecase) GetAll () ([]*model.CarOwner, error) {
     // インフラストラクチャ層のGetAllを実行
-    return uc.CarOwnerRepo.GetAll()
+    owners, err := uc.CarOwnerRepo.GetAll()
+	if err != nil{
+		return nil, fmt.Errorf("DBのCarOwnersから全件取得するところでエラー: %w", err)
+	}
+
+	// ownersが空の場合の処理
+	if len(owners) == 0 {
+		return nil, fmt.Errorf("CarOwnersテーブルにデータが存在しません")
+	}
+	return owners, nil
 }
 
 // owner検索（ID）
