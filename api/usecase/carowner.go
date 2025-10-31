@@ -16,6 +16,7 @@ type CarOwnerUsecase struct {
 // CarOwnerUsecaseのインターフェースを作成(後に作成するHandlerのテストの際にUsecseの際し変えが見込まれるから)
 type CarOwnerUsecaseIF interface {
 	RegistCarOwner(owner *model.CarOwner) error
+	GetAll() ([]*model.CarOwner, error)
 	FindByID(id uint) (*model.CarOwner, error)
 	FindByName(name string) ([]*model.CarOwner, error)
 	Update(owner *model.CarOwner) error
