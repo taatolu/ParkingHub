@@ -57,6 +57,57 @@ func TestCarOwnerRepositoryImpl_Save(t *testing.T){
     assert.Equal(t, owner.ID, got.ID, "IDが一致しない")
 }
 
+// GetAllのテスト(data取得ができる場合と0件の場合の両方)
+func TestCarOwnerRepositoryImpl_GetAll(t *testing.T) {
+    tests := []struct {
+        name        string
+        seedData    []*model.CarOwner
+        wantCount   int
+    }{
+        {
+            name: "正常系: 複数件取得",
+            seedData: []*model.CarOwner{
+                {ID: 1, FirstName: "taro", MiddleName: "山田", LastName: "Yusuke", LicenseExpiration: time.Now().AddDate(1, 0, 0)},
+                {ID: 2, FirstName: "tamaki", MiddleName: "山田", LastName: "Yuichi", LicenseExpiration: time.Now().AddDate(1, 0, 0)},
+            },
+            wantCount: 2,
+        },
+        {
+            name:      "正常系: データ0件",
+            seedData:  []*model.CarOwner{},
+            wantCount: 0,
+        },
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            // mockDBとコントローラの生成(sqliteのin-memoryDBを使用)
+            db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+            db.AutoMigrate(&model.CarOwner{})
+
+            // Seedデータをsqliteのin-memoryDBに挿入
+            for _, owner := range tt.seedData {
+                db.Create(owner)
+            }
+            
+            // テスト用のモックリポジトリを設定
+            repo := &CarOwnerRepositoryImpl{DB: db}
+
+            // テスト対象メソッドの呼び出し
+            got, err := repo.GetAll()
+
+            // Assert
+            assert.NoError(t, err)  // エラーが発生しないことを確認
+            assert.Len(t, got, tt.wantCount)    // 取得件数が期待通りであることを確認
+            if tt.wantCount > 0 {   // データが存在する場合のみ内容を確認
+                for i := range tt.seedData {
+                    assert.True(t, ownerEqual(got[i], tt.seedData[i]), "取得データが期待値と一致しません")
+                }
+            }
+        })
+    }
+}
+
 
 func TestCarOwnerRepositoryImpl_FindByID(t *testing.T){
     //テーブル駆動テスト(Mockテスト)
