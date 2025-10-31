@@ -44,6 +44,12 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 	//return err と同義（errにnilが返ろうがerrorが返ろうがエラー型に返せるでしょ）
 }
 
+// owner全件取得
+func (uc *CarOwnerUsecase) GetAll () ([]*model.CarOwner, error) {
+    // インフラストラクチャ層のGetAllを実行
+    return uc.CarOwnerRepo.GetAll()
+}
+
 // owner検索（ID）
 func (uc *CarOwnerUsecase) FindByID(id uint) (*model.CarOwner, error) {
 	//idのバリデーション

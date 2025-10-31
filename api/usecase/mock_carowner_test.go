@@ -94,6 +94,39 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 	}
 }
 
+// GetAllのテスト
+func TestGetAll_MockRepo(t *testing.T){
+    owners := []*model.CarOwner{
+        {
+            ID:                1,
+    		FirstName:         "test",
+    		MiddleName:        "山田",
+    		LastName:          "太郎",
+    		LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+        },
+        {
+            ID:                2,
+    		FirstName:         "test",
+    		MiddleName:        "山田",
+    		LastName:          "はなこ",
+    		LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+        },
+    }
+    
+    mock := &mocks.MockCarOwnerRepo{
+        FoundOwners:    owners,
+    }
+    
+    //usecaseにモックのCarOwnerRepoをDI
+	usecase := CarOwnerUsecase{CarOwnerRepo: mock}
+    
+    gotOwners, err := usecase.GetAll()
+    if err != nil {
+        t.Errorf("GetAllでエラー: %v", err)
+    }
+    assert.Equal(t, owners, gotOwners)
+}
+
 // FindByIDのテスト
 func TestFindByID_MockRepo(t *testing.T) {
 	owner := &model.CarOwner{
