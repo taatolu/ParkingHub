@@ -127,6 +127,19 @@ func TestGetAll_MockRepo(t *testing.T){
     assert.Equal(t, owners, gotOwners)
 }
 
+// GetAllのテスト(Errorを返すか？)
+func TestGetAll_MockRepo_Error(t *testing.T) {
+	//モックリポジトリをインスタンス化するときに、ownerのリストを渡さない(FoundOwners=nilとする)
+	mock := &mocks.MockCarOwnerRepo{}
+	//usecaseにモックのCarOwnerRepoをDI
+	usecase := CarOwnerUsecase{CarOwnerRepo: mock}
+	
+	//モックテストの本番
+	gotOwners, err := usecase.GetAll()
+	assert.Error(t, err, "GetAllはエラーを返すべき")
+	assert.Nil(t, gotOwners, "gotOwnersはnilになるはず")
+}
+
 // FindByIDのテスト
 func TestFindByID_MockRepo(t *testing.T) {
 	owner := &model.CarOwner{
