@@ -46,7 +46,7 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 }
 
 // owner全件取得
-func (uc *CarOwnerUsecase) GetAll () ([]*model.CarOwner, error) {
+func (uc *CarOwnerUsecase) GetAll() ([]*model.CarOwner, error) {
     // インフラストラクチャ層のGetAllを実行
     owners, err := uc.CarOwnerRepo.GetAll()
 	if err != nil{
