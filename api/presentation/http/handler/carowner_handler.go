@@ -19,6 +19,9 @@ type CarOwnerHandler struct {
 // CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
 func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch {
+	case r.URL.Path == "/api/v1/car_owners" && r.Method == http.MethodGet:
+		//全件取得の処理
+		h.GetAll(w, r)
 	case r.URL.Path == "/api/v1/car_owners" && r.Method == http.MethodPost:
 		h.CreateCarOwner(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/v1/car_owners/") && r.Method == http.MethodGet:
@@ -94,6 +97,23 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(owner)
+}
+
+// GET (All)
+func (h CarOwnerHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	// Usecase層のGetAllメソッドを呼び出して全件取得
+	owners, err := h.Usecase.GetAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// 取得したownersをJSON形式でレスポンスに書き込み
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(owners); err != nil {
+		fmt.Printf("error:エンコード失敗: %v\n", err)
+	}
 }
 
 // GET (Find By id)

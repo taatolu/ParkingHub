@@ -85,20 +85,94 @@ func TestRegistCarOwner(t *testing.T) {
 			if tt.wantError {
 				//wantErrorがtrue　=　異常系だったら
 				if resp.StatusCode == http.StatusCreated {
-					t.Errorf("異常系なのに201が返っています")
+					t.Errorf("error:異常系なのに201が返っています")
 				}
 				if !strings.Contains(bodyString, "error") && resp.StatusCode != http.StatusNotFound {
-					t.Errorf("エラーメッセージが含まれていません: %s", bodyString)
+					t.Errorf("error: エラーメッセージが含まれていません: %s", bodyString)
 				}
 			} else {
 				//wantErrorがfalse　=　正常系だったら
 				if resp.StatusCode != http.StatusCreated {
-					t.Errorf("GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusCreated)
+					t.Errorf("error: GotStatus=%d WantStatus=%d", resp.StatusCode, http.StatusCreated)
 				}
 			}
 		})
 	}
 }
+
+func TestGetAll(t *testing.T) {
+	//tableTest
+	tests := []struct {
+		testname	string
+		method		string
+		url			string
+		wantError	bool
+	}{
+		//testCase作成
+		{
+			testname:	"正常系",
+			method:		"GET",
+			url:		"/api/v1/car_owners",
+			wantError:	false,
+		},
+	}
+	//testCaseのループ処理
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.testname, func(t *testing.T){
+			//handlerにDIするためのUsecase層のモックをインスタンス化
+			mockUsecase := &usecase.MockCarOwnerUsecase{
+				GetAllFunc:	func() ([]*model.CarOwner, error){
+					if !tt.wantError {
+						return []*model.CarOwner{
+							{
+								ID:        1,
+								FirstName: "Test",
+								LastName:  "User",
+							},
+						}, nil
+					}
+					return nil, fmt.Errorf("error:取得に失敗しました")
+				},
+			}
+			//handlerのインスタンス生成(上で作成したUsecase層のモックをDI)
+			handler := &CarOwnerHandler{Usecase: mockUsecase}
+
+			//http.NewRecorderでレスポンスを記録(テスト時にhttp.ResponseWriterの代わりで動くもの)
+			rec := httptest.NewRecorder()
+			//http.NewRequest()でリクエスト作成
+			req, err := http.NewRequest(tt.method, tt.url, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			//handler.ServeHttpで実行
+			handler.ServeHTTP(rec, req)
+			//recorder.Resultでrec(http.ResponseWriterの代わりで動くもの)に帰ってきたレスポンスを検証
+			resp := rec.Result()
+			defer resp.Body.Close()
+
+			//respからBodyの値を取得
+			bodyBytes, _ := io.ReadAll(resp.Body)
+			bodyString := string(bodyBytes)
+
+			if tt.wantError {
+				//tt.wantErrorがtrue=異常値の場合
+				if resp.StatusCode == http.StatusOK {
+					t.Errorf("異常系なのに200番が返っています")
+				}
+				if resp.StatusCode != http.StatusNotFound && !strings.Contains(bodyString, "error") {
+					t.Error("エラーメッセージが含まれていません")
+				}
+			} else {
+				//tt.wantErrorがfalse=正常値の場合
+				if resp.StatusCode != http.StatusOK {
+					t.Errorf("Got:%d Want:%d", resp.StatusCode, http.StatusOK)
+				}
+			}
+		})
+	}
+}
+
 
 func TestFindByID(t *testing.T) {
 	//tableTest
