@@ -215,6 +215,8 @@ func TestFindByID(t *testing.T) {
 							ID:        1,
 							FirstName: "Test",
 							LastName:  "User",
+							MiddleName: "Middle",
+							LicenseExpiration: time.Now().AddDate(1, 0, 0),
 						}, nil
 					}
 					return nil, fmt.Errorf("インフラストラクチャ層の実装をしたときにデータが返ってこなかった体（テイ）")
