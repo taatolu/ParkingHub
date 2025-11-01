@@ -19,7 +19,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T) {
 			testname: "正常系",
 			owner: &model.CarOwner{
 				ID: 1, FirstName: "test", MiddleName: "山田", LastName: "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: false,
 		},
@@ -27,7 +27,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T) {
 			testname: "異常系(FirstNameのみ存在)",
 			owner: &model.CarOwner{
 				ID: 1, FirstName: "test", MiddleName: "", LastName: "",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: true,
 		},
@@ -35,7 +35,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T) {
 			testname: "異常系(MiddleNameのみ存在)",
 			owner: &model.CarOwner{
 				ID: 1, FirstName: "", MiddleName: "山田", LastName: "",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: true,
 		},
@@ -43,7 +43,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T) {
 			testname: "異常系(LastNameのみ存在)",
 			owner: &model.CarOwner{
 				ID: 1, FirstName: "", MiddleName: "", LastName: "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: true,
 		},
@@ -51,7 +51,7 @@ func TestRegistCarOwner_FakeRepo(t *testing.T) {
 			testname: "異常系(免許証の期限切れ)",
 			owner: &model.CarOwner{
 				ID: 1, FirstName: "test", MiddleName: "山田", LastName: "太郎",
-				LicenseExpiration: time.Date(2000, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(-1, 0, 0),
 			},
 			wantError: true,
 		},

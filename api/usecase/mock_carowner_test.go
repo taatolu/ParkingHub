@@ -40,7 +40,7 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 				FirstName:         "test",
 				MiddleName:        "山田",
 				LastName:          "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: false,
 		},
@@ -51,7 +51,7 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 				FirstName:         "",
 				MiddleName:        "",
 				LastName:          "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: true,
 		},
@@ -102,14 +102,14 @@ func TestGetAll_MockRepo(t *testing.T){
     		FirstName:         "test",
     		MiddleName:        "山田",
     		LastName:          "太郎",
-    		LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+    		LicenseExpiration: time.Now().AddDate(1, 0, 0),
         },
         {
             ID:                2,
     		FirstName:         "test",
     		MiddleName:        "山田",
     		LastName:          "はなこ",
-    		LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+    		LicenseExpiration: time.Now().AddDate(1, 0, 0),
         },
     }
     
@@ -147,7 +147,7 @@ func TestFindByID_MockRepo(t *testing.T) {
 		FirstName:         "test",
 		MiddleName:        "山田",
 		LastName:          "太郎",
-		LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
 	}
 
 	mock := &mocks.MockCarOwnerRepo{
