@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/taatolu/ParkingHub/api/config"
+	"github.com/taatolu/ParkingHub/api/infrastructure/migrate"
 	presentation "github.com/taatolu/ParkingHub/api/presentation/http"
 	"github.com/taatolu/ParkingHub/api/registry"
 	"log"
@@ -14,6 +15,11 @@ func main() {
 	if err != nil {
 		log.Fatal("設定読み込み失敗:", err)
 	}
+
+	// マイグレーション実行（追加）
+    if err := migrate.RunMigration(conf); err != nil {
+        log.Fatalf("マイグレーション失敗: %v", err)
+    }
 
 	// デバッグ用ログ（一時的に追加）
 	log.Printf("=== 設定確認 ===")
