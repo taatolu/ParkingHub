@@ -60,21 +60,21 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 	///リクエストボディの内容をparamにパース
 	err := json.NewDecoder(r.Body).Decode(&param)
 	if err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "error: Invalid request", http.StatusBadRequest)
 		return
 	}
 
 	//取得したリクエストボディの型（取得時は文字列）をエンティティの型と一致するよう修正
 	idInt, err := strconv.Atoi(param.ID)
 	if err != nil {
-		http.Error(w, "IDの型変換に失敗", http.StatusBadRequest)
+		http.Error(w, "error: IDの型変換に失敗", http.StatusBadRequest)
 		return
 	}
 	idUint := uint(idInt)
 
 	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
 	if err != nil {
-		http.Error(w, "Invalid LicenseExpiration format", http.StatusBadRequest)
+		http.Error(w, "error: Invalid LicenseExpiration format", http.StatusBadRequest)
 		return
 	}
 
