@@ -191,12 +191,6 @@ func (h *CarOwnerHandler) FindByName (w http.ResponseWriter, r *http.Request) {
 
 //Updateメソッドは、車の所有者の情報を更新するためのHTTPメソッドPUTリクエストを処理します。
 func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
-	//メソッドの判定
-	if r.Method != http.MethodPut {
-        // クライアントが不正なHTTPメソッドでアクセスした場合
-        http.Error(w, `{"error":"リクエストメソッドが不正です"}`, http.StatusMethodNotAllowed)
-        return
-    }
 
 	//URLPathの検証
 	path := r.URL.Path
@@ -270,11 +264,6 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 
 //Deleteはパラメータで与えられたIDのOwnerを削除する
 func (h *CarOwnerHandler) Delete (w http.ResponseWriter, r *http.Request) {
-	//メソッドの判定
-	if r.Method != http.MethodDelete {
-		http.Error(w, `{"error":"リクエストメソッドが不正です"}`, http.StatusBadRequest)
-		return
-	}
 
 	//URL.Pathの検証
 	path := r.URL.Path

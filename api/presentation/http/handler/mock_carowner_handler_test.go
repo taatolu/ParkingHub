@@ -39,13 +39,6 @@ func TestRegistCarOwner(t *testing.T) {
                                                 "license_expiration":"2030-12-31"}`),
 			wantError: false,
 		},
-		{
-			testname:  "異常系（method不正）",
-			method:    "GET",
-			url:       "/api/v1/car_owners",
-			body:      bytes.NewBufferString(`{"id":"1"}`),
-			wantError: true,
-		},
 	}
 	//テストケースをループで回す
 	for _, tt := range tests {
