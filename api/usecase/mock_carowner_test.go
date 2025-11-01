@@ -99,17 +99,17 @@ func TestGetAll_MockRepo(t *testing.T) {
     owners := []*model.CarOwner{
         {
             ID:                1,
-    		FirstName:         "test",
-    		MiddleName:        "山田",
-    		LastName:          "太郎",
-    		LicenseExpiration: time.Now().AddDate(1, 0, 0),
+		FirstName:         "test",
+		MiddleName:        "山田",
+		LastName:          "太郎",
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
         },
         {
             ID:                2,
-    		FirstName:         "test",
-    		MiddleName:        "山田",
-    		LastName:          "はなこ",
-    		LicenseExpiration: time.Now().AddDate(1, 0, 0),
+		FirstName:         "test",
+		MiddleName:        "山田",
+		LastName:          "はなこ",
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
         },
     }
     
