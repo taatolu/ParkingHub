@@ -19,6 +19,11 @@ func (f *FakeCarOwnerRepo) Save (carOwner *model.CarOwner) error {
 	return fmt.Errorf("fakerepoImplに渡したデータが不正です")
 }
 
+func (f *FakeCarOwnerRepo) GetAll() ([]*model.CarOwner, error) {
+	//取り急ぎ、実装しない（未実装であることがわかるようにエラーを返す）
+	return nil, fmt.Errorf("fakerepoのGetAllメソッドは未実装です")
+}
+
 
 func (f *FakeCarOwnerRepo) FindByID(id uint) (*model.CarOwner, error) {
 	tempOwner := &model.CarOwner{ID:id}

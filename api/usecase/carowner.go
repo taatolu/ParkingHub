@@ -16,6 +16,7 @@ type CarOwnerUsecase struct {
 // CarOwnerUsecaseのインターフェースを作成(後に作成するHandlerのテストの際にUsecseの際し変えが見込まれるから)
 type CarOwnerUsecaseIF interface {
 	RegistCarOwner(owner *model.CarOwner) error
+	GetAll() ([]*model.CarOwner, error)
 	FindByID(id uint) (*model.CarOwner, error)
 	FindByName(name string) ([]*model.CarOwner, error)
 	Update(owner *model.CarOwner) error
@@ -42,6 +43,19 @@ func (uc *CarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
 	//
 	//err = uc.CarOwnerRepo.Save(owner)
 	//return err と同義（errにnilが返ろうがerrorが返ろうがエラー型に返せるでしょ）
+}
+
+// owner全件取得
+func (uc *CarOwnerUsecase) GetAll() ([]*model.CarOwner, error) {
+    // インフラストラクチャ層のGetAllを実行
+    owners, err := uc.CarOwnerRepo.GetAll()
+	if err != nil{
+		return nil, fmt.Errorf("DBのCarOwnersから全件取得するところでエラー: %w", err)
+	}
+
+	// ownersが空の場合の処理
+	// 空リストは正常なレスポンスとして返す
+	return owners, nil
 }
 
 // owner検索（ID）

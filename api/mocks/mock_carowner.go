@@ -26,6 +26,14 @@ func (m *MockCarOwnerRepo) Save(carOwner *model.CarOwner) error {
 	return fmt.Errorf("保存失敗")
 }
 
+// GetAllメソッド
+func (m *MockCarOwnerRepo) GetAll()([]*model.CarOwner, error) {
+    if m.FoundOwners == nil {
+        return nil, fmt.Errorf("オーナー一覧を取得できませんでした")
+    }
+    return m.FoundOwners, nil
+}
+
 // FindByID
 func (m *MockCarOwnerRepo) FindByID(id uint) (*model.CarOwner, error) {
 	return m.FoundOwner, nil

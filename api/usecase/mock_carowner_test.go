@@ -40,7 +40,7 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 				FirstName:         "test",
 				MiddleName:        "山田",
 				LastName:          "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: false,
 		},
@@ -51,7 +51,7 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 				FirstName:         "",
 				MiddleName:        "",
 				LastName:          "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: true,
 		},
@@ -94,6 +94,52 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 	}
 }
 
+// GetAllのテスト
+func TestGetAll_MockRepo(t *testing.T) {
+    owners := []*model.CarOwner{
+        {
+            ID:                1,
+		FirstName:         "test",
+		MiddleName:        "山田",
+		LastName:          "太郎",
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
+        },
+        {
+            ID:                2,
+		FirstName:         "test",
+		MiddleName:        "山田",
+		LastName:          "はなこ",
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
+        },
+    }
+    
+    mock := &mocks.MockCarOwnerRepo{
+        FoundOwners:    owners,
+    }
+    
+    //usecaseにモックのCarOwnerRepoをDI
+	usecase := CarOwnerUsecase{CarOwnerRepo: mock}
+    
+    gotOwners, err := usecase.GetAll()
+    if err != nil {
+        t.Errorf("GetAllでエラー: %v", err)
+    }
+    assert.Equal(t, owners, gotOwners)
+}
+
+// GetAllのテスト(Errorを返すか？)
+func TestGetAll_MockRepo_Error(t *testing.T) {
+	//モックリポジトリをインスタンス化するときに、ownerのリストを渡さない(FoundOwners=nilとする)
+	mock := &mocks.MockCarOwnerRepo{}
+	//usecaseにモックのCarOwnerRepoをDI
+	usecase := CarOwnerUsecase{CarOwnerRepo: mock}
+	
+	//モックテストの本番
+	gotOwners, err := usecase.GetAll()
+	assert.Error(t, err, "GetAllはエラーを返すべき")
+	assert.Nil(t, gotOwners, "gotOwnersはnilになるはず")
+}
+
 // FindByIDのテスト
 func TestFindByID_MockRepo(t *testing.T) {
 	owner := &model.CarOwner{
@@ -101,7 +147,7 @@ func TestFindByID_MockRepo(t *testing.T) {
 		FirstName:         "test",
 		MiddleName:        "山田",
 		LastName:          "太郎",
-		LicenseExpiration: time.Date(2025, 1, 1, 0, 0, 0, 0, time.Local),
+		LicenseExpiration: time.Now().AddDate(1, 0, 0),
 	}
 
 	mock := &mocks.MockCarOwnerRepo{

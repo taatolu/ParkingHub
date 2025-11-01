@@ -23,6 +23,17 @@ func (r *CarOwnerRepositoryImpl) Save (carOwner *model.CarOwner) error {
 	return nil
 }
 
+// GetAll(オーナーの全件取得)
+func (r *CarOwnerRepositoryImpl) GetAll() ([]*model.CarOwner, error) {
+    //DBから取得した値を保存するためのリストを作成
+    var owners []*model.CarOwner
+    err := r.DB.Find(&owners).Error
+    if err != nil {
+        return nil, fmt.Errorf("CarOwnersの全件取得に失敗: %w", err)
+    }
+    return owners, nil
+}
+
 // IDでCarOwnerを検索する
 // レコードが見つからない場合は nil, gorm.ErrRecordNotFound を返す
 func (r *CarOwnerRepositoryImpl) FindByID(id uint) (*model.CarOwner, error) {
