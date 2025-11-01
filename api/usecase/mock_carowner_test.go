@@ -95,7 +95,7 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 }
 
 // GetAllのテスト
-func TestGetAll_MockRepo(t *testing.T){
+func TestGetAll_MockRepo(t *testing.T) {
     owners := []*model.CarOwner{
         {
             ID:                1,
