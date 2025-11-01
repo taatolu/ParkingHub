@@ -54,9 +54,7 @@ func (uc *CarOwnerUsecase) GetAll() ([]*model.CarOwner, error) {
 	}
 
 	// ownersが空の場合の処理
-	if len(owners) == 0 {
-		return nil, fmt.Errorf("CarOwnersテーブルにデータが存在しません")
-	}
+	// 空リストは正常なレスポンスとして返す
 	return owners, nil
 }
 
