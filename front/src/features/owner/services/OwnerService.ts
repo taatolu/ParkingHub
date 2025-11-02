@@ -1,6 +1,6 @@
 //CarOwner関連のAPIを作成
 import { API_BASE_URL, API_HEADERS, ApiError, ApiResponse } from  "./apiConfig";
-import { Owner, CreateOwnerDTO } from "../types/Owner";
+import { Owner } from "../types/Owner";
 
 
 //ヘッダー作成のヘルパー関数
@@ -96,7 +96,7 @@ export async function updateOwner(id:number, ownerData:Partial<Owner>, authToken
 }
 
 //オーナー作成
-export async function createOwner (ownerData: CreateOwnerDTO, authToken?:string):Promise<ApiResponse<Owner>>{
+export async function createOwner (ownerData: Owner, authToken?:string):Promise<ApiResponse<Owner>>{
     try {
         const res = await fetch( `${API_BASE_URL}/car_owners`, {
             method: "POST",

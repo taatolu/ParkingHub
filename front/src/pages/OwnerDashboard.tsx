@@ -26,12 +26,6 @@ export const OwnerDashboard: React.FC = () => {
         fetchOwnerDetails(id);
         setIsOpen(true);
     };
-    // Ownerの保存（onSave）ボタンクリック時の処理
-    // この処理(関数)を以下のコンポーネントの中で、EditOwnerModalのプロップスとして、渡す
-    const onSave = (owner : Owner) => {
-        // 保存処理をここに書く
-        createOwnerDetails(owner);
-    }
     // Ownerの削除ボタンクリック時の処理
     // この処理(関数)を以下のコンポーネントの中で、OwnerListのプロップスとして、渡す
     const onDelete = (id : number) => {
@@ -74,10 +68,29 @@ export const OwnerDashboard: React.FC = () => {
             isOpen={isOpen}
             owner={selectedOwner}
             onClose={() => setIsOpen(false)}
-            onSave={(updatedOwner) => {
-                // 保存処理を実装
-                console.log('更新されたオーナー:', updatedOwner);
-                setIsOpen(false);
+            onSave={async(updatedOwner) => {
+                try {
+                    console.log('保存開始:', updatedOwner);
+                    if (selectedOwner?.id) {
+                        // 既存のオーナーを更新
+                        await updateOwnerDetails(selectedOwner.id, updatedOwner);
+                        console.log('更新完了');
+                    } else {
+                        // 新規オーナーを作成
+                        await createOwnerDetails(updatedOwner);
+                        console.log('作成完了');
+                    }
+                    // 成功時
+                    await fetchOwners();
+                    setIsOpen(false);
+                    alert('保存に成功しました');
+                } catch (error) {
+                    console.error('オーナーの保存中にエラーが発生しました:', error);
+                    // エラーメッセージを取得
+                    const errorMessage = error instanceof Error ? error.message : '不明なエラーが発生しました';
+                    alert(`エラー: ${errorMessage}`);
+                    // モーダルは閉じない（ユーザーが修正できるように）
+                }
             }}
         />
         </div>
