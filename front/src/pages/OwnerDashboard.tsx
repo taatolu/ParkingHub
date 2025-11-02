@@ -12,7 +12,7 @@ export const OwnerDashboard: React.FC = () => {
     // オーナー一覧取得フック（useOwnersList)がreturnする値を分割代入で受け取り
     const { owners, loading: listLoading, error: listError, fetchOwners, showExpiredOnly, toggleExpiredFilter } = useOwnersList();
     // オーナー詳細取得フック（useOwnerDetail)がreturnする値を分割代入で受け取り
-    const { selectedOwner, loading: detailLoading, error: detailError, fetchOwnerDetails, updateOwnerDetails } = useOwnerDetails();
+    const { selectedOwner, loading: detailLoading, error: detailError, fetchOwnerDetails, createOwnerDetails, updateOwnerDetails } = useOwnerDetails();
 
     //modal関連
     // モーダルの表示状態を管理するstateの定義
@@ -26,6 +26,12 @@ export const OwnerDashboard: React.FC = () => {
         fetchOwnerDetails(id);
         setIsOpen(true);
     };
+    // Ownerの保存（onSave）ボタンクリック時の処理
+    // この処理(関数)を以下のコンポーネントの中で、EditOwnerModalのプロップスとして、渡す
+    const onSave = (owner : Owner) => {
+        // 保存処理をここに書く
+        createOwnerDetails(owner);
+    }
     // Ownerの削除ボタンクリック時の処理
     // この処理(関数)を以下のコンポーネントの中で、OwnerListのプロップスとして、渡す
     const onDelete = (id : number) => {
@@ -49,7 +55,9 @@ export const OwnerDashboard: React.FC = () => {
                     </label>
                 </div>
                 {/* 新規作成ボタン */}
-                <button className={styles.createButton} onClick={() => fetchOwnerDetails(0)}>
+                <button className={styles.createButton} onClick={() => {
+                    setIsOpen(true);
+                }}>
                     新規作成
                 </button>
             </div>
