@@ -1,0 +1,54 @@
+import React from "react";
+import { Owner } from "../types/Owner"; // Ownerの型定義
+import styles from "../assets/css/OwnerList.module.css";
+
+// OwnerListコンポーネントで使用するprops（引数）の型定義
+type OwnerListProps = {
+    owners: Owner[]; // Owner型の配列（Owner型は/features/owner/types/Ownerで定義してある）
+    onDetail: (id: number) => void; // 詳細ボタン押下時にonDetail関数をPropsとして受け取る(この関数は引数にidを受け取る)
+    onDelete: (id: number) => void; // 削除ボタン押下時にonDelete関数をPropsとして受け取る(この関数は引数にidを受け取る)
+}
+
+//OwnerListコンポーネント：オーナーテーブルで表示するテーブルの本体
+export const OwnerList: React.FC<OwnerListProps> = ({ owners, onDetail, onDelete }) => {
+    // ownersを使って処理を書く
+    return (
+        <table className={styles.table}>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>姓</th>
+                    <th>ミドルネーム</th>
+                    <th>名</th>
+                    <th>免許証期限</th>
+                </tr>
+            </thead>
+            <tbody>
+                {owners.map((owner) => (
+                    <tr key={owner.id}>
+                        <td>{owner.id}</td>
+                        <td>{owner.first_name}</td>
+                        <td>{owner.middle_name}</td>
+                        <td>{owner.last_name}</td>
+                        <td>{owner.license_expiration}</td>
+                        <td className={styles.actions}>
+                            {/* 詳細ページへの遷移ボタン
+                                propsで受け取ったonDetail関数をボタンのonClickに設定 
+                                onDetail関数にpropsで受け取ったowner.idを渡す */}
+                            <button className={styles.detailButton}
+                            onClick={() => onDetail(owner.id)}>詳細
+                            </button>
+                            {/* 削除ボタン
+                                propsで受け取ったonDelete関数をボタンのonClickに設定
+                                onDelete関数にpropsで受け取ったowner.idを渡す */}
+                            <button className={styles.deleteButton}
+                            onClick={() => onDelete(owner.id)}>削除
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
+
