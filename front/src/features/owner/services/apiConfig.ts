@@ -1,5 +1,5 @@
 //apiのベースURLを定義
-export const API_BASE_URL = "http://localhost:3000/api/v1";
+export const API_BASE_URL = "http://localhost:8080/api/v1";
 
 //apiの共通ヘッダーを定義
 export const API_HEADERS =  {
