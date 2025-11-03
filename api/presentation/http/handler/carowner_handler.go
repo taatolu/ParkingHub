@@ -64,6 +64,11 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// IDが負の場合はエラーを返す
+	if param.ID < 0 {
+		http.Error(w, "error: ID must be a non-negative integer", http.StatusBadRequest)
+		return
+	}
 	//取得したIDをuint型に変換
 	idUint := uint(param.ID)
 
