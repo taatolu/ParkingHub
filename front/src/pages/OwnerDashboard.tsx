@@ -17,6 +17,8 @@ export const OwnerDashboard: React.FC = () => {
     //modal関連
     // モーダルの表示状態を管理するstateの定義
     const [isOpen, setIsOpen] = useState(false);
+    // 編集モードか新規作成モードかを管理するstate
+    const [isEditMode, setIsEditMode] = useState(false);
 
     // Button関連の関数（処理を定義）
     // Ownerの詳細ボタンクリック時の処理
@@ -24,6 +26,7 @@ export const OwnerDashboard: React.FC = () => {
     const onDetail = (id : number) => {
         // 詳細ページへ遷移する処理をここに書く(EditOwnerModalを開く)
         fetchOwnerDetails(id);
+        setIsEditMode(true);
         setIsOpen(true);
     };
     // Ownerの削除ボタンクリック時の処理
@@ -51,6 +54,7 @@ export const OwnerDashboard: React.FC = () => {
                 {/* 新規作成ボタン */}
                 <button className={styles.createButton} onClick={() => {
                     setIsOpen(true);
+                    setIsEditMode(false);
                 }}>
                     新規作成
                 </button>
@@ -66,12 +70,12 @@ export const OwnerDashboard: React.FC = () => {
         {/* モーダルコンポーネントを追加 */}
         <EditOwnerModal
             isOpen={isOpen}
-            owner={selectedOwner}
+            owner={isEditMode ? selectedOwner : null}
             onClose={() => setIsOpen(false)}
             onSave={async(updatedOwner) => {
                 try {
                     console.log('保存開始:', updatedOwner);
-                    if (selectedOwner?.id) {
+                    if (isEditMode && selectedOwner?.id) {
                         // 既存のオーナーを更新
                         await updateOwnerDetails(selectedOwner.id, updatedOwner);
                         console.log('更新完了');
