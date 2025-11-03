@@ -1,4 +1,4 @@
-import Reacr, { Component } from 'react';
+import React, { Component } from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { OwnerDashboard } from './OwnerDashboard';
 import { useOwnersList } from '../features/owner/hooks/useOwnersList';
