@@ -1,7 +1,6 @@
 import { useState, useCallback} from  'react';
 import { Owner} from '../types/Owner';
 import { getOwnerByID, updateOwner, createOwner } from '../services/OwnerService';
-import { create } from 'domain';
 
 /*カスタムフック：オーナー詳細情報を取得・管理する
 このフックは、特定のオーナーの詳細情報の取得と更新の機能を提供します。
