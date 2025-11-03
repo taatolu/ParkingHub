@@ -81,7 +81,7 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
     }
     fmt.Printf("ID validation passed\n")
 
-    idUint := uint(param.ID)
+    idUint = uint(param.ID)
     fmt.Printf("Converted ID to uint: %d\n", idUint)
 
     fmt.Printf("Attempting to parse date: %s\n", param.LicenseExpiration)
