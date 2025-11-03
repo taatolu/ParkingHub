@@ -42,7 +42,12 @@ export const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, 
     //入力フィールドの変更を処理する関数
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        // id フィールドの場合は数値に変換
+        if (name === 'id') {
+            setFormData((prev) => ({ ...prev, [name]: parseInt(value) || 0 }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     //保存ボタン押下時の処理
@@ -65,6 +70,17 @@ export const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, 
                             <h2>オーナー情報の編集</h2>
                         </div>
                         <form>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="id">社員ID</label>
+                                <input
+                                    type="number"
+                                    id="id"
+                                    name="id"
+                                    value={formData.id}
+                                    onChange={handleChange}
+                                    required    //社員IDは必須入力
+                                />
+                            </div>
                             <div className={styles.formGroup}>
                                 <label htmlFor="first_name">姓</label>
                                 <input

@@ -1,7 +1,6 @@
 import { useState, useCallback} from  'react';
-import { Owner, CreateOwnerDTO } from '../types/Owner';
+import { Owner} from '../types/Owner';
 import { getOwnerByID, updateOwner, createOwner } from '../services/OwnerService';
-import { create } from 'domain';
 
 /*カスタムフック：オーナー詳細情報を取得・管理する
 このフックは、特定のオーナーの詳細情報の取得と更新の機能を提供します。
@@ -25,6 +24,8 @@ export const useOwnerDetails = (authToken?: string) => {
             }
         } catch (error) {
             setError(`オーナー情報の取得に失敗しました: ${error}`); //エラー発生時にエラーメッセージをセット
+            throw error;
+        } finally {
             setLoading(false); //読み込み完了
         }
     }
@@ -41,13 +42,15 @@ export const useOwnerDetails = (authToken?: string) => {
                 return response.data; //データを直接返す
             }
         } catch (error) {
-            setError( `オーナー情報の更新に失敗しました: $%{error}`); //エラー発生時にエラーメッセージをセット
+            setError( `オーナー情報の更新に失敗しました: ${error}`); //エラー発生時にエラーメッセージをセット
+            throw error;
+        } finally {
             setLoading(false); //読み込み完了
         }
     }
 
     // オーナー情報の新規作成
-    const createOwnerDetails = async (ownerDetails: CreateOwnerDTO) => {
+    const createOwnerDetails = async (ownerDetails: Owner) => {
         setError(null); //エラー状態をリセット
         setLoading(true); //読み込み開始
         try {
@@ -59,6 +62,8 @@ export const useOwnerDetails = (authToken?: string) => {
             }
         } catch (error) {
             setError( `オーナー情報の作成に失敗しました: ${error}`); //エラー発生時にエラーメッセージをセット
+            throw error;
+        } finally {
             setLoading(false); //読み込み完了
         }
     }

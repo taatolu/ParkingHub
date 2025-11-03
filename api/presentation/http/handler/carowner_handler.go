@@ -48,6 +48,7 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // POST api car_owners
 func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) {
+
 	//リクエストボディの内容を取得
 	///取得したリクエストボディの内容を格納する構造体を作成
 	var param struct {
@@ -72,31 +73,56 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 	//取得したIDをuint型に変換
 	idUint := uint(param.ID)
 
-	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
-	if err != nil {
-		http.Error(w, "error: Invalid LicenseExpiration format", http.StatusBadRequest)
-		return
-	}
+    if param.ID <= 0 {
+        fmt.Printf("ID validation failed: %d\n", param.ID)
+        w.Header().Set("Content-Type", "application/json")
+        http.Error(w, `{"error":"ID must be positive"}`, http.StatusBadRequest)
+        return
+    }
+    fmt.Printf("ID validation passed\n")
 
-	//model構築
-	owner := &model.CarOwner{
-		ID:         idUint,
-		FirstName:  param.FirstName,
-		MiddleName: param.MiddleName,
-		LastName:   param.LastName,
-		// 文字列 → time.Time変換する処理が必要
-		LicenseExpiration: expiry,
-	}
+    idUint = uint(param.ID)
+    fmt.Printf("Converted ID to uint: %d\n", idUint)
 
-	// ユースケースを呼んで新規登録
-	err = h.Usecase.RegistCarOwner(owner)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+    fmt.Printf("Attempting to parse date: %s\n", param.LicenseExpiration)
+    expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
+    if err != nil {
+        fmt.Printf("Date Parse Error: %v\n", err)
+        w.Header().Set("Content-Type", "application/json")
+        http.Error(w, fmt.Sprintf(`{"error":"Invalid date format: %s"}`, err.Error()), http.StatusBadRequest)
+        return
+    }
+    fmt.Printf("Parsed expiry successfully: %v\n", expiry)
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(owner)
+    owner := &model.CarOwner{
+        ID:                idUint,
+        FirstName:         param.FirstName,
+        MiddleName:        param.MiddleName,
+        LastName:          param.LastName,
+        LicenseExpiration: expiry,
+    }
+    fmt.Printf("Created owner model: %+v\n", owner)
+
+    fmt.Printf("Calling RegistCarOwner...\n")
+    err = h.Usecase.RegistCarOwner(owner)
+    if err != nil {
+        fmt.Printf("RegistCarOwner Error: %v\n", err)
+        w.Header().Set("Content-Type", "application/json")
+        http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Error()), http.StatusInternalServerError)
+        return
+    }
+    fmt.Printf("RegistCarOwner completed successfully\n")
+
+    fmt.Printf("Setting response headers...\n")
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    
+    fmt.Printf("Encoding response: %+v\n", owner)
+    if err := json.NewEncoder(w).Encode(owner); err != nil {
+        fmt.Printf("Encode Error: %v\n", err)
+        return
+    }
+    fmt.Printf("Response sent successfully\n")
 }
 
 // GET (All)
