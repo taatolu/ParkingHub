@@ -39,6 +39,12 @@ export const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, 
         }
     }, [owner]);
 
+    // 日付を "yyyy-MM-dd" 形式に変換する関数
+    const formatDate = (dateString: string) => {
+        if (!dateString) return '';
+        return dateString.split('T')[0];
+    };
+
     //入力フィールドの変更を処理する関数
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -117,7 +123,7 @@ export const EditOwnerModal: React.FC< EditOwnerModalProps > = ({isOpen, owner, 
                                     type="date"
                                     id="license_expiration"
                                     name="license_expiration"
-                                    value={formData.license_expiration}
+                                    value={formatDate(formData.license_expiration)}
                                     onChange={handleChange}
                                 />
                             </div>
