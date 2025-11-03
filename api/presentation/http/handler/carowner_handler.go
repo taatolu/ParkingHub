@@ -48,23 +48,30 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // POST api car_owners
 func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) {
-    var param struct {
-        ID                int    `json:"id"`
-        FirstName         string `json:"first_name"`
-        MiddleName        string `json:"middle_name"`
-        LastName          string `json:"last_name"`
-        LicenseExpiration string `json:"license_expiration"`
-    }
-    
-    err := json.NewDecoder(r.Body).Decode(&param)
-    if err != nil {
-        fmt.Printf("JSON Decode Error: %v\n", err)
-        w.Header().Set("Content-Type", "application/json")
-        http.Error(w, fmt.Sprintf(`{"error":"Invalid request: %s"}`, err.Error()), http.StatusBadRequest)
-        return
-    }
 
-    fmt.Printf("Received param: %+v\n", param)
+	//リクエストボディの内容を取得
+	///取得したリクエストボディの内容を格納する構造体を作成
+	var param struct {
+		ID                int `json:"id"`
+		FirstName         string `json:"first_name"`
+		MiddleName        string `json:"middle_name"`
+		LastName          string `json:"last_name"`
+		LicenseExpiration string `json:"license_expiration"`
+	}
+	///リクエストボディの内容をparamにパース
+	err := json.NewDecoder(r.Body).Decode(&param)
+	if err != nil {
+		http.Error(w, "error: Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	// IDが負の場合はエラーを返す
+	if param.ID < 0 {
+		http.Error(w, "error: ID must be a non-negative integer", http.StatusBadRequest)
+		return
+	}
+	//取得したIDをuint型に変換
+	idUint := uint(param.ID)
 
     if param.ID <= 0 {
         fmt.Printf("ID validation failed: %d\n", param.ID)

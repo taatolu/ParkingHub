@@ -32,7 +32,7 @@ func TestRegistCarOwner(t *testing.T) {
 			testname: "正常系",
 			method:   "POST",
 			url:      "/api/v1/car_owners",
-			body: bytes.NewBufferString(`{"id":"1",
+			body: bytes.NewBufferString(`{"id":1,
                                                 "first_name":"test",
                                                 "middle_name":"山田",
                                                 "last_name":"太郎",
