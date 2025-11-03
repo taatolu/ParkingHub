@@ -51,7 +51,7 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 	//リクエストボディの内容を取得
 	///取得したリクエストボディの内容を格納する構造体を作成
 	var param struct {
-		ID                string `json:"id"`
+		ID                int `json:"id"`
 		FirstName         string `json:"first_name"`
 		MiddleName        string `json:"middle_name"`
 		LastName          string `json:"last_name"`
@@ -64,13 +64,13 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	//取得したリクエストボディの型（取得時は文字列）をエンティティの型と一致するよう修正
-	idInt, err := strconv.Atoi(param.ID)
-	if err != nil {
-		http.Error(w, "error: IDの型変換に失敗", http.StatusBadRequest)
+	// IDが負の場合はエラーを返す
+	if param.ID < 0 {
+		http.Error(w, "error: ID must be a non-negative integer", http.StatusBadRequest)
 		return
 	}
-	idUint := uint(idInt)
+	//取得したIDをuint型に変換
+	idUint := uint(param.ID)
 
 	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
 	if err != nil {
