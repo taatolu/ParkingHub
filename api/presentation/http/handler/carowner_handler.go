@@ -66,30 +66,21 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// IDが負の場合はエラーを返す
-	if param.ID < 0 {
-		http.Error(w, "error: ID must be a non-negative integer", http.StatusBadRequest)
-		return
-	}
-	//取得したIDをuint型に変換
-	idUint := uint(param.ID)
-
     if param.ID <= 0 {
         fmt.Printf("ID validation failed: %d\n", param.ID)
         w.Header().Set("Content-Type", "application/json")
-        http.Error(w, `{"error":"ID must be positive"}`, http.StatusBadRequest)
+        http.Error(w, `{"error":"IDは正の整数でなければなりません"}`, http.StatusBadRequest)
         return
     }
-    fmt.Printf("ID validation passed\n")
 
-    idUint = uint(param.ID)
-    fmt.Printf("Converted ID to uint: %d\n", idUint)
+    idUint := uint(param.ID)
 
     fmt.Printf("Attempting to parse date: %s\n", param.LicenseExpiration)
     expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
     if err != nil {
         fmt.Printf("Date Parse Error: %v\n", err)
         w.Header().Set("Content-Type", "application/json")
-        http.Error(w, fmt.Sprintf(`{"error":"Invalid date format: %s"}`, err.Error()), http.StatusBadRequest)
+        http.Error(w, fmt.Sprintf(`{"error":"日付の形式が無効です: %s"}`, err.Error()), http.StatusBadRequest)
         return
     }
     fmt.Printf("Parsed expiry successfully: %v\n", expiry)
@@ -111,18 +102,15 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
         http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Error()), http.StatusInternalServerError)
         return
     }
-    fmt.Printf("RegistCarOwner completed successfully\n")
 
-    fmt.Printf("Setting response headers...\n")
+
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
     
-    fmt.Printf("Encoding response: %+v\n", owner)
     if err := json.NewEncoder(w).Encode(owner); err != nil {
         fmt.Printf("Encode Error: %v\n", err)
         return
     }
-    fmt.Printf("Response sent successfully\n")
 }
 
 // GET (All)
