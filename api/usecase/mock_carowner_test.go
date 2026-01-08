@@ -40,7 +40,7 @@ func TestSaveCarOwner_MockRepo(t *testing.T) {
 				FirstName:         "test",
 				MiddleName:        "山田",
 				LastName:          "太郎",
-				LicenseExpiration: time.Date(2025, 11, 1, 0, 0, 0, 0, time.Local),
+				LicenseExpiration: time.Now().AddDate(1, 0, 0),
 			},
 			wantError: false,
 		},
