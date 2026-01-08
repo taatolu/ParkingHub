@@ -22,6 +22,11 @@ type Car struct {
     Note                string      `json:"note" gorm:"column:note;size:255"`               //備考欄
 }
 
+// テーブル名を明示的に指定
+func (Car) TableName() string {
+    return "cars"
+}
+
 // 車検の期限切れ確認
 func (c *Car) IsShakenExpired () bool {
     //現在時刻がc.ShakenExpirationより後かどうか（現在時刻の方が後ならtrueを返す）
