@@ -81,7 +81,7 @@ func TestCarOwnerRepositoryImpl_FindByID(t *testing.T) {
 		{
 			testname:    "正常系:ヒット無し（IDが存在しない）",
 			inputID:     3,
-			expectError: true, //RecordNotFoundのエラーが返る使用だから
+			expectError: true, //RecordNotFoundのエラーが返る仕様だから
 			Owners: []*model.CarOwner{&model.CarOwner{ID: 1, FirstName: "taro", MiddleName: "山田", LastName: "yusuke", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
 				&model.CarOwner{ID: 2, FirstName: "tamaki", MiddleName: "山田", LastName: "yuichi", LicenseExpiration: atThisTime.AddDate(1, 0, 0)},
 			},

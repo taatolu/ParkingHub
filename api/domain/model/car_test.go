@@ -24,6 +24,11 @@ func TestIsShakenExpired(t *testing.T) {
 			shakenExp: time.Now().AddDate(-1, 0, 0),
 			wantError: true,
 		},
+		{
+			testname:  "正常系（車検なし）",
+			shakenExp: time.Time{},
+			wantError: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.testname, func(t *testing.T) {
