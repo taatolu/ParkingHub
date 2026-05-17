@@ -33,6 +33,11 @@ func (f *FakeCarOwnerUsecase) RegistCarOwner(owner *model.CarOwner) error {
     return nil
 }
 
+func (f *FakeCarOwnerUsecase) GetAll() ([]*model.CarOwner, error) {
+    //とり急ぎUsecase層の作成時にエラーが出ないよう、errorを返させる(todo: handlerのテストを書くときに実装)
+    return nil, fmt.Errorf("FakeCarOwnerUsecase.GetAllは未実装(handlerのテストを書くときに実装します)")
+}
+
 func (f *FakeCarOwnerUsecase) FindByID (id uint) (*model.CarOwner, error) {
     //とり急ぎUsecase層の作成時にエラーが出ないよう、errorを返させる
     return nil, fmt.Errorf("FakeCarOwnerUsecase.FindByIDは未実装(handlerのテストを書くときに実装します)")

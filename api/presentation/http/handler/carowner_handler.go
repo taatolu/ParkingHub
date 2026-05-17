@@ -19,6 +19,9 @@ type CarOwnerHandler struct {
 // CarOwnerHandler definition（ルーターでCarOwnerHandlerが呼ばれたときどのメソッドを実行するか & ServeHTTPをラップ）
 func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch {
+	case r.URL.Path == "/api/v1/car_owners" && r.Method == http.MethodGet:
+		//全件取得の処理
+		h.GetAll(w, r)
 	case r.URL.Path == "/api/v1/car_owners" && r.Method == http.MethodPost:
 		h.CreateCarOwner(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/v1/car_owners/") && r.Method == http.MethodGet:
@@ -45,10 +48,11 @@ func (h CarOwnerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // POST api car_owners
 func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) {
+
 	//リクエストボディの内容を取得
 	///取得したリクエストボディの内容を格納する構造体を作成
 	var param struct {
-		ID                string `json:"id"`
+		ID                int `json:"id"`
 		FirstName         string `json:"first_name"`
 		MiddleName        string `json:"middle_name"`
 		LastName          string `json:"last_name"`
@@ -57,43 +61,73 @@ func (h CarOwnerHandler) CreateCarOwner(w http.ResponseWriter, r *http.Request) 
 	///リクエストボディの内容をparamにパース
 	err := json.NewDecoder(r.Body).Decode(&param)
 	if err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, "error: Invalid request", http.StatusBadRequest)
 		return
 	}
 
-	//取得したリクエストボディの型（取得時は文字列）をエンティティの型と一致するよう修正
-	idInt, err := strconv.Atoi(param.ID)
-	if err != nil {
-		http.Error(w, "IDの型変換に失敗", http.StatusBadRequest)
-		return
-	}
-	idUint := uint(idInt)
+	// IDが負の場合はエラーを返す
+    if param.ID <= 0 {
+        fmt.Printf("ID validation failed: %d\n", param.ID)
+        w.Header().Set("Content-Type", "application/json")
+        http.Error(w, `{"error":"IDは正の整数でなければなりません"}`, http.StatusBadRequest)
+        return
+    }
 
-	expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
-	if err != nil {
-		http.Error(w, "Invalid LicenseExpiration format", http.StatusBadRequest)
-		return
-	}
+    idUint := uint(param.ID)
 
-	//model構築
-	owner := &model.CarOwner{
-		ID:         idUint,
-		FirstName:  param.FirstName,
-		MiddleName: param.MiddleName,
-		LastName:   param.LastName,
-		// 文字列 → time.Time変換する処理が必要
-		LicenseExpiration: expiry,
-	}
+    fmt.Printf("Attempting to parse date: %s\n", param.LicenseExpiration)
+    expiry, err := time.Parse("2006-01-02", param.LicenseExpiration)
+    if err != nil {
+        fmt.Printf("Date Parse Error: %v\n", err)
+        w.Header().Set("Content-Type", "application/json")
+        http.Error(w, fmt.Sprintf(`{"error":"日付の形式が無効です: %s"}`, err.Error()), http.StatusBadRequest)
+        return
+    }
+    fmt.Printf("Parsed expiry successfully: %v\n", expiry)
 
-	// ユースケースを呼んで新規登録
-	err = h.Usecase.RegistCarOwner(owner)
+    owner := &model.CarOwner{
+        ID:                idUint,
+        FirstName:         param.FirstName,
+        MiddleName:        param.MiddleName,
+        LastName:          param.LastName,
+        LicenseExpiration: expiry,
+    }
+    fmt.Printf("Created owner model: %+v\n", owner)
+
+    fmt.Printf("Calling RegistCarOwner...\n")
+    err = h.Usecase.RegistCarOwner(owner)
+    if err != nil {
+        fmt.Printf("RegistCarOwner Error: %v\n", err)
+        w.Header().Set("Content-Type", "application/json")
+        http.Error(w, fmt.Sprintf(`{"error":"%s"}`, err.Error()), http.StatusInternalServerError)
+        return
+    }
+
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusCreated)
+    
+    if err := json.NewEncoder(w).Encode(owner); err != nil {
+        fmt.Printf("Encode Error: %v\n", err)
+        return
+    }
+}
+
+// GET (All)
+func (h CarOwnerHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	// Usecase層のGetAllメソッドを呼び出して全件取得
+	owners, err := h.Usecase.GetAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(owner)
+	// 取得したownersをJSON形式でレスポンスに書き込み
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(owners); err != nil {
+		fmt.Printf("error:エンコード失敗: %v\n", err)
+	}
 }
 
 // GET (Find By id)
@@ -171,12 +205,6 @@ func (h *CarOwnerHandler) FindByName (w http.ResponseWriter, r *http.Request) {
 
 //Updateメソッドは、車の所有者の情報を更新するためのHTTPメソッドPUTリクエストを処理します。
 func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
-	//メソッドの判定
-	if r.Method != http.MethodPut {
-        // クライアントが不正なHTTPメソッドでアクセスした場合
-        http.Error(w, `{"error":"リクエストメソッドが不正です"}`, http.StatusMethodNotAllowed)
-        return
-    }
 
 	//URLPathの検証
 	path := r.URL.Path
@@ -250,11 +278,6 @@ func (h *CarOwnerHandler) Update (w http.ResponseWriter, r *http.Request){
 
 //Deleteはパラメータで与えられたIDのOwnerを削除する
 func (h *CarOwnerHandler) Delete (w http.ResponseWriter, r *http.Request) {
-	//メソッドの判定
-	if r.Method != http.MethodDelete {
-		http.Error(w, `{"error":"リクエストメソッドが不正です"}`, http.StatusBadRequest)
-		return
-	}
 
 	//URL.Pathの検証
 	path := r.URL.Path
