@@ -29,6 +29,11 @@ func (Car) TableName() string {
 
 // 車検の期限切れ確認
 func (c *Car) IsShakenExpired () bool {
+    // 車検が存在しない、または未設定の場合は期限切れ判定を行わない
+    if c.ShakenExpiration.IsZero() {
+        return false
+    }
+
     //現在時刻がc.ShakenExpirationより後かどうか（現在時刻の方が後ならtrueを返す）
     return time.Now().After(c.ShakenExpiration)
 }
