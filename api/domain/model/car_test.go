@@ -42,7 +42,7 @@ func TestIsInsuranceExpired(t *testing.T) {
 		insuranceExp time.Time
 		wantError    bool
 	}{
-		//tsetCase
+		//testCase
 		{
 			testname:     "正常系",
 			insuranceExp: time.Now().AddDate(1, 0, 0),
