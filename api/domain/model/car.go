@@ -40,6 +40,6 @@ func (c *Car) IsShakenExpired () bool {
 
 // 任意保険の期限切れ確認
 func (c *Car) IsInsuranceExpired () bool {
-    //現在時刻がc.IsInsuranceExpirationより後かどうか（現在時刻の方が後ならtrueを返す）
+    //現在時刻がc.InsuranceExpirationより後かどうか（現在時刻の方が後ならtrueを返す）
     return time.Now().After(c.InsuranceExpiration)
 }
